@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "..\[Shared]\Utilities\Utilities.shproj", "{6D77D9F7-85BB-45EA-A467-8AC2882608D0}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "[Shared]\Utilities\Utilities.shproj", "{6D77D9F7-85BB-45EA-A467-8AC2882608D0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "[Shared]", "[Shared]", "{A1C7068F-29A6-4124-AA6B-26B16A3A3C52}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Android", "..\[Shared]\Android\Android.shproj", "{E62A7BA6-14A0-4DE8-927F-4A9AF4279FF3}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Android", "[Shared]\Android\Android.shproj", "{E62A7BA6-14A0-4DE8-927F-4A9AF4279FF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Android", "TramUrWay.Android\TramUrWay.Android.csproj", "{985E6B0D-BA87-4A4C-AD63-AC50AD49F0AE}"
 EndProject
@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Dumper", "TramUrW
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\[Shared]\Android\Android.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
 		..\[Shared]\Utilities\Utilities.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
-		..\[Shared]\Android\Android.projitems*{e62a7ba6-14a0-4de8-927f-4a9af4279ff3}*SharedItemsImports = 13
+		..\[Shared]\Android\Android.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
+		[Shared]\Android\Android.projitems*{e62a7ba6-14a0-4de8-927f-4a9af4279ff3}*SharedItemsImports = 13
 		..\[Shared]\Utilities\Utilities.projitems*{f0bb2a45-fa8e-4b22-8b5f-03709e27449b}*SharedItemsImports = 4
-		..\[Shared]\Utilities\Utilities.projitems*{6d77d9f7-85bb-45ea-a467-8ac2882608d0}*SharedItemsImports = 13
+		[Shared]\Utilities\Utilities.projitems*{6d77d9f7-85bb-45ea-a467-8ac2882608d0}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
