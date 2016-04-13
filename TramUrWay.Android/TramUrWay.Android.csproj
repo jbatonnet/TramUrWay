@@ -78,9 +78,7 @@
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\StopActivity.cs" />
     <Compile Include="Activities\LineActivity.cs" />
-    <Compile Include="Activities\StepWidgetActivity.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
-    <Compile Include="Components\TopAlignedImageView.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Model\TimeTable.cs" />
@@ -94,7 +92,6 @@
     <Compile Include="Adapters\TimeStepsAdapter.cs" />
     <Compile Include="Adapters\StepsAdapter.cs" />
     <Compile Include="Service\WidgetUpdateService.cs" />
-    <Compile Include="Widgets\StepWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
@@ -126,30 +123,6 @@
     </AndroidAsset>
     <AndroidAsset Include="..\Data\Hiver 2015\L2.R1.ven.csv">
       <Link>Assets\L2.R1.ven.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.dim.csv">
-      <Link>Assets\L1.R0.dim.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.lun-jeu.csv">
-      <Link>Assets\L1.R0.lun-jeu.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.sam.csv">
-      <Link>Assets\L1.R0.sam.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.ven.csv">
-      <Link>Assets\L1.R0.ven.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.dim.csv">
-      <Link>Assets\L1.R1.dim.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.lun-jeu.csv">
-      <Link>Assets\L1.R1.lun-jeu.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.sam.csv">
-      <Link>Assets\L1.R1.sam.csv</Link>
-    </AndroidAsset>
-    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.ven.csv">
-      <Link>Assets\L1.R1.ven.csv</Link>
     </AndroidAsset>
     <None Include="packages.config" />
     <None Include="Properties\AndroidManifest.xml">
@@ -272,11 +245,6 @@
     <AndroidResource Include="Resources\layout\StopItem.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\xml\StepWidget.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\StepWidget.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -303,6 +271,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\menu\StopMenu.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

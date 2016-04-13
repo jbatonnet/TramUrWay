@@ -27,8 +27,8 @@ namespace TramUrWay.Android
     {
         public const string Name = "TramUrWay";
 
-        public const int GlobalUpdateDelay = 30;
-        public const int WidgetUpdateDelay = 60;
+        public const int GlobalUpdateDelay = 60;
+        public const int WidgetUpdateDelay = 120;
 
         private static bool initialized = false;
         private static AndroidDatabaseConnection connection;
@@ -47,9 +47,9 @@ namespace TramUrWay.Android
             Database.Initialize(context, connection);
 
             // Trigger widgets update
-            Intent intent = new Intent();
-            intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-            context.SendBroadcast(intent);
+            //Intent intent = new Intent();
+            //intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            //context.SendBroadcast(intent);
         }
 
         private static void Connection_VersionUpgraded(AndroidDatabaseConnection connection, int oldVersion, int newVersion)

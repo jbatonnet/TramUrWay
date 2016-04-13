@@ -11,8 +11,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Android", "..\[Shared]\Andr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Android", "TramUrWay.Android\TramUrWay.Android.csproj", "{985E6B0D-BA87-4A4C-AD63-AC50AD49F0AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Test", "TramUrWay.Test\TramUrWay.Test.csproj", "{3347AFC6-6827-469E-BA33-97873F3D4380}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Dumper", "TramUrWay.Dumper\TramUrWay.Dumper.csproj", "{F0BB2A45-FA8E-4B22-8B5F-03709E27449B}"
 EndProject
 Global
@@ -20,7 +18,6 @@ Global
 		..\[Shared]\Android\Android.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
 		..\[Shared]\Utilities\Utilities.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
 		..\[Shared]\Android\Android.projitems*{e62a7ba6-14a0-4de8-927f-4a9af4279ff3}*SharedItemsImports = 13
-		..\[Shared]\Utilities\Utilities.projitems*{3347afc6-6827-469e-ba33-97873f3d4380}*SharedItemsImports = 4
 		..\[Shared]\Utilities\Utilities.projitems*{f0bb2a45-fa8e-4b22-8b5f-03709e27449b}*SharedItemsImports = 4
 		..\[Shared]\Utilities\Utilities.projitems*{6d77d9f7-85bb-45ea-a467-8ac2882608d0}*SharedItemsImports = 13
 	EndGlobalSection
@@ -35,10 +32,6 @@ Global
 		{985E6B0D-BA87-4A4C-AD63-AC50AD49F0AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{985E6B0D-BA87-4A4C-AD63-AC50AD49F0AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{985E6B0D-BA87-4A4C-AD63-AC50AD49F0AE}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{3347AFC6-6827-469E-BA33-97873F3D4380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3347AFC6-6827-469E-BA33-97873F3D4380}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3347AFC6-6827-469E-BA33-97873F3D4380}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3347AFC6-6827-469E-BA33-97873F3D4380}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F0BB2A45-FA8E-4B22-8B5F-03709E27449B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F0BB2A45-FA8E-4B22-8B5F-03709E27449B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0BB2A45-FA8E-4B22-8B5F-03709E27449B}.Release|Any CPU.ActiveCfg = Release|Any CPU

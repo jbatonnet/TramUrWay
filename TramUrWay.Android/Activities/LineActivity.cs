@@ -151,7 +151,7 @@ namespace TramUrWay.Android
                 while (!refreshCancellationTokenSource.IsCancellationRequested)
                 {
                     RunOnUiThread(() => OnRefreshedTimes());
-                    Thread.Sleep(5000);
+                    Thread.Sleep(App.GlobalUpdateDelay / 4 * 1000);
                 }
             });
 

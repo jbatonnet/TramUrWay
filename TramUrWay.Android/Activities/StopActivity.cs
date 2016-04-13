@@ -110,16 +110,6 @@ namespace TramUrWay.Android
             otherStopList.NestedScrollingEnabled = false;
             otherStopList.SetLayoutManager(new WrapLayoutManager(this));
             otherStopList.AddItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.Vertical));
-
-            // Trigger a refresh regularly
-            Task.Run(() =>
-            {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
-                {
-                    RunOnUiThread(() => Refresh());
-                    Thread.Sleep(App.GlobalUpdateDelay * 1000);
-                }
-            });
         }
         protected override void OnPause()
         {
@@ -135,8 +125,8 @@ namespace TramUrWay.Android
             {
                 while (!refreshCancellationTokenSource.IsCancellationRequested)
                 {
-                    RunOnUiThread(() => Refresh());
-                    Thread.Sleep(15000);
+                    Refresh();
+                    Thread.Sleep(App.GlobalUpdateDelay * 1000);
                 }
             });
 
@@ -221,9 +211,14 @@ namespace TramUrWay.Android
 
             if (stop != null && timeSteps != null)
             {
-                listStopList.SetAdapter(new TimeStepsAdapter(timeSteps.Where(s => s.Step.Stop.Line == line)));
+                TimeStep[] lineSteps = timeSteps.Where(s => s.Step.Stop.Line == line)
+                                                .OrderBy(s => s.Date)
+                                                .ToArray();
+                listStopList.SetAdapter(new TimeStepsAdapter(lineSteps));
 
-                TimeStep[] otherSteps = timeSteps.Where(s => s.Step.Stop.Line != line).ToArray();
+                TimeStep[] otherSteps = timeSteps.Where(s => s.Step.Stop.Line != line)
+                                                 .OrderBy(s => s.Date)
+                                                 .ToArray();
                 otherStopList.SetAdapter(new TimeStepsAdapter(otherSteps));
 
                 otherLabel.Visibility = otherSteps.Length == 0 ? ViewStates.Gone : ViewStates.Visible;

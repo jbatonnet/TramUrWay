@@ -19,7 +19,7 @@
             android:id="@+id/StepItem_Rail"
             android:orientation="vertical" />
 
-        <net.thedju.TramUrWay.TopAlignedImageView
+        <TopAlignedImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_train_glow"
@@ -28,7 +28,7 @@
             android:layout_alignLeft="@+id/StepItem_Icon"
             android:layout_alignRight="@+id/StepItem_Icon" />
 
-        <net.thedju.TramUrWay.TopAlignedImageView
+        <TopAlignedImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_train"

@@ -44,7 +44,10 @@ namespace TramUrWay.Android
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            RefreshFavorites();
+            //if (Database.GetFavoriteStops().Any())
+                RefreshFavorites();
+            //else
+            //    RefreshLines();
         }
         public override void OnBackPressed()
         {
