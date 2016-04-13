@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -492,7 +493,7 @@ namespace TramUrWay.Android
                 string header = reader.ReadLine();
                 string[] headerParts = header.Split(';');
 
-                partialSteps = headerParts.Select(p => route.Steps.FirstOrDefault(s => s.Stop.Name == p)).ToArray();
+                partialSteps = headerParts.Select(p => route.Steps.FirstOrDefault(s => string.Compare(s.Stop.Name, p, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0)).ToArray();
 
                 TimeSpan[] lastTimes = new TimeSpan[partialSteps.Length];
                 while (true)

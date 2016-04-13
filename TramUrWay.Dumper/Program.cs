@@ -11,6 +11,8 @@ namespace TramUrWay.Dumper
 {
     public class Program
     {
+        // http://www.tam-voyages.com/horaires_ligne/index.asp?rub_code=6&actionButton=SearchByLineNumberHiddenField&lign_id=
+
         private const string baseAddress = "http://www.tam-voyages.com/horaires_ligne/index.asp?rub_code=6";
         private const string outputDirectory = @"..\..\..\Data\Hiver 2015";
 
@@ -42,7 +44,25 @@ namespace TramUrWay.Dumper
                 { "L2.R1.ven", "&ladate=15/04/2016&lign_id=12&sens=2" },
                 { "L2.R1.sam", "&ladate=16/04/2016&lign_id=12&sens=2" },
                 { "L2.R1.dim", "&ladate=17/04/2016&lign_id=12&sens=2" },
-            };
+
+                { "L4.R0.lun-jeu", "&ladate=03/05/2016&lign_id=33&sens=1" },
+                { "L4.R0.ven", "&ladate=15/04/2016&lign_id=33&sens=1" },
+                { "L4.R0.sam", "&ladate=16/04/2016&lign_id=33&sens=1" },
+                { "L4.R0.dim", "&ladate=17/04/2016&lign_id=33&sens=1" },
+                { "L4.R1.lun-jeu", "&ladate=03/05/2016&lign_id=33&sens=2" },
+                { "L4.R1.ven", "&ladate=15/04/2016&lign_id=33&sens=2" },
+                { "L4.R1.sam", "&ladate=16/04/2016&lign_id=33&sens=2" },
+                { "L4.R1.dim", "&ladate=17/04/2016&lign_id=33&sens=2" },
+
+                { "L9.R0.lun-jeu", "&ladate=03/05/2016&lign_id=38&sens=2" },
+                { "L9.R0.ven", "&ladate=15/04/2016&lign_id=38&sens=2" },
+                { "L9.R0.sam", "&ladate=16/04/2016&lign_id=38&sens=2" },
+                { "L9.R0.dim", "&ladate=17/04/2016&lign_id=38&sens=2" },
+                { "L9.R1.lun-jeu", "&ladate=03/05/2016&lign_id=38&sens=1" },
+                { "L9.R1.ven", "&ladate=15/04/2016&lign_id=38&sens=1" },
+                { "L9.R1.sam", "&ladate=16/04/2016&lign_id=38&sens=1" },
+                { "L9.R1.dim", "&ladate=17/04/2016&lign_id=38&sens=1" },
+           };
 
             foreach (var dump in dumpTasks)
             {

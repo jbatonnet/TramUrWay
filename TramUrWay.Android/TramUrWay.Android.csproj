@@ -124,6 +124,78 @@
     <AndroidAsset Include="..\Data\Hiver 2015\L2.R1.ven.csv">
       <Link>Assets\L2.R1.ven.csv</Link>
     </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.dim.csv">
+      <Link>Assets\L1.R0.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.lun-jeu.csv">
+      <Link>Assets\L1.R0.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.sam.csv">
+      <Link>Assets\L1.R0.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R0.ven.csv">
+      <Link>Assets\L1.R0.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.dim.csv">
+      <Link>Assets\L1.R1.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.lun-jeu.csv">
+      <Link>Assets\L1.R1.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.sam.csv">
+      <Link>Assets\L1.R1.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L1.R1.ven.csv">
+      <Link>Assets\L1.R1.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R0.dim.csv">
+      <Link>Assets\L4.R0.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R0.lun-jeu.csv">
+      <Link>Assets\L4.R0.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R0.sam.csv">
+      <Link>Assets\L4.R0.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R0.ven.csv">
+      <Link>Assets\L4.R0.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R1.dim.csv">
+      <Link>Assets\L4.R1.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R1.lun-jeu.csv">
+      <Link>Assets\L4.R1.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R1.sam.csv">
+      <Link>Assets\L4.R1.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L4.R1.ven.csv">
+      <Link>Assets\L4.R1.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R0.dim.csv">
+      <Link>Assets\L9.R0.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R0.lun-jeu.csv">
+      <Link>Assets\L9.R0.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R0.sam.csv">
+      <Link>Assets\L9.R0.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R0.ven.csv">
+      <Link>Assets\L9.R0.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R1.dim.csv">
+      <Link>Assets\L9.R1.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R1.lun-jeu.csv">
+      <Link>Assets\L9.R1.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R1.sam.csv">
+      <Link>Assets\L9.R1.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L9.R1.ven.csv">
+      <Link>Assets\L9.R1.ven.csv</Link>
+    </AndroidAsset>
     <None Include="packages.config" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
