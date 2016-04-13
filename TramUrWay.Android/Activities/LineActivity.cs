@@ -30,13 +30,16 @@ namespace TramUrWay.Android
     {
         private Line line;
         private Route route;
-        private Dictionary<Step, TimeStep[]> stepTimes;
 
-        private Snackbar dataSnackbar;
-
-        private SwipeRefreshLayout swipeRefresh;
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
-        
+        private RouteAdapter routeAdapter;
+
+        private Snackbar snackbar;
+        private RecyclerView recyclerView;
+        private SwipeRefreshLayout swipeRefresh;
+        private Switch routeSwitch;
+        private Spinner routeChoice;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             App.Initialize(this);
@@ -76,6 +79,7 @@ namespace TramUrWay.Android
                 throw new Exception("Could not find any line matching the specified id");
 
             Title = line.Name;
+            route = line.Routes.First();
 
             // Change toolbar color
             Color color = Database.GetColorForLine(line);
@@ -88,7 +92,7 @@ namespace TramUrWay.Android
 
             // Refresh widget
             swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.LineActivity_SwipeRefresh);
-            swipeRefresh.Refresh += (s, e) => Refresh();
+            swipeRefresh.Refresh += SwipeRefresh_Refresh;
             swipeRefresh.SetColorSchemeColors(color.ToArgb());
 
             // Initialize UI
@@ -103,8 +107,8 @@ namespace TramUrWay.Android
                 TextView switchRightChoice = FindViewById<TextView>(Resource.Id.LineActivity_RouteSwitch_RightChoice);
                 switchRightChoice.Text = line.Routes[1].Steps.Last().Stop.Name;
 
-                Switch switchView = FindViewById<Switch>(Resource.Id.LineActivity_RouteSwitch);
-                switchView.CheckedChange += (s, e) => Refresh();
+                routeSwitch = FindViewById<Switch>(Resource.Id.LineActivity_RouteSwitch);
+                routeSwitch.CheckedChange += RouteSwitch_CheckedChange;
             }
             else
             {
@@ -116,17 +120,19 @@ namespace TramUrWay.Android
                 foreach (Route route in line.Routes)
                     spinnerAdapter.Add("De " + route.Steps.First().Stop.Name + " vers " + route.Steps.Last().Stop.Name);
 
-                Spinner spinner = FindViewById<Spinner>(Resource.Id.LineActivity_RouteChoice);
-                spinner.Adapter = spinnerAdapter;
-                spinner.ItemSelected += (s, e) => Refresh();
+                routeChoice = FindViewById<Spinner>(Resource.Id.LineActivity_RouteChoice);
+                routeChoice.Adapter = spinnerAdapter;
+                routeChoice.ItemSelected += RouteChoice_ItemSelected;
             }
 
             // Show the list
-            RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.LineActivity_StopList);
+            recyclerView = FindViewById<RecyclerView>(Resource.Id.LineActivity_StopList);
+            recyclerView.Focusable = false;
             recyclerView.HasFixedSize = true;
             recyclerView.NestedScrollingEnabled = false;
-            recyclerView.SetLayoutManager(new WrapLayoutManager(this));
+            recyclerView.SetLayoutManager(new WrapLayoutManager(recyclerView));
             recyclerView.AddItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.Vertical));
+            recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
         }
         protected override void OnPause()
         {
@@ -146,17 +152,18 @@ namespace TramUrWay.Android
                     Thread.Sleep(App.GlobalUpdateDelay * 1000);
                 }
             });
-            Task.Run(() =>
+            /*Task.Run(() =>
             {
                 while (!refreshCancellationTokenSource.IsCancellationRequested)
                 {
-                    RunOnUiThread(() => OnRefreshedTimes());
+                    RunOnUiThread(() => OnRefreshed());
                     Thread.Sleep(App.GlobalUpdateDelay / 4 * 1000);
                 }
-            });
+            });*/
 
             base.OnResume();
         }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -169,76 +176,94 @@ namespace TramUrWay.Android
             return base.OnOptionsItemSelected(item);
         }
 
-        private async Task Refresh()
+        private void SwipeRefresh_Refresh(object sender, EventArgs e)
         {
-            await Task.Run(() =>
+            if (snackbar?.IsShown == false)
+                snackbar = null;
+
+            Refresh();
+        }
+        private void RouteSwitch_CheckedChange(object sender, EventArgs e)
+        {
+            route = routeSwitch.Checked ? line.Routes[1] : line.Routes[0];
+            recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
+
+            snackbar?.Dismiss();
+            Refresh();
+        }
+        private void RouteChoice_ItemSelected(object sender, EventArgs e)
+        {
+            route = line.Routes[routeChoice.SelectedItemPosition];
+            recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
+
+            snackbar?.Dismiss();
+            Refresh();
+        }
+        private void Snackbar_Retry(View v)
+        {
+            snackbar?.Dismiss();
+            snackbar = null;
+
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            Task.Run(() =>
             {
                 swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-                if (line.Routes.Length == 2)
-                {
-                    Switch switchView = FindViewById<Switch>(Resource.Id.LineActivity_RouteSwitch);
-                    route = switchView.Checked ? line.Routes[1] : line.Routes[0];
-                }
-                else
-                {
-                    Spinner spinner = FindViewById<Spinner>(Resource.Id.LineActivity_RouteChoice);
-                    route = line.Routes[spinner.SelectedItemPosition];
-                }
+                TimeStep[] timeSteps;
 
                 // Online time steps
                 try
                 {
-                    dataSnackbar?.Dismiss();
+                    if (App.OfflineMode)
+                        throw new Exception();
 
-                    TimeStep[] timeSteps = Database.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
-                    stepTimes = route.Steps.ToDictionary(s => s, s => timeSteps.Where(t => t.Step.Stop == s.Stop)
-                                                                               .Take(3)
-                                                                               .ToArray());
+                    timeSteps = Database.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
+                    snackbar?.Dismiss();
                 }
                 catch (Exception e)
                 {
-                    // No offline data
-                    if (route.TimeTable == null)
-                    {
-                        stepTimes = null;
-
-                        dataSnackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", v => Refresh());
-                        dataSnackbar.Show();
-                    }
-                    else
+                    // Offline data
+                    if (route.TimeTable != null)
                     {
                         DateTime now = DateTime.Now;
-                        stepTimes = route.Steps.ToDictionary(s => s, s => route.TimeTable.GetStepsFromStep(s, now).Take(3).ToArray());
+                        timeSteps = route.Steps.SelectMany(s => route.TimeTable.GetStepsFromStep(s, now).Take(3)).ToArray();
 
-                        dataSnackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", v => Refresh());
-                        dataSnackbar.Show();
+                        if (snackbar == null)
+                        {
+                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
+                                               .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar.Show();
+                        }
+                    }
+                    
+                    // No data
+                    else
+                    {
+                        timeSteps = null;
+
+                        if (snackbar == null)
+                        {
+                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
+                                               .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar.Show();
+                        }
                     }
                 }
+
+                routeAdapter.UpdateSteps(timeSteps);
+
+                swipeRefresh.Post(() => swipeRefresh.Refreshing = false);
 
                 RunOnUiThread(OnRefreshed);
             });
         }
-
         private void OnRefreshed()
         {
-            swipeRefresh.Refreshing = false;
-
-            if (route != null)
-            {
-                RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.LineActivity_StopList);
-                recyclerView.SetAdapter(stepTimes == null ? null : new StepsAdapter(stepTimes));
-            }
-        }
-        private void OnRefreshedTimes()
-        {
-            if (route != null && stepTimes != null)
-            {
-                RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.LineActivity_StopList);
-                recyclerView.GetAdapter()?.NotifyDataSetChanged();
-            }
+            routeAdapter?.NotifyDataSetChanged();
         }
     }
 }

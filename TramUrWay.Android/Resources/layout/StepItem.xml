@@ -23,19 +23,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_train_glow"
-            android:layout_alignTop="@+id/StepItem_Icon"
-            android:layout_alignBottom="@+id/StepItem_Icon"
-            android:layout_alignLeft="@+id/StepItem_Icon"
-            android:layout_alignRight="@+id/StepItem_Icon" />
+            android:layout_alignTop="@+id/StepItem_Icon1"
+            android:layout_alignBottom="@+id/StepItem_Icon1"
+            android:layout_alignLeft="@+id/StepItem_Icon1"
+            android:layout_alignRight="@+id/StepItem_Icon1" />
 
         <TopAlignedImageView
+            android:id="@+id/StepItem_Icon1"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_train"
             android:layout_centerHorizontal="true"
-            android:tint="#f29400"
-            android:layout_marginTop="20dp"
-            android:id="@+id/StepItem_Icon" />
+            android:tint="#ffffff"
+            android:layout_marginTop="72dp" />
+
+        <TopAlignedImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_train_glow"
+            android:layout_alignTop="@+id/StepItem_Icon2"
+            android:layout_alignBottom="@+id/StepItem_Icon2"
+            android:layout_alignLeft="@+id/StepItem_Icon2"
+            android:layout_alignRight="@+id/StepItem_Icon2" />
+
+        <TopAlignedImageView
+            android:id="@+id/StepItem_Icon2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_train"
+            android:layout_centerHorizontal="true"
+            android:tint="#ffffff"
+            android:layout_marginTop="72dp" />
 
     </RelativeLayout>
 
@@ -60,7 +78,7 @@
             android:id="@+id/StepItem_Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:text="Information indisponible"
             android:textSize="@dimen/abc_text_size_body_1_material"
             android:textColor="@android:color/tertiary_text_light"
             android:layout_below="@+id/StepItem_Name"

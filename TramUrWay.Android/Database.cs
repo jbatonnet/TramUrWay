@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-
+using System.Threading.Tasks;
 using Android.Content;
 using Android.Graphics;
 using Newtonsoft.Json;
@@ -32,37 +32,40 @@ namespace TramUrWay.Android
         {
             Database.context = context;
             Database.connection = connection;
-            
+
             // Load lines from cached asset
             Lines = LoadLinesFromCache();
 
             // Load available time tables
-            foreach (string asset in context.Assets.List(""))
+            Task.Run(() =>
             {
-                Match match = timeTableDetector.Match(asset);
-                if (!match.Success)
-                    continue;
-
-                int lineId = int.Parse(match.Groups["Line"].Value);
-                int routeId = int.Parse(match.Groups["Route"].Value);
-                string type = match.Groups["Type"].Value;
-
-                Line line = Lines.FirstOrDefault(l => l.Id == lineId);
-                Route route = line.Routes.FirstOrDefault(r => r.Id == routeId);
-
-                if (route.TimeTable == null)
-                    route.TimeTable = new TimeTable() { Route = route };
-
-                TimeSpan?[,] tableData = LoadTimeTable(route, context.Assets.Open(asset));
-                switch (type)
+                foreach (string asset in context.Assets.List(""))
                 {
-                    case "lun-jeu": route.TimeTable.WeekTable = tableData; break;
-                    case "ven": route.TimeTable.FridayTable = tableData; break;
-                    case "sam": route.TimeTable.SaturdayTable = tableData; break;
-                    case "dim": route.TimeTable.SundayTable = tableData; break;
-                    case "vac": route.TimeTable.HolidaysTable = tableData; break;
+                    Match match = timeTableDetector.Match(asset);
+                    if (!match.Success)
+                        continue;
+
+                    int lineId = int.Parse(match.Groups["Line"].Value);
+                    int routeId = int.Parse(match.Groups["Route"].Value);
+                    string type = match.Groups["Type"].Value;
+
+                    Line line = Lines.FirstOrDefault(l => l.Id == lineId);
+                    Route route = line.Routes.FirstOrDefault(r => r.Id == routeId);
+
+                    if (route.TimeTable == null)
+                        route.TimeTable = new TimeTable() { Route = route };
+
+                    TimeSpan?[,] tableData = LoadTimeTable(route, context.Assets.Open(asset));
+                    switch (type)
+                    {
+                        case "lun-jeu": route.TimeTable.WeekTable = tableData; break;
+                        case "ven": route.TimeTable.FridayTable = tableData; break;
+                        case "sam": route.TimeTable.SaturdayTable = tableData; break;
+                        case "dim": route.TimeTable.SundayTable = tableData; break;
+                        case "vac": route.TimeTable.HolidaysTable = tableData; break;
+                    }
                 }
-            }
+            });
 
 //#if DEBUG
             // Check database in debug mode
@@ -77,7 +80,8 @@ namespace TramUrWay.Android
             {
                 "SELECT id FROM favorite_lines LIMIT 0",
                 "SELECT id FROM favorite_stops LIMIT 0",
-                "SELECT id, line_id, route_id, stop_id FROM widgets LIMIT 0"
+                "SELECT id, line_id, route_id, stop_id FROM widgets LIMIT 0",
+                "SELECT key, value FROM config LIMIT 0"
             };
 
             try
@@ -108,6 +112,9 @@ namespace TramUrWay.Android
 
                     "DROP TABLE IF EXISTS widgets",
                     "CREATE TABLE widgets (id INTEGER NOT NULL, line_id INTEGER NOT NULL, route_id INTEGER NOT NULL, stop_id INTEGER NOT NULL)",
+
+                    "DROP TABLE IF EXISTS config",
+                    "CREATE TABLE config (key TEXT NOT NULL, VALUE TEXT, PRIMARY KEY (key))",
                 };
 
                 foreach (string query in createQueries)
@@ -163,6 +170,30 @@ namespace TramUrWay.Android
             {
                 command.CommandText = $"INSERT INTO widgets (id, line_id, route_id, stop_id) VALUES ({widgetId}, {step.Route.Line.Id}, {step.Route.Id}, {step.Stop.Id})";
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public static void SetConfigValue(string key, string value)
+        {
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = $"INSERT OR REPLACE INTO config (key, value) VALUES ('{key}', '{value}')";
+                command.ExecuteNonQuery();
+            }
+        }
+        public static string GetConfigValue(string key)
+        {
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = $"SELECT value FROM config WHERE key = '{key}'";
+
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return null;
+
+                    return reader.IsDBNull(0) ? null : reader.GetString(0);
+                }
             }
         }
 
@@ -402,18 +433,20 @@ namespace TramUrWay.Android
             DateTime referenceDate = now.DayOfWeek == referenceDay ? now.Date : now.Date.AddDays(-1);
 
             JObject data = JsonConvert.DeserializeObject(content) as JObject;
+            TimeSpan lastTime = TimeSpan.Zero;
 
             JArray allersData = data["aller"] as JArray;
             foreach (JToken allerData in allersData)
             {
                 int diff = allerData[5].Value<int>();
-                if (diff < -120)
+                if (diff <= 0)
                     continue;
 
                 int lineId = allerData[0].Value<int>();
                 bool theorical = allerData[2].Value<int>() != 0;
                 TimeSpan time = TimeSpan.Parse(allerData[3].Value<string>());
                 int stopId = allerData[4].Value<int>();
+                string end = allerData[6].Value<string>();
 
                 Line line = GetLine(lineId);
                 if (line == null)
@@ -423,20 +456,32 @@ namespace TramUrWay.Android
                 if (step == null)
                     continue;
 
-                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online };
+                Step destination = step.Route.Steps.FirstOrDefault(s => string.Compare(s.Stop.Name, end, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
+                if (destination == null)
+                    continue;
+
+                if (time < lastTime)
+                    time = time.Add(TimeSpan.FromDays(1));
+                else
+                    lastTime = time;
+
+                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online, Destination = destination };
             }
+
+            lastTime = TimeSpan.Zero;
 
             JArray retoursData = data["retour"] as JArray;
             foreach (JToken retourData in retoursData)
             {
                 int diff = retourData[5].Value<int>();
-                if (diff < -120)
+                if (diff <= 0)
                     continue;
 
                 int lineId = retourData[0].Value<int>();
                 bool theorical = retourData[2].Value<int>() != 0;
                 TimeSpan time = TimeSpan.Parse(retourData[3].Value<string>());
                 int stopId = retourData[4].Value<int>();
+                string end = retourData[6].Value<string>();
 
                 Line line = GetLine(lineId);
                 if (line == null)
@@ -446,7 +491,16 @@ namespace TramUrWay.Android
                 if (step == null)
                     continue;
 
-                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online };
+                Step destination = step.Route.Steps.FirstOrDefault(s => string.Compare(s.Stop.Name, end, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
+                if (destination == null)
+                    continue;
+
+                if (time < lastTime)
+                    time = time.Add(TimeSpan.FromDays(1));
+                else
+                    lastTime = time;
+
+                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online, Destination = destination };
             }
         }
         public static string GetReadableTime(TimeStep timeStep, DateTime now, bool useLongStyle = true)
@@ -461,7 +515,12 @@ namespace TramUrWay.Android
             else if (minutes >= 60)
                 return useLongStyle ? "Plus d'une heure" : "> 1 heure";
             else
-                return $"{minutes} min";
+            {
+                if (App.EnableTamBug && now.Day != timeStep.Date.Day)
+                    return $"24 h {minutes} min";
+                else
+                    return $"{minutes} min";
+            }
         }
         public static string GetReadableTimes(TimeStep[] timeSteps, DateTime now, bool useLongStyle = true)
         {

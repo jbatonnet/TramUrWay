@@ -30,6 +30,9 @@ namespace TramUrWay.Android
         public const int GlobalUpdateDelay = 60;
         public const int WidgetUpdateDelay = 120;
 
+        public static bool OfflineMode { get; set; } = false;
+        public static bool EnableTamBug { get; set; } = false;
+
         private static bool initialized = false;
         private static AndroidDatabaseConnection connection;
 
@@ -50,6 +53,10 @@ namespace TramUrWay.Android
             //Intent intent = new Intent();
             //intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
             //context.SendBroadcast(intent);
+
+            // Read config from DB
+            OfflineMode = Database.GetConfigValue(nameof(OfflineMode)) == "true";
+            EnableTamBug = Database.GetConfigValue(nameof(EnableTamBug)) == "true";
         }
 
         private static void Connection_VersionUpgraded(AndroidDatabaseConnection connection, int oldVersion, int newVersion)

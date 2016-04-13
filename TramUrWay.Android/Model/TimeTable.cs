@@ -17,6 +17,7 @@ namespace TramUrWay.Android
         public Step Step { get; set; }
         public DateTime Date { get; set; }
         public TimeStepSource Source { get; set; }
+        public Step Destination { get; set; }
 
         public override string ToString()
         {
@@ -67,8 +68,13 @@ namespace TramUrWay.Android
                 }
 
                 TimeSpan? time = table[index, stepIndex];
+
+                int destinationIndex = stepIndex;
+                while (destinationIndex < Route.Steps.Length - 1 && table[index, destinationIndex + 1] != null)
+                    destinationIndex++;
+
                 if (time != null)
-                    yield return new TimeStep() { Step = step, Date = referenceDate.Add(time.Value), Source = TimeStepSource.Offline };
+                    yield return new TimeStep() { Step = step, Date = referenceDate.Add(time.Value), Source = TimeStepSource.Offline, Destination = Route.Steps[destinationIndex] };
 
                 index++;
             }

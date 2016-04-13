@@ -25,6 +25,8 @@ namespace TramUrWay.Android
     [Activity(Label = App.Name, MainLauncher = true, Icon = "@mipmap/ic_launcher", Theme = "@style/AppTheme.NoActionBar", LaunchMode = LaunchMode.SingleTask)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
+        private int currentItem = 0;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             App.Initialize(this);
@@ -44,11 +46,18 @@ namespace TramUrWay.Android
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            //if (Database.GetFavoriteStops().Any())
-                RefreshFavorites();
-            //else
-            //    RefreshLines();
+            if (Database.GetFavoriteStops().Any())
+                currentItem = Resource.Id.SideMenu_Favorites;
+            else
+                currentItem = Resource.Id.SideMenu_Lines;
         }
+        protected override void OnResume()
+        {
+            base.OnResume();
+
+            Refresh();
+        }
+
         public override void OnBackPressed()
         {
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
@@ -58,22 +67,60 @@ namespace TramUrWay.Android
             else
                 base.OnBackPressed();
         }
-
         public bool OnNavigationItemSelected(IMenuItem item)
         {
-            switch (item.ItemId)
-            {
-                case Resource.Id.SideMenu_Favorites: RefreshFavorites();  break;
-                case Resource.Id.SideMenu_Lines: RefreshLines(); break;
-                case Resource.Id.SideMenu_Stops: RefreshStops(); break;
-            }
+            currentItem = item.ItemId;
+            Refresh();
 
             DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             drawer.CloseDrawer(GravityCompat.Start);
 
             return true;
         }
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.MainMenu, menu);
 
+            for (int i = 0; i < menu.Size(); i++)
+            {
+                IMenuItem item = menu.GetItem(i);
+
+                if (item.ItemId == Resource.Id.MainMenu_Offline)
+                    item.SetChecked(App.OfflineMode ? true : false);
+                else if (item.ItemId == Resource.Id.MainMenu_Bug)
+                    item.SetChecked(App.EnableTamBug ? true : false);
+            }
+
+            return true;
+        }
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.MainMenu_Offline:
+                    item.SetChecked(App.OfflineMode = !App.OfflineMode);
+                    break;
+
+                case Resource.Id.MainMenu_Bug:
+                    item.SetChecked(App.EnableTamBug = !App.EnableTamBug);
+                    break;
+            }
+
+            Database.SetConfigValue(nameof(App.OfflineMode), App.OfflineMode ? "true" : "false");
+            Database.SetConfigValue(nameof(App.EnableTamBug), App.EnableTamBug ? "true" : "false");
+
+            return base.OnOptionsItemSelected(item);
+        }
+
+        private void Refresh()
+        {
+            switch (currentItem)
+            {
+                case Resource.Id.SideMenu_Favorites: RefreshFavorites(); break;
+                case Resource.Id.SideMenu_Lines: RefreshLines(); break;
+                case Resource.Id.SideMenu_Stops: RefreshStops(); break;
+            }
+        }
         private void RefreshFavorites()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();

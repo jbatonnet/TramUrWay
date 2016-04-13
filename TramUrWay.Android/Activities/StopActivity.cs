@@ -31,15 +31,14 @@ namespace TramUrWay.Android
         private Stop stop;
         private TimeStep[] timeSteps;
 
+        private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
+
+        private Snackbar snackbar;
         private SwipeRefreshLayout swipeRefresh;
         private RecyclerView listStopList;
         private TextView lineLabel;
         private RecyclerView otherStopList;
         private TextView otherLabel;
-
-        private Snackbar dataSnackbar;
-
-        private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -88,7 +87,7 @@ namespace TramUrWay.Android
 
             // Refresh widget
             swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.StopActivity_SwipeRefresh);
-            swipeRefresh.Refresh += (s, e) => Refresh();
+            swipeRefresh.Refresh += SwipeRefresh_Refresh;
             swipeRefresh.SetColorSchemeColors(color.ToArgb());
 
             // Initialize UI
@@ -164,18 +163,35 @@ namespace TramUrWay.Android
             return base.OnOptionsItemSelected(item);
         }
 
-        private async Task Refresh()
+        private void SwipeRefresh_Refresh(object sender, EventArgs e)
         {
-            await Task.Run(() =>
+            if (snackbar?.IsShown == false)
+                snackbar = null;
+
+            Refresh();
+        }
+        private void Snackbar_Retry(View v)
+        {
+            snackbar?.Dismiss();
+            snackbar = null;
+
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            Task.Run(() =>
             {
                 swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
                 // Online time steps
                 try
                 {
-                    dataSnackbar?.Dismiss();
+                    if (App.OfflineMode)
+                        throw new Exception();
 
                     timeSteps = Database.GetLiveTimeSteps().Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
+                    snackbar?.Dismiss();
                 }
                 catch (Exception e)
                 {
@@ -185,30 +201,35 @@ namespace TramUrWay.Android
                                               .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
                                               .ToArray();
 
-                    if (timeSteps.Length == 0)
+                    if (timeSteps.Length != 0)
                     {
-                        dataSnackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", v => Refresh());
-                        dataSnackbar.Show();
-
-                        timeSteps = null;
+                        if (snackbar == null)
+                        {
+                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
+                                           .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar.Show();
+                        }
                     }
                     else
                     {
-                        dataSnackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", v => Refresh());
-                        dataSnackbar.Show();
+                        timeSteps = null;
+
+                        if (snackbar == null)
+                        {
+                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
+                                           .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar.Show();
+                        }
                     }
                 }
+
+                swipeRefresh.Post(() => swipeRefresh.Refreshing = false);
 
                 RunOnUiThread(OnRefreshed);
             });
         }
-
         private void OnRefreshed()
         {
-            swipeRefresh.Refreshing = false;
-
             if (stop != null && timeSteps != null)
             {
                 TimeStep[] lineSteps = timeSteps.Where(s => s.Step.Stop.Line == line)

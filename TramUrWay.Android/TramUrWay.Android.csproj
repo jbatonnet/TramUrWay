@@ -90,7 +90,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Adapters\LinesAdapter.cs" />
     <Compile Include="Adapters\TimeStepsAdapter.cs" />
-    <Compile Include="Adapters\StepsAdapter.cs" />
+    <Compile Include="Adapters\RouteAdapter.cs" />
     <Compile Include="Service\WidgetUpdateService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -343,7 +343,9 @@
   <ItemGroup>
     <AndroidResource Include="Resources\menu\StopMenu.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\MainMenu.xml" />
+  </ItemGroup>
   <Import Project="..\..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
