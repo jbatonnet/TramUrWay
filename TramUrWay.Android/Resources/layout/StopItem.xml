@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/StopItem_Icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/StopItem_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_toEndOf="@+id/StopItem_Icon"
+        android:text="Name"
+        android:textSize="@dimen/abc_text_size_subhead_material"
+        android:textColor="@android:color/primary_text_light"
+        android:layout_centerVertical="true" />
+
+</RelativeLayout>

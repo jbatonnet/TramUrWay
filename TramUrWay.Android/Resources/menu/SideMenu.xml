@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/SideMenu_Favorites"
+            android:icon="@drawable/ic_star"
+            android:title="Favoris"
+            android:checked="true" />
+        <item
+            android:id="@+id/SideMenu_Lines"
+            android:icon="@drawable/ic_tram"
+            android:title="Liste des lignes" />
+        <item
+            android:id="@+id/SideMenu_Stops"
+            android:icon="@drawable/ic_tram"
+            android:title="Liste des stations" />
+    </group>
+
+</menu>

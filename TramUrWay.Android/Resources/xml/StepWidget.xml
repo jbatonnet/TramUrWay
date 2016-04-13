@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="48dp"
+    android:minHeight="48dp"
+    android:configure="net.thedju.TramUrWay.StepWidgetActivity"
+    android:initialLayout="@layout/StepWidget"
+    android:updatePeriodMillis="30000">
+
+</appwidget-provider>

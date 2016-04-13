@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dp"
+    android:layout_height="80dp"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/Widget.AppCompat.Button"
+        android:backgroundTint="@color/background_material_light"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <RelativeLayout
+            android:id="@+id/StepWidget_Button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/StepWidget_Icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_tram"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/StepWidget_Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Jeu de mail des Abbés"
+                android:textColor="@color/primary_text_default_material_light"
+                android:textAlignment="gravity"
+                android:textSize="9sp"
+                android:layout_alignParentEnd="false"
+                android:layout_below="@+id/StepWidget_Icon"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/StepWidget_Description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2 min, 10 min"
+                android:textColor="@color/secondary_text_default_material_light"
+                android:textAlignment="gravity"
+                android:textSize="8sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_below="@+id/StepWidget_Name"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
