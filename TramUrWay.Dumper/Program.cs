@@ -16,6 +16,11 @@ namespace TramUrWay.Dumper
         private const string baseAddress = "http://www.tam-voyages.com/horaires_ligne/index.asp?rub_code=6";
         private const string outputDirectory = @"..\..\..\Data\Hiver 2015";
 
+        private const string weekDate = "03/05/2016";
+        private const string fridayDate = "15/04/2016";
+        private const string saturdayDate = "16/04/2016";
+        private const string sundayDate = "17/04/2016";
+
         private static Regex blockRegex = new Regex(@"headers=""commune""([^<]|<[^\/]|<\/[^t]|<\/t[^r])+", RegexOptions.Compiled);
         private static Regex nameRegex = new Regex(@"title=""[^""]+"">([^<]+)<", RegexOptions.Compiled);
         private static Regex timeRegex = new Regex(@"s=""arret[^""]+"">([^<]+)<", RegexOptions.Compiled);
@@ -27,41 +32,79 @@ namespace TramUrWay.Dumper
 
             Dictionary<string, string> dumpTasks = new Dictionary<string, string>()
             {
-                { "L1.R0.lun-jeu", "&ladate=03/05/2016&lign_id=1&sens=2" },
-                { "L1.R0.ven", "&ladate=15/04/2016&lign_id=1&sens=2" },
-                { "L1.R0.sam", "&ladate=16/04/2016&lign_id=1&sens=2" },
-                { "L1.R0.dim", "&ladate=17/04/2016&lign_id=1&sens=2" },
-                { "L1.R1.lun-jeu", "&ladate=03/05/2016&lign_id=1&sens=1" },
-                { "L1.R1.ven", "&ladate=15/04/2016&lign_id=1&sens=1" },
-                { "L1.R1.sam", "&ladate=16/04/2016&lign_id=1&sens=1" },
-                { "L1.R1.dim", "&ladate=17/04/2016&lign_id=1&sens=1" },
+                #region Ligne 1
 
-                { "L2.R0.lun-jeu", "&ladate=03/05/2016&lign_id=12&sens=1" },
-                { "L2.R0.ven", "&ladate=15/04/2016&lign_id=12&sens=1" },
-                { "L2.R0.sam", "&ladate=16/04/2016&lign_id=12&sens=1" },
-                { "L2.R0.dim", "&ladate=17/04/2016&lign_id=12&sens=1" },
-                { "L2.R1.lun-jeu", "&ladate=03/05/2016&lign_id=12&sens=2" },
-                { "L2.R1.ven", "&ladate=15/04/2016&lign_id=12&sens=2" },
-                { "L2.R1.sam", "&ladate=16/04/2016&lign_id=12&sens=2" },
-                { "L2.R1.dim", "&ladate=17/04/2016&lign_id=12&sens=2" },
+                { "L1.R0.lun-jeu", $"&ladate={weekDate}&lign_id=1&sens=2" },
+                { "L1.R0.ven",   $"&ladate={fridayDate}&lign_id=1&sens=2" },
+                { "L1.R0.sam", $"&ladate={saturdayDate}&lign_id=1&sens=2" },
+                { "L1.R0.dim",   $"&ladate={sundayDate}&lign_id=1&sens=2" },
+                { "L1.R1.lun-jeu", $"&ladate={weekDate}&lign_id=1&sens=1" },
+                { "L1.R1.ven",   $"&ladate={fridayDate}&lign_id=1&sens=1" },
+                { "L1.R1.sam", $"&ladate={saturdayDate}&lign_id=1&sens=1" },
+                { "L1.R1.dim",   $"&ladate={sundayDate}&lign_id=1&sens=1" },
 
-                { "L4.R0.lun-jeu", "&ladate=03/05/2016&lign_id=33&sens=1" },
-                { "L4.R0.ven", "&ladate=15/04/2016&lign_id=33&sens=1" },
-                { "L4.R0.sam", "&ladate=16/04/2016&lign_id=33&sens=1" },
-                { "L4.R0.dim", "&ladate=17/04/2016&lign_id=33&sens=1" },
-                { "L4.R1.lun-jeu", "&ladate=03/05/2016&lign_id=33&sens=2" },
-                { "L4.R1.ven", "&ladate=15/04/2016&lign_id=33&sens=2" },
-                { "L4.R1.sam", "&ladate=16/04/2016&lign_id=33&sens=2" },
-                { "L4.R1.dim", "&ladate=17/04/2016&lign_id=33&sens=2" },
+                #endregion
+                #region Ligne 2
 
-                { "L9.R0.lun-jeu", "&ladate=03/05/2016&lign_id=38&sens=2" },
-                { "L9.R0.ven", "&ladate=15/04/2016&lign_id=38&sens=2" },
-                { "L9.R0.sam", "&ladate=16/04/2016&lign_id=38&sens=2" },
-                { "L9.R0.dim", "&ladate=17/04/2016&lign_id=38&sens=2" },
-                { "L9.R1.lun-jeu", "&ladate=03/05/2016&lign_id=38&sens=1" },
-                { "L9.R1.ven", "&ladate=15/04/2016&lign_id=38&sens=1" },
-                { "L9.R1.sam", "&ladate=16/04/2016&lign_id=38&sens=1" },
-                { "L9.R1.dim", "&ladate=17/04/2016&lign_id=38&sens=1" },
+                { "L2.R0.lun-jeu", $"&ladate={weekDate}&lign_id=12&sens=1" },
+                { "L2.R0.ven",   $"&ladate={fridayDate}&lign_id=12&sens=1" },
+                { "L2.R0.sam", $"&ladate={saturdayDate}&lign_id=12&sens=1" },
+                { "L2.R0.dim",   $"&ladate={sundayDate}&lign_id=12&sens=1" },
+                { "L2.R1.lun-jeu", $"&ladate={weekDate}&lign_id=12&sens=2" },
+                { "L2.R1.ven",   $"&ladate={fridayDate}&lign_id=12&sens=2" },
+                { "L2.R1.sam", $"&ladate={saturdayDate}&lign_id=12&sens=2" },
+                { "L2.R1.dim",   $"&ladate={sundayDate}&lign_id=12&sens=2" },
+
+                #endregion
+                #region Ligne 4
+
+                { "L4.R0.lun-jeu", $"&ladate={weekDate}&lign_id=33&sens=1" },
+                { "L4.R0.ven",   $"&ladate={fridayDate}&lign_id=33&sens=1" },
+                { "L4.R0.sam", $"&ladate={saturdayDate}&lign_id=33&sens=1" },
+                { "L4.R0.dim",   $"&ladate={sundayDate}&lign_id=33&sens=1" },
+                { "L4.R1.lun-jeu", $"&ladate={weekDate}&lign_id=33&sens=2" },
+                { "L4.R1.ven",   $"&ladate={fridayDate}&lign_id=33&sens=2" },
+                { "L4.R1.sam", $"&ladate={saturdayDate}&lign_id=33&sens=2" },
+                { "L4.R1.dim",   $"&ladate={sundayDate}&lign_id=33&sens=2" },
+
+                #endregion
+
+                #region Ligne 6
+
+                { "L6.R0.lun-jeu", $"&ladate={weekDate}&lign_id=35&sens=1" },
+                { "L6.R0.ven",   $"&ladate={fridayDate}&lign_id=35&sens=1" },
+                { "L6.R0.sam", $"&ladate={saturdayDate}&lign_id=35&sens=1" },
+                { "L6.R0.dim",   $"&ladate={sundayDate}&lign_id=35&sens=1" },
+                { "L6.R1.lun-jeu", $"&ladate={weekDate}&lign_id=35&sens=2" },
+                { "L6.R1.ven",   $"&ladate={fridayDate}&lign_id=35&sens=2" },
+                { "L6.R1.sam", $"&ladate={saturdayDate}&lign_id=35&sens=2" },
+                { "L6.R1.dim",   $"&ladate={sundayDate}&lign_id=35&sens=2" },
+
+                #endregion
+                #region Ligne 9
+
+                { "L9.R0.lun-jeu", $"&ladate={weekDate}&lign_id=38&sens=2" },
+                { "L9.R0.ven",   $"&ladate={fridayDate}&lign_id=38&sens=2" },
+                { "L9.R0.sam", $"&ladate={saturdayDate}&lign_id=38&sens=2" },
+                { "L9.R0.dim",   $"&ladate={sundayDate}&lign_id=38&sens=2" },
+                { "L9.R1.lun-jeu", $"&ladate={weekDate}&lign_id=38&sens=1" },
+                { "L9.R1.ven",   $"&ladate={fridayDate}&lign_id=38&sens=1" },
+                { "L9.R1.sam", $"&ladate={saturdayDate}&lign_id=38&sens=1" },
+                { "L9.R1.dim",   $"&ladate={sundayDate}&lign_id=38&sens=1" },
+
+                #endregion
+                #region Ligne 15 (La Ronde)
+
+                { "L15.R0.lun-jeu", $"&ladate={weekDate}&lign_id=7&sens=2" },
+                { "L15.R0.ven",   $"&ladate={fridayDate}&lign_id=7&sens=2" },
+                { "L15.R0.sam", $"&ladate={saturdayDate}&lign_id=7&sens=2" },
+                { "L15.R0.dim",   $"&ladate={sundayDate}&lign_id=7&sens=2" },
+                { "L15.R1.lun-jeu", $"&ladate={weekDate}&lign_id=7&sens=1" },
+                { "L15.R1.ven",   $"&ladate={fridayDate}&lign_id=7&sens=1" },
+                { "L15.R1.sam", $"&ladate={saturdayDate}&lign_id=7&sens=1" },
+                { "L15.R1.dim",   $"&ladate={sundayDate}&lign_id=7&sens=1" },
+
+                #endregion
            };
 
             foreach (var dump in dumpTasks)
@@ -100,6 +143,7 @@ namespace TramUrWay.Dumper
                         }
                     }
 
+                    // This button indicates that there are more pages
                     if (!content.Contains("laterHour"))
                         break;
                 }
@@ -108,9 +152,12 @@ namespace TramUrWay.Dumper
                 List<string> lines = new List<string>();
                 lines.Add(string.Join(";", stopTimes.Keys));
 
-                int count = stopTimes.First().Value.Count;
-                for (int i = 0; i < count; i++)
-                    lines.Add(string.Join(";", stopTimes.Select(t => t.Value[i] == null ? "" : $"{t.Value[i]?.Hours}:{t.Value[i]?.Minutes:d2}")));
+                if (stopTimes.Count > 0)
+                {
+                    int count = stopTimes.First().Value.Count;
+                    for (int i = 0; i < count; i++)
+                        lines.Add(string.Join(";", stopTimes.Select(t => t.Value[i] == null ? "" : $"{t.Value[i]?.Hours}:{t.Value[i]?.Minutes:d2}")));
+                }
 
                 // Write deduplicated lines
                 using (StreamWriter output = new StreamWriter(outputFile, false, Encoding.UTF8))
