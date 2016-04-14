@@ -129,7 +129,7 @@ namespace TramUrWay.Android
 
                 {
                     float? currentProgress = position == tramProgresses.Length ? null : tramProgresses[position];
-                    float currentPosition = currentProgress == null ? 72 : (int)(36 - 16 + 72 * currentProgress.Value);
+                    float currentPosition = currentProgress == null ? 72 : (int)(1 + 36 - 16 + 72 * currentProgress.Value);
 
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)(32 * density), (int)(32 * density));
                     layoutParams.AddRule(LayoutRules.CenterHorizontal);

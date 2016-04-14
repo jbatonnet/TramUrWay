@@ -365,6 +365,10 @@ namespace TramUrWay.Android
                 }
                 line.Stops = lineStops.ToArray();
 
+                // For now, skip lines 18 and > 19
+                if (line.Id == 18 || line.Id > 19)
+                    continue;
+
                 Route currentRoute = null;
                 List<Step> routeSteps = new List<Step>();
                 int routeId = 0;
