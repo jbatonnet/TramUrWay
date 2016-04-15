@@ -83,7 +83,9 @@ namespace TramUrWay.Android
 
             Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
             Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
-            Window.SetStatusBarColor(darkColor);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                Window.SetStatusBarColor(darkColor);
 
             // Refresh widget
             swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.StopActivity_SwipeRefresh);
