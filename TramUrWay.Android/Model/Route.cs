@@ -11,7 +11,11 @@ namespace TramUrWay.Android
 
         public Line Line { get; set; }
         public Step[] Steps { get; set; }
-        public TimeTable TimeTable { get; set; }
+
+        public TimeTable GetTimeTable()
+        {
+            return App.Assets.LoadTimeTable(this);
+        }
 
         public override string ToString()
         {

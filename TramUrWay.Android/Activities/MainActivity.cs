@@ -46,7 +46,7 @@ namespace TramUrWay.Android
             NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            if (Database.GetFavoriteStops().Any())
+            if (App.Database.GetFavoriteStops().Any())
                 currentItem = Resource.Id.SideMenu_Favorites;
             else
                 currentItem = Resource.Id.SideMenu_Lines;
@@ -86,9 +86,9 @@ namespace TramUrWay.Android
                 IMenuItem item = menu.GetItem(i);
 
                 if (item.ItemId == Resource.Id.MainMenu_Offline)
-                    item.SetChecked(App.OfflineMode ? true : false);
+                    item.SetChecked(App.Config.OfflineMode ? true : false);
                 else if (item.ItemId == Resource.Id.MainMenu_Bug)
-                    item.SetChecked(App.EnableTamBug ? true : false);
+                    item.SetChecked(App.Config.EnableTamBug ? true : false);
             }
 
             return true;
@@ -98,16 +98,13 @@ namespace TramUrWay.Android
             switch (item.ItemId)
             {
                 case Resource.Id.MainMenu_Offline:
-                    item.SetChecked(App.OfflineMode = !App.OfflineMode);
+                    item.SetChecked(App.Config.OfflineMode = !App.Config.OfflineMode);
                     break;
 
                 case Resource.Id.MainMenu_Bug:
-                    item.SetChecked(App.EnableTamBug = !App.EnableTamBug);
+                    item.SetChecked(App.Config.EnableTamBug = !App.Config.EnableTamBug);
                     break;
             }
-
-            Database.SetConfigValue(nameof(App.OfflineMode), App.OfflineMode ? "true" : "false");
-            Database.SetConfigValue(nameof(App.EnableTamBug), App.EnableTamBug ? "true" : "false");
 
             return base.OnOptionsItemSelected(item);
         }

@@ -60,9 +60,9 @@ namespace TramUrWay.Android
             TimeStepViewHolder viewHolder = holder as TimeStepViewHolder;
             TimeStep timeStep = timeSteps[position];
 
-            viewHolder.Icon.SetImageResource(Database.GetIconForLine(timeStep.Step.Route.Line));
+            viewHolder.Icon.SetImageResource(Utils.GetIconForLine(timeStep.Step.Route.Line));
             viewHolder.Name.Text = timeStep.Destination.Stop.Name;
-            viewHolder.Description.Text = Database.GetReadableTime(timeStep, DateTime.Now);
+            viewHolder.Description.Text = Utils.GetReadableTime(timeStep, DateTime.Now);
 
             if (!viewHolders.Contains(viewHolder))
                 viewHolders.Add(viewHolder);

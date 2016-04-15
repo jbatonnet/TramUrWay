@@ -35,7 +35,7 @@ namespace TramUrWay.Android
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(new LinesAdapter(Database.Lines));
+            recyclerView.SetAdapter(new LinesAdapter(App.Lines));
         }
     }
 }

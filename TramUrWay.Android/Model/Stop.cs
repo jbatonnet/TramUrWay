@@ -21,8 +21,8 @@ namespace TramUrWay.Android
             {
                 if (favorites == null)
                 {
-                    Stop[] favoriteStops = Database.GetFavoriteStops().ToArray();
-                    favorites = Database.Lines.SelectMany(l => l.Stops).ToDictionary(s => s, s => favoriteStops.Contains(s));
+                    Stop[] favoriteStops = App.Database.GetFavoriteStops().ToArray();
+                    favorites = App.Lines.SelectMany(l => l.Stops).ToDictionary(s => s, s => favoriteStops.Contains(s));
                 }
 
                 return favorites[this];
@@ -35,9 +35,9 @@ namespace TramUrWay.Android
                 favorites[this] = value;
 
                 if (value)
-                    Database.AddFavoriteStop(this);
+                    App.Database.AddFavoriteStop(this);
                 else
-                    Database.RemoveFavoriteStop(this);
+                    App.Database.RemoveFavoriteStop(this);
             }
         }
 

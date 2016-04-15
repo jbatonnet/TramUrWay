@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using Android.Content;
 
 namespace TramUrWay.Android
 {
@@ -11,7 +13,6 @@ namespace TramUrWay.Android
         Theorical,
         Offline
     }
-
     public class TimeStep
     {
         public Step Step { get; set; }
@@ -79,7 +80,6 @@ namespace TramUrWay.Android
                 index++;
             }
         }
-
         private TimeSpan?[,] GetTableFromDay(DayOfWeek day)
         {
             switch (day)

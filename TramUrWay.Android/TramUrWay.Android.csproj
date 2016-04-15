@@ -22,7 +22,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
@@ -31,6 +31,15 @@
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkSkip />
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidSupportedAbis />
+    <AndroidStoreUncompressedFileExtensions />
+    <MandroidI18n />
+    <Debugger>Xamarin</Debugger>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,12 +49,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidLinkMode>Full</AndroidLinkMode>
     <AndroidLinkSkip />
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <AndroidSupportedAbis />
+    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86,x86_64,arm64-v8a</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <Debugger>Xamarin</Debugger>
@@ -92,9 +101,13 @@
     <Compile Include="Activities\StopActivity.cs" />
     <Compile Include="Activities\LineActivity.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
+    <Compile Include="WebService.cs" />
+    <Compile Include="Model\TimeTable.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="App.cs" />
-    <Compile Include="Model\TimeTable.cs" />
+    <Compile Include="Assets.cs" />
     <Compile Include="Model\Step.cs" />
     <Compile Include="Model\Route.cs" />
     <Compile Include="Model\Line.cs" />
@@ -209,6 +222,30 @@
     <AndroidAsset Include="..\Data\Hiver 2015\L9.R1.ven.csv">
       <Link>Assets\L9.R1.ven.csv</Link>
     </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R0.dim.csv">
+      <Link>Assets\L6.R0.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R0.lun-jeu.csv">
+      <Link>Assets\L6.R0.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R0.sam.csv">
+      <Link>Assets\L6.R0.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R0.ven.csv">
+      <Link>Assets\L6.R0.ven.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R1.dim.csv">
+      <Link>Assets\L6.R1.dim.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R1.lun-jeu.csv">
+      <Link>Assets\L6.R1.lun-jeu.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R1.sam.csv">
+      <Link>Assets\L6.R1.sam.csv</Link>
+    </AndroidAsset>
+    <AndroidAsset Include="..\Data\Hiver 2015\L6.R1.ven.csv">
+      <Link>Assets\L6.R1.ven.csv</Link>
+    </AndroidAsset>
     <None Include="packages.config" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -254,9 +291,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-w820dp\dimens.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\side_nav_bar.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\MainActivity.xml" />
@@ -334,10 +368,10 @@
     <AndroidResource Include="Resources\layout\TimeStepItem.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_train_glow.png" />
+    <AndroidResource Include="Resources\drawable\train_glow.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\ic_train.png" />
+    <AndroidResource Include="Resources\drawable\train.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\LinesFragment.xml" />
@@ -365,9 +399,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_star_border.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v21\ic_train.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_tram.xml" />

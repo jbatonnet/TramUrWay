@@ -56,11 +56,11 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("Stop"))
             {
                 int stopId = extras.GetInt("Stop");
-                stop = Database.GetStop(stopId);
+                stop = App.GetStop(stopId);
             }
 #if DEBUG
             else
-                stop = Database.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == "Saint-Lazare");
+                stop = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == "Saint-Lazare");
 #endif
             if (stop == null)
                 throw new Exception("Could not find any stop matching the specified id");
@@ -68,7 +68,7 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("Line"))
             {
                 int lineId = extras.GetInt("Line");
-                line = Database.GetLine(lineId);
+                line = App.GetLine(lineId);
             }
             else
                 line = stop.Line;
@@ -76,7 +76,7 @@ namespace TramUrWay.Android
             Title = stop.Name;
 
             // Change toolbar color
-            Color color = Database.GetColorForLine(line);
+            Color color = Utils.GetColorForLine(this, line);
             Color darkColor = new Color(color.R * 2 / 3, color.G * 2 / 3, color.B * 2 / 3);
 
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(color));
@@ -120,6 +120,7 @@ namespace TramUrWay.Android
         }
         protected override void OnResume()
         {
+            refreshCancellationTokenSource?.Cancel();
             refreshCancellationTokenSource = new CancellationTokenSource();
 
             Task.Run(() =>
@@ -182,33 +183,35 @@ namespace TramUrWay.Android
 
         private void Refresh()
         {
+            swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
+
             Task.Run(() =>
             {
-                swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
-
                 // Online time steps
                 try
                 {
-                    if (App.OfflineMode)
+                    if (App.Config.OfflineMode)
                         throw new Exception();
 
-                    timeSteps = Database.GetLiveTimeSteps().Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
+                    timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
                     snackbar?.Dismiss();
                 }
                 catch (Exception e)
                 {
                     DateTime now = DateTime.Now;
-                    timeSteps = Database.Lines.SelectMany(l => l.Routes)
-                                              .SelectMany(r => r.Steps.Where(s => s.Stop.Name == stop.Name))
-                                              .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
-                                              .ToArray();
+                    timeSteps = App.Lines.SelectMany(l => l.Routes)
+                                         .SelectMany(r => r.Steps.Where(s => s.Stop.Name == stop.Name))
+                                         .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
+                                         .ToArray();
 
                     if (timeSteps.Length != 0)
                     {
                         if (snackbar == null)
                         {
-                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
-                                           .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite);
+                            if (!App.Config.OfflineMode)
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+
                             snackbar.Show();
                         }
                     }
@@ -218,8 +221,10 @@ namespace TramUrWay.Android
 
                         if (snackbar == null)
                         {
-                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
-                                           .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite);
+                            if (!App.Config.OfflineMode)
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+
                             snackbar.Show();
                         }
                     }

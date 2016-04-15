@@ -1777,70 +1777,67 @@ namespace TramUrWay.Android
 			public const int ic_star_border = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int ic_train = 2130837579;
+			public const int ic_tram = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int ic_train_glow = 2130837580;
+			public const int L1 = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int ic_tram = 2130837581;
+			public const int L10 = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
-			public const int L1 = 2130837582;
+			public const int L11 = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int L10 = 2130837583;
+			public const int L12 = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int L11 = 2130837584;
+			public const int L13 = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int L12 = 2130837585;
+			public const int L14 = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int L13 = 2130837586;
+			public const int L15 = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int L14 = 2130837587;
+			public const int L16 = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int L15 = 2130837588;
+			public const int L17 = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int L16 = 2130837589;
+			public const int L19 = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int L17 = 2130837590;
+			public const int L2 = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int L19 = 2130837591;
+			public const int L3 = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int L2 = 2130837592;
+			public const int L4 = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int L3 = 2130837593;
+			public const int L6 = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int L4 = 2130837594;
+			public const int L7 = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int L6 = 2130837595;
+			public const int L8 = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int L7 = 2130837596;
-			
-			// aapt resource value: 0x7f02005d
-			public const int L8 = 2130837597;
-			
-			// aapt resource value: 0x7f02005e
-			public const int L9 = 2130837598;
-			
-			// aapt resource value: 0x7f020060
-			public const int notification_template_icon_bg = 2130837600;
+			public const int L9 = 2130837596;
 			
 			// aapt resource value: 0x7f02005f
-			public const int side_nav_bar = 2130837599;
+			public const int notification_template_icon_bg = 2130837599;
+			
+			// aapt resource value: 0x7f02005d
+			public const int train = 2130837597;
+			
+			// aapt resource value: 0x7f02005e
+			public const int train_glow = 2130837598;
 			
 			static Drawable()
 			{

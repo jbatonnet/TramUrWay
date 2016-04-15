@@ -58,7 +58,7 @@ namespace TramUrWay.Android
             LineViewHolder viewHolder = holder as LineViewHolder;
             Line line = lines[position];
 
-            viewHolder.Icon.SetImageResource(Database.GetIconForLine(line));
+            viewHolder.Icon.SetImageResource(Utils.GetIconForLine(line));
             viewHolder.Name.Text = line.Name;
 
             if (!viewHolders.Contains(viewHolder))

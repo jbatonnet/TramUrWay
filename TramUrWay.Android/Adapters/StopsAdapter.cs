@@ -63,7 +63,7 @@ namespace TramUrWay.Android
             StopViewHolder viewHolder = holder as StopViewHolder;
             KeyValuePair<string, Stop[]> stop = stops.ElementAt(position);
 
-            viewHolder.Icon.SetImageResource(Database.GetIconForLine(stop.Value.First().Line));
+            viewHolder.Icon.SetImageResource(Utils.GetIconForLine(stop.Value.First().Line));
             viewHolder.Name.Text = stop.Key;
 
             if (!viewHolders.Contains(viewHolder))

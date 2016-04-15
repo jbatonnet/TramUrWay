@@ -69,11 +69,11 @@ namespace TramUrWay.Android
                 }
 
                 // Try to find device
-                line = Database.GetLine(lineId);
+                line = App.GetLine(lineId);
             }
 #if DEBUG
             else
-                line = Database.GetLine(2);
+                line = App.GetLine(2);
 #endif
             if (line == null)
                 throw new Exception("Could not find any line matching the specified id");
@@ -82,7 +82,7 @@ namespace TramUrWay.Android
             route = line.Routes.First();
 
             // Change toolbar color
-            Color color = Database.GetColorForLine(line);
+            Color color = Utils.GetColorForLine(this, line);
 
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(color));
 
@@ -144,6 +144,7 @@ namespace TramUrWay.Android
         }
         protected override void OnResume()
         {
+            refreshCancellationTokenSource?.Cancel();
             refreshCancellationTokenSource = new CancellationTokenSource();
 
             Task.Run(() =>
@@ -154,14 +155,14 @@ namespace TramUrWay.Android
                     Thread.Sleep(App.GlobalUpdateDelay * 1000);
                 }
             });
-            /*Task.Run(() =>
+            Task.Run(() =>
             {
                 while (!refreshCancellationTokenSource.IsCancellationRequested)
                 {
-                    RunOnUiThread(() => OnRefreshed());
+                    RefreshIcons();
                     Thread.Sleep(App.GlobalUpdateDelay / 4 * 1000);
                 }
-            });*/
+            });
 
             base.OnResume();
         }
@@ -211,33 +212,37 @@ namespace TramUrWay.Android
 
         private void Refresh()
         {
+            swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
+
             Task.Run(() =>
             {
-                swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
-
                 TimeStep[] timeSteps;
 
                 // Online time steps
                 try
                 {
-                    if (App.OfflineMode)
+                    if (App.Config.OfflineMode)
                         throw new Exception();
 
-                    timeSteps = Database.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
+                    timeSteps = App.Service.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
                     snackbar?.Dismiss();
                 }
                 catch (Exception e)
                 {
+                    TimeTable timeTable = route.GetTimeTable();
+
                     // Offline data
-                    if (route.TimeTable != null)
+                    if (timeTable != null)
                     {
                         DateTime now = DateTime.Now;
-                        timeSteps = route.Steps.SelectMany(s => route.TimeTable.GetStepsFromStep(s, now).Take(3)).ToArray();
+                        timeSteps = route.Steps.SelectMany(s => timeTable.GetStepsFromStep(s, now).Take(3)).ToArray();
 
                         if (snackbar == null)
                         {
-                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite);
+                            if (!App.Config.OfflineMode)
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+
                             snackbar.Show();
                         }
                     }
@@ -249,8 +254,10 @@ namespace TramUrWay.Android
 
                         if (snackbar == null)
                         {
-                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite)
-                                               .SetAction("Réessayer", Snackbar_Retry);
+                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite);
+                            if (!App.Config.OfflineMode)
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+
                             snackbar.Show();
                         }
                     }
@@ -262,6 +269,11 @@ namespace TramUrWay.Android
 
                 RunOnUiThread(OnRefreshed);
             });
+        }
+        private void RefreshIcons()
+        {
+            routeAdapter.UpdateIcons();
+            RunOnUiThread(OnRefreshed);
         }
         private void OnRefreshed()
         {

@@ -61,15 +61,32 @@ namespace TramUrWay.Android
         public RouteAdapter(Route route)
         {
             Route = route;
-            color = Database.GetColorForLine(route.Line);
+            color = Utils.GetColorForLine(null, route.Line);
         }
 
         public void UpdateSteps(IEnumerable<TimeStep> timeSteps)
         {
+            if (timeSteps == null)
+            {
+                stepTimes = null;
+                tramProgresses = null;
+
+                return;
+            }
+
             DateTime now = DateTime.Now;
 
             // Update timesteps
             stepTimes = Route.Steps.Select(s => timeSteps.Where(t => t.Step == s).ToArray()).ToArray();
+
+            UpdateIcons();
+        }
+        public void UpdateIcons()
+        {
+            if (Route == null || stepTimes == null)
+                return;
+
+            DateTime now = DateTime.Now;
 
             // Update tramways positions
             tramProgresses = new float?[Route.Steps.Length - 1];
@@ -117,10 +134,12 @@ namespace TramUrWay.Android
                 TimeStep[] timeSteps = stepTimes[position];
 
                 if (timeSteps.Length > 0)
-                    viewHolder.Description.Text = Database.GetReadableTimes(timeSteps, DateTime.Now);
+                    viewHolder.Description.Text = Utils.GetReadableTimes(timeSteps, DateTime.Now);
                 else
                     viewHolder.Description.Text = "Service terminé";
             }
+            else
+                viewHolder.Description.Text = "Informations non disponibles";
 
             // Update icon positions
             if (tramProgresses != null)

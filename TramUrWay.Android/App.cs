@@ -30,38 +30,55 @@ namespace TramUrWay.Android
         public const int GlobalUpdateDelay = 60;
         public const int WidgetUpdateDelay = 120;
 
-        public static bool OfflineMode { get; set; } = false;
-        public static bool EnableTamBug { get; set; } = false;
+        public static Config Config { get; private set; }
+        public static Assets Assets { get; private set; }
+        public static Database Database { get; private set; }
+        public static WebService Service { get; private set; }
+
+        public static Line[] Lines { get; private set; }
 
         private static bool initialized = false;
-        private static AndroidDatabaseConnection connection;
-
         public static void Initialize(Context context)
         {
             if (initialized) return;
             initialized = true;
-
-            // Connect to local database
-            connection = new AndroidDatabaseConnection(context, Name + ".db");
-            connection.VersionUpgraded += Connection_VersionUpgraded;
-            connection.Open();
+            
+            // Initialize logging
+#if DEBUG
+            Log.TraceStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Verbose);
+            Log.DebugStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Debug);
+#endif
+            Log.InfoStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Info);
+            Log.WarningStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Warn);
+            Log.ErrorStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Error);
 
             // Load data
-            Database.Initialize(context, connection);
+            Config = new Config(context);
+            Assets = new Assets(context);
+            Service = new WebService();
+
+            // Connect to local database
+            AndroidDatabaseConnection connection = new AndroidDatabaseConnection(context, Name + ".db");
+            connection.VersionUpgraded += (c, o, n) => Database.CheckDatabase(c);
+            connection.Open();
+            Database = new Database(connection);
 
             // Trigger widgets update
             //Intent intent = new Intent();
             //intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
             //context.SendBroadcast(intent);
 
-            // Read config from DB
-            OfflineMode = Database.GetConfigValue(nameof(OfflineMode)) == "true";
-            EnableTamBug = Database.GetConfigValue(nameof(EnableTamBug)) == "true";
+            // Preload lines
+            Lines = Assets.LoadLines();
         }
 
-        private static void Connection_VersionUpgraded(AndroidDatabaseConnection connection, int oldVersion, int newVersion)
+        public static Line GetLine(int id)
         {
-            Database.CheckDatabase(connection);
+            return Lines.FirstOrDefault(l => l.Id == id);
+        }
+        public static Stop GetStop(int id)
+        {
+            return Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Id == id);
         }
     }
 }
