@@ -28,7 +28,7 @@ namespace TramUrWay.Android
         public const string Name = "TramUrWay";
 
         public const int GlobalUpdateDelay = 60;
-        public const int WidgetUpdateDelay = 120;
+        public const int WidgetUpdateDelay = 60;
 
         public static Config Config { get; private set; }
         public static Assets Assets { get; private set; }
@@ -64,9 +64,7 @@ namespace TramUrWay.Android
             Database = new Database(connection);
 
             // Trigger widgets update
-            //Intent intent = new Intent();
-            //intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-            //context.SendBroadcast(intent);
+            WidgetUpdateService.Start(context);
 
             // Preload lines
             Lines = Assets.LoadLines();

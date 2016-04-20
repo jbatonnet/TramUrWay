@@ -24,6 +24,7 @@ using Android.Appwidget;
 namespace TramUrWay.Android
 {
     [Register("net.thedju.TramUrWay.StepWidgetActivity")]
+    [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetConfigure })]
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
     public class StepWidgetActivity : AppCompatActivity
     {
@@ -34,6 +35,7 @@ namespace TramUrWay.Android
         {
             App.Initialize(this);
             base.OnCreate(savedInstanceState);
+
             SetContentView(Resource.Layout.StepWidgetActivity);
             Title = "Sélectionnez une station";
 
@@ -57,7 +59,7 @@ namespace TramUrWay.Android
             RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.StepWidgetActivity_StopList);
             recyclerView.SetLayoutManager(new WrapLayoutManager(this));
             recyclerView.AddItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(adapter = new StopsAdapter(Database.Lines.SelectMany(l => l.Stops)));
+            recyclerView.SetAdapter(adapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
 
             // Register UI events
             adapter.StopClick += Adapter_StopClick;
@@ -101,7 +103,7 @@ namespace TramUrWay.Android
         private void RegisterWidget(Step step)
         {
             // Register the widget
-            Database.RegisterStepWidget(appWidgetId, step);
+            App.Database.RegisterStepWidget(appWidgetId, step);
 
             // Update the widget
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);

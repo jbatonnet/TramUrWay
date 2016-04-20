@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\FavoritesFragment.cs" />
+    <Compile Include="Activities\StepWidgetActivity.cs" />
     <Compile Include="Activities\StopsFragment.cs" />
     <Compile Include="Activities\LinesFragment.cs" />
     <Compile Include="Activities\MainActivity.cs" />
@@ -118,9 +119,12 @@
     <Compile Include="Adapters\TimeStepsAdapter.cs" />
     <Compile Include="Adapters\RouteAdapter.cs" />
     <Compile Include="Service\WidgetUpdateService.cs" />
+    <Compile Include="Widgets\IntentBroadcastReceiver.cs" />
+    <Compile Include="Widgets\StepWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\xml\StepWidget.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="..\Data\Hiver 2015\getAll.json">

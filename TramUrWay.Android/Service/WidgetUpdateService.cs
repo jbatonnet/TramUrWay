@@ -25,18 +25,28 @@ namespace TramUrWay.Android
         {
             base.OnCreate();
 
+            // Register ScreenOn, ScreenOff intents
+            RegisterReceiver(IntentBroadcastReceiver.Instance, new IntentFilter(Intent.ActionScreenOn));
+            RegisterReceiver(IntentBroadcastReceiver.Instance, new IntentFilter(Intent.ActionScreenOff));
+
+            // Create widget update intent
             Intent intent = new Intent();
             intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-
             pendingIntent = PendingIntent.GetBroadcast(this, 0, intent, 0);
 
+            // Setup an alarm
             AlarmManager alarmManager = GetSystemService(AlarmService) as AlarmManager;
-            alarmManager.SetRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime(), App.WidgetUpdateDelay * 1000, pendingIntent);
+            alarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime(), App.WidgetUpdateDelay * 1000, pendingIntent);
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
 
+            // Unregister ScreenOn, ScreenOff intents
+            UnregisterReceiver(IntentBroadcastReceiver.Instance);
+            UnregisterReceiver(IntentBroadcastReceiver.Instance);
+
+            // Cancel the pending intent
             AlarmManager alarmManager = GetSystemService(AlarmService) as AlarmManager;
             alarmManager.Cancel(pendingIntent);
         }
@@ -48,6 +58,30 @@ namespace TramUrWay.Android
         public override IBinder OnBind(Intent intent)
         {
             throw new NotImplementedException();
+        }
+
+        public static void Start(Context context, bool force = false)
+        {
+            bool start = force;
+
+            if (!start)
+            {
+                AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+
+                ComponentName stepWidgetComponent = StepWidget.GetComponentName(context);
+                start |= appWidgetManager.GetAppWidgetIds(stepWidgetComponent).Length > 0;
+            }
+
+            if (start)
+            {
+                Intent intent = new Intent(context, typeof(WidgetUpdateService));
+                context.StartService(intent);
+            }
+        }
+        public static void Stop(Context context)
+        {
+            Intent intent = new Intent(context, typeof(WidgetUpdateService));
+            context.StopService(intent);
         }
     }
 }

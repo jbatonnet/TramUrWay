@@ -16,18 +16,21 @@ using Android.Widget;
 
 namespace TramUrWay.Android
 {
-    [Register(ComponentName)]
     [BroadcastReceiver(Label = "Station", Exported = true)]
-    [IntentFilter(new string[] { AppWidgetManager.ActionAppwidgetUpdate })]
+    [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetUpdate })]
     [MetaData("android.appwidget.provider", Resource = "@xml/stepwidget")]
     public class StepWidget : AppWidgetProvider
     {
-        private const string ComponentName = "net.thedju.TramUrWay.StepWidget";
+        private static ComponentName componentName;
+        public static ComponentName GetComponentName(Context context)
+        {
+            var javaClass = Java.Lang.Class.FromType(typeof(StepWidget));
+            return componentName ?? (componentName = new ComponentName(context, javaClass.CanonicalName));
+        }
 
         public override void OnEnabled(Context context)
         {
-            Intent intent = new Intent(context, typeof(WidgetUpdateService));
-            context.StartService(intent);
+            WidgetUpdateService.Start(context, true);
         }
         public override void OnDisabled(Context context)
         {
@@ -37,10 +40,7 @@ namespace TramUrWay.Android
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(widgetComponent);
 
             if (appWidgetIds.Length == 0)
-            {
-                Intent intent = new Intent(context, typeof(WidgetUpdateService));
-                context.StopService(intent);
-            }
+                WidgetUpdateService.Stop(context);
         }
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
@@ -58,9 +58,7 @@ namespace TramUrWay.Android
                 // Service update
                 if (appWidgetIds == null)
                 {
-                    intent = new Intent(context, typeof(WidgetUpdateService));
-                    context.StartService(intent);
-
+                    WidgetUpdateService.Start(context);
                     Update(context, appWidgetManager);
                 }
 
@@ -83,24 +81,26 @@ namespace TramUrWay.Android
         {
             foreach (int appWidgetId in appWidgetIds)
             {
-                Step step = Database.FindStepByWidgetId(appWidgetId);
+                Step step = App.Database.FindStepByWidgetId(appWidgetId);
                 if (step == null)
                     return;
 
                 RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.StepWidget);
 
                 Intent intent = new Intent(context, typeof(StopActivity));
-                intent.PutExtra("Route", step.Route.Id);
                 intent.PutExtra("Stop", step.Stop.Id);
+                intent.PutExtra("Route", step.Route.Id);
 
-                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, intent, 0);
+                int code = step.Stop.Id << 4 | step.Route.Id;
+
+                PendingIntent pendingIntent = PendingIntent.GetActivity(context, code, intent, 0);
                 remoteViews.SetOnClickPendingIntent(Resource.Id.StepWidget_Button, pendingIntent);
 
                 // Update widget UI
                 remoteViews.SetTextViewText(Resource.Id.StepWidget_Name, step.Stop.Name);
 
-                Color color = Database.GetColorForLine(step.Route.Line);
-                Drawable drawable = context.Resources.GetDrawable(Database.GetResourceForLine(step.Route.Line));
+                Color color = Utils.GetColorForLine(context, step.Route.Line);
+                Drawable drawable = context.Resources.GetDrawable(Utils.GetResourceForLine(step.Route.Line));
                 DrawableCompat.SetTint(drawable, color);
 
                 remoteViews.SetImageViewBitmap(Resource.Id.StepWidget_Icon, drawable.ToBitmap());
@@ -111,18 +111,18 @@ namespace TramUrWay.Android
 
                 try
                 {
-                    timeSteps = Database.GetLiveTimeSteps().Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
+                    timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
                 }
                 catch (Exception e)
                 {
-                    timeSteps = Database.Lines.SelectMany(l => l.Routes)
-                                              .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
-                                              .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
-                                              .Take(2)
-                                              .ToArray();
+                    timeSteps = App.Lines.SelectMany(l => l.Routes)
+                                         .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
+                                         .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
+                                         .Take(2)
+                                         .ToArray();
                 }
 
-                remoteViews.SetTextViewText(Resource.Id.StepWidget_Description, timeSteps == null ? "???" : Database.GetReadableTimes(timeSteps, now, false));
+                remoteViews.SetTextViewText(Resource.Id.StepWidget_Description, timeSteps == null ? "???" : Utils.GetReadableTimes(timeSteps, now, false));
 
                 try
                 {
@@ -133,11 +133,6 @@ namespace TramUrWay.Android
                     Toast.MakeText(context, "Exception while updating widget: " + e, ToastLength.Long).Show();
                 }
             }
-        }
-
-        private static ComponentName GetComponentName(Context context)
-        {
-            return new ComponentName(context, ComponentName);
         }
     }
 }
