@@ -94,6 +94,7 @@
         android:layout_marginStart="16dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:tint="@color/primary_dark_material_light"
         android:src="@drawable/ic_star_border"
         android:focusable="true"

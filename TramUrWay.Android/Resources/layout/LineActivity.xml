@@ -52,7 +52,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
-                            android:layout_margin="8dp" />
+                            android:layout_margin="8dp"
+                            android:textOff="        "
+                            android:textOn="        " />
 
                         <TextView
                             android:id="@+id/LineActivity_RouteSwitch_LeftChoice"
@@ -60,6 +62,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_toStartOf="@+id/LineActivity_RouteSwitch"
+                            android:layout_toLeftOf="@+id/LineActivity_RouteSwitch"
                             android:text="Left stop" />
 
                         <TextView
@@ -68,6 +71,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@+id/LineActivity_RouteSwitch"
+                            android:layout_toRightOf="@+id/LineActivity_RouteSwitch"
                             android:text="Right stop" />
 
                     </RelativeLayout>
