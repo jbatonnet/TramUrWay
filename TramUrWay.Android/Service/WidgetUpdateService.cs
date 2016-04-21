@@ -19,8 +19,6 @@ namespace TramUrWay.Android
     [Service]
     public class WidgetUpdateService : Service
     {
-        private PendingIntent pendingIntent;
-
         public override void OnCreate()
         {
             base.OnCreate();
@@ -29,10 +27,17 @@ namespace TramUrWay.Android
             RegisterReceiver(IntentBroadcastReceiver.Instance, new IntentFilter(Intent.ActionScreenOn));
             RegisterReceiver(IntentBroadcastReceiver.Instance, new IntentFilter(Intent.ActionScreenOff));
 
+            PowerManager powerManager = GetSystemService(PowerService) as PowerManager;
+            if (!powerManager.IsInteractive)
+            {
+                StopSelf();
+                return;
+            }
+
             // Create widget update intent
             Intent intent = new Intent();
             intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
-            pendingIntent = PendingIntent.GetBroadcast(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.GetBroadcast(this, 0, intent, 0);
 
             // Setup an alarm
             AlarmManager alarmManager = GetSystemService(AlarmService) as AlarmManager;
@@ -42,9 +47,10 @@ namespace TramUrWay.Android
         {
             base.OnDestroy();
 
-            // Unregister ScreenOn, ScreenOff intents
-            UnregisterReceiver(IntentBroadcastReceiver.Instance);
-            UnregisterReceiver(IntentBroadcastReceiver.Instance);
+            // Create widget update intent
+            Intent intent = new Intent();
+            intent.SetAction(AppWidgetManager.ActionAppwidgetUpdate);
+            PendingIntent pendingIntent = PendingIntent.GetBroadcast(this, 0, intent, 0);
 
             // Cancel the pending intent
             AlarmManager alarmManager = GetSystemService(AlarmService) as AlarmManager;
