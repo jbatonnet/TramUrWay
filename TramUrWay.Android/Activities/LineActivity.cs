@@ -144,9 +144,11 @@ namespace TramUrWay.Android
         }
         protected override void OnResume()
         {
+            // Cancel refresh tasks
             refreshCancellationTokenSource?.Cancel();
             refreshCancellationTokenSource = new CancellationTokenSource();
 
+            // Run new refresh tasks
             Task.Run(() =>
             {
                 while (!refreshCancellationTokenSource.IsCancellationRequested)
@@ -210,11 +212,11 @@ namespace TramUrWay.Android
             Refresh();
         }
 
-        private void Refresh()
+        private async void Refresh()
         {
             swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 TimeStep[] timeSteps;
 

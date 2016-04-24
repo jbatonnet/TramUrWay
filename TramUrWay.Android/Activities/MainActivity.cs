@@ -22,7 +22,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 
 namespace TramUrWay.Android
 {
-    [Activity(Label = App.Name, MainLauncher = true, Icon = "@mipmap/ic_launcher", Theme = "@style/AppTheme.NoActionBar", LaunchMode = LaunchMode.SingleTask)]
+    [Activity(Theme = "@style/AppTheme.NoActionBar", LaunchMode = LaunchMode.SingleTask)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         private int currentItem = 0;

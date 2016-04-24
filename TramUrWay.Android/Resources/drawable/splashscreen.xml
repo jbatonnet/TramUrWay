@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="#e6f9ff"/>
+    </item>
+    <item>
+        <bitmap
+            android:src="@mipmap/splashscreen"
+            android:gravity="center" />
+    </item>
+</layer-list>
