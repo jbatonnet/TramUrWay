@@ -27,6 +27,9 @@ namespace TramUrWay.Android
     {
         private int currentItem = 0;
 
+        private DrawerLayout drawer;
+        private NavigationView navigationView;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             App.Initialize(this);
@@ -38,12 +41,12 @@ namespace TramUrWay.Android
             SetSupportActionBar(toolbar);
             
             // Initliaze UI
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, Resource.String.navigation_drawer_open, Resource.String.navigation_drawer_close);
             drawer.SetDrawerListener(toggle);
             toggle.SyncState();
 
-            NavigationView navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
             if (App.Database.GetFavoriteStops().Any())
@@ -54,7 +57,6 @@ namespace TramUrWay.Android
         protected override void OnResume()
         {
             base.OnResume();
-
             Refresh();
         }
 
@@ -69,53 +71,47 @@ namespace TramUrWay.Android
         }
         public bool OnNavigationItemSelected(IMenuItem item)
         {
-            currentItem = item.ItemId;
-            Refresh();
-
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            drawer.CloseDrawer(GravityCompat.Start);
-
-            return true;
-        }
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater.Inflate(Resource.Menu.MainMenu, menu);
-
-            for (int i = 0; i < menu.Size(); i++)
-            {
-                IMenuItem item = menu.GetItem(i);
-
-                if (item.ItemId == Resource.Id.MainMenu_Offline)
-                    item.SetChecked(App.Config.OfflineMode ? true : false);
-                else if (item.ItemId == Resource.Id.MainMenu_Bug)
-                    item.SetChecked(App.Config.EnableTamBug ? true : false);
-            }
-
-            return true;
-        }
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
             switch (item.ItemId)
             {
-                case Resource.Id.MainMenu_Offline:
-                    item.SetChecked(App.Config.OfflineMode = !App.Config.OfflineMode);
-                    break;
+                case Resource.Id.SideMenu_Settings:
+                {
+                    Intent intent = new Intent(this, typeof(SettingsActivity));
+                    StartActivity(intent);
+                        break;
+                }
 
-                case Resource.Id.MainMenu_Bug:
-                    item.SetChecked(App.Config.EnableTamBug = !App.Config.EnableTamBug);
+                case Resource.Id.SideMenu_About:
+                {
+                    Intent intent = new Intent(this, typeof(AboutActivity));
+                    StartActivity(intent);
+                        break;
+                }
+
+                default:
+                    currentItem = item.ItemId;
+                    Refresh();
                     break;
             }
 
-            return base.OnOptionsItemSelected(item);
+            drawer.CloseDrawer(GravityCompat.Start);
+            return true;
         }
 
         private void Refresh()
         {
+            for (int i = 0; i < navigationView.Menu.Size(); i++)
+            {
+                IMenuItem menuItem = navigationView.Menu.GetItem(i);
+                menuItem.SetChecked(menuItem.ItemId == currentItem);
+            }
+
             switch (currentItem)
             {
                 case Resource.Id.SideMenu_Favorites: RefreshFavorites(); break;
                 case Resource.Id.SideMenu_Lines: RefreshLines(); break;
                 case Resource.Id.SideMenu_Stops: RefreshStops(); break;
+                case Resource.Id.SideMenu_Routes: RefreshRoutes(); break;
+                case Resource.Id.SideMenu_Map: RefreshMap(); break;
             }
         }
         private void RefreshFavorites()
@@ -134,6 +130,18 @@ namespace TramUrWay.Android
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
             fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new StopsFragment());
+            fragmentTransaction.Commit();
+        }
+        private void RefreshRoutes()
+        {
+            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new RoutesFragment());
+            fragmentTransaction.Commit();
+        }
+        private void RefreshMap()
+        {
+            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new MapFragment());
             fragmentTransaction.Commit();
         }
     }

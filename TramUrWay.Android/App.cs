@@ -64,7 +64,8 @@ namespace TramUrWay.Android
             Database = new Database(connection);
 
             // Trigger widgets update
-            WidgetUpdateService.Start(context);
+            if (Config.EnableWidgetRefresh)
+                WidgetUpdateService.Start(context);
 
             // Preload lines
             Lines = Assets.LoadLines();

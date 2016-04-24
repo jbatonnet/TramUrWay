@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/SideMenu_MainGroup"
+        android:checkableBehavior="single">
+        
         <item
             android:id="@+id/SideMenu_Favorites"
             android:icon="@drawable/ic_star"
@@ -9,12 +12,37 @@
             android:checked="true" />
         <item
             android:id="@+id/SideMenu_Lines"
-            android:icon="@drawable/ic_tram"
+            android:icon="@drawable/ic_directions_subway"
             android:title="Liste des lignes" />
         <item
             android:id="@+id/SideMenu_Stops"
-            android:icon="@drawable/ic_tram"
+            android:icon="@drawable/ic_place"
             android:title="Liste des stations" />
+        <item
+            android:id="@+id/SideMenu_Routes"
+            android:icon="@drawable/ic_directions"
+            android:enabled="false"
+            android:title="Itinéraires" />
+        <item
+            android:id="@+id/SideMenu_Map"
+            android:icon="@drawable/ic_map"
+            android:enabled="false"
+            android:title="Carte interactive" />
+        
+    </group>
+
+    <group
+        android:id="@+id/SideMenu_FooterGroup">
+
+        <item
+            android:id="@+id/SideMenu_Settings"
+            android:icon="@drawable/ic_settings"
+            android:title="Paramètres" />
+        <item
+            android:id="@+id/SideMenu_About"
+            android:icon="@drawable/ic_info"
+            android:title="A propos" />
+
     </group>
 
 </menu>

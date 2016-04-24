@@ -30,7 +30,8 @@ namespace TramUrWay.Android
 
         public override void OnEnabled(Context context)
         {
-            WidgetUpdateService.Start(context, true);
+            if (App.Config.EnableWidgetRefresh)
+                WidgetUpdateService.Start(context, true);
         }
         public override void OnDisabled(Context context)
         {
@@ -39,7 +40,7 @@ namespace TramUrWay.Android
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(widgetComponent);
 
-            if (appWidgetIds.Length == 0)
+            if (appWidgetIds.Length == 0 && App.Config.EnableWidgetRefresh)
                 WidgetUpdateService.Stop(context);
         }
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -106,23 +107,26 @@ namespace TramUrWay.Android
                 remoteViews.SetImageViewBitmap(Resource.Id.StepWidget_Icon, drawable.ToBitmap());
 
                 // Get step information
-                DateTime now = DateTime.Now;
-                TimeStep[] timeSteps = null;
-
-                try
+                if (App.Config.EnableWidgetRefresh)
                 {
-                    timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
-                }
-                catch (Exception e)
-                {
-                    timeSteps = App.Lines.SelectMany(l => l.Routes)
-                                         .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
-                                         .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
-                                         .Take(2)
-                                         .ToArray();
-                }
+                    DateTime now = DateTime.Now;
+                    TimeStep[] timeSteps = null;
 
-                remoteViews.SetTextViewText(Resource.Id.StepWidget_Description, timeSteps == null ? "???" : Utils.GetReadableTimes(timeSteps, now, false));
+                    try
+                    {
+                        timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
+                    }
+                    catch (Exception e)
+                    {
+                        timeSteps = App.Lines.SelectMany(l => l.Routes)
+                                             .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
+                                             .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
+                                             .Take(2)
+                                             .ToArray();
+                    }
+
+                    remoteViews.SetTextViewText(Resource.Id.StepWidget_Description, timeSteps == null ? "???" : Utils.GetReadableTimes(timeSteps, now, false));
+                }
 
                 try
                 {

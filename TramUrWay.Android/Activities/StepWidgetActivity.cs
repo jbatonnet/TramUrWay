@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Android.App;
+using Android.Appwidget;
 using Android.Content;
 using Android.Database;
 using Android.Graphics;
@@ -19,13 +20,14 @@ using Android.Views;
 using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using Android.Appwidget;
+using SearchView = Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
 {
     [Register("net.thedju.TramUrWay.StepWidgetActivity")]
     [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetConfigure })]
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
+    [MetaData("android.app.searchable", Resource = "@xml/stepwidgetsearchable")]
     public class StepWidgetActivity : AppCompatActivity
     {
         private int appWidgetId = AppWidgetManager.InvalidAppwidgetId;
@@ -70,6 +72,32 @@ namespace TramUrWay.Android
             SetResult(Result.Canceled);
             base.OnBackPressed();
         }
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.StepWidgetMenu, menu);
+
+            for (int i = 0; i < menu.Size(); i++)
+            {
+                IMenuItem item = menu.GetItem(i);
+
+                if (item.ItemId == Resource.Id.StepWidgetMenu_Search)
+                {
+                    SearchManager searchManager = (SearchManager)GetSystemService(SearchService);
+
+                    SearchView searchView = item.ActionView as SearchView;
+                    searchView.SetSearchableInfo(searchManager.GetSearchableInfo(ComponentName));
+                    searchView.QueryTextChange += SearchView_QueryTextChange;
+                }
+            }
+
+            return base.OnCreateOptionsMenu(menu);
+        }
+        
+        private void SearchView_QueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e)
+        {
+            adapter.Filter = e.NewText;
+        }
+
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)

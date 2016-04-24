@@ -105,6 +105,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\FavoritesFragment.cs" />
+    <Compile Include="Activities\AboutActivity.cs" />
+    <Compile Include="Activities\MapFragment.cs" />
+    <Compile Include="Activities\RoutesFragment.cs" />
+    <Compile Include="Activities\SettingsActivity.cs" />
+    <Compile Include="Activities\RouteActivity.cs" />
     <Compile Include="Activities\StepWidgetActivity.cs" />
     <Compile Include="Activities\StopsFragment.cs" />
     <Compile Include="Activities\LinesFragment.cs" />
@@ -400,9 +405,6 @@
     <AndroidResource Include="Resources\menu\StopMenu.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\menu\MainMenu.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_directions_bus.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -413,9 +415,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_star_border.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable-v21\ic_tram.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_directions_bus.png" />
@@ -431,6 +430,48 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_tram.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\StepWidgetMenu.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\xml\StepWidgetSearchable.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\montpellier.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sidemenugradient.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_directions.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_directions_subway.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_place.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_settings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_info.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\AboutActivity.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\SettingsActivity.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RoutesFragment.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_map.xml" />
   </ItemGroup>
   <Import Project="..\..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

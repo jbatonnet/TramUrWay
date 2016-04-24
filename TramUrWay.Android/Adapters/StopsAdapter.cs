@@ -34,14 +34,28 @@ namespace TramUrWay.Android
         {
             get
             {
-                return stops.Count;
+                return filteredStops.Count;
+            }
+        }
+        public string Filter
+        {
+            get
+            {
+                return filter;
+            }
+            set
+            {
+                filter = value;
+                UpdateFilter();
             }
         }
 
         public event EventHandler<Stop> StopClick;
 
         private Dictionary<string, Stop[]> stops;
+        private Dictionary<string, Stop[]> filteredStops;
         private List<StopViewHolder> viewHolders = new List<StopViewHolder>();
+        private string filter = null;
         
         public StopsAdapter(IEnumerable<Stop> stops)
         {
@@ -49,6 +63,8 @@ namespace TramUrWay.Android
                               .GroupBy(s => s.Name)
                               .OrderBy(g => g.Key)
                               .ToDictionary(g => g.Key, g => g.ToArray());
+
+            UpdateFilter();
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -61,7 +77,7 @@ namespace TramUrWay.Android
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             StopViewHolder viewHolder = holder as StopViewHolder;
-            KeyValuePair<string, Stop[]> stop = stops.ElementAt(position);
+            KeyValuePair<string, Stop[]> stop = filteredStops.ElementAt(position);
 
             viewHolder.Icon.SetImageResource(Utils.GetIconForLine(stop.Value.First().Line));
             viewHolder.Name.Text = stop.Key;
@@ -73,7 +89,7 @@ namespace TramUrWay.Android
         public void OnClick(View view)
         {
             StopViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view);
-            KeyValuePair<string, Stop[]> stop = stops.ElementAt(viewHolder.AdapterPosition);
+            KeyValuePair<string, Stop[]> stop = filteredStops.ElementAt(viewHolder.AdapterPosition);
 
             if (StopClick != null)
                 StopClick.Invoke(this, stop.Value.First());
@@ -84,6 +100,32 @@ namespace TramUrWay.Android
 
                 view.Context.StartActivity(intent);
             }
+        }
+
+        private void UpdateFilter()
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+                filteredStops = stops;
+            else
+            {
+                Predicate<string> predicate = s =>
+                {
+                    // ASCII normalize strings
+                    string value = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(s.ToLowerInvariant()));
+                    string pattern = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(filter.ToLowerInvariant()));
+
+                    // Remove non character strings
+                    value = new string(value.Select(c => char.IsLetter(c) ? c : ' ').ToArray());
+                    pattern = new string(pattern.Select(c => char.IsLetter(c) ? c : ' ').ToArray());
+
+                    return value.Contains(pattern);
+                };
+
+                filteredStops = stops.Where(p => predicate(p.Key))
+                                     .ToDictionary(p => p.Key, p => p.Value);
+            }
+
+            NotifyDataSetChanged();
         }
     }
 }
