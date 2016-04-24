@@ -26,7 +26,6 @@
         <item
             android:id="@+id/SideMenu_Map"
             android:icon="@drawable/ic_map"
-            android:enabled="false"
             android:title="Carte interactive" />
         
     </group>
