@@ -187,4 +187,56 @@ namespace TramUrWay.Android
             }
         }
     }
+
+    public static class DatabaseExtensions
+    {
+        private static Dictionary<Line, bool> favoriteLines = null;
+        private static Dictionary<Stop, bool> favoriteStops = null;
+
+        public static bool GetIsFavorite(this Line me)
+        {
+            if (favoriteLines == null)
+            {
+                Line[] lines = App.Database.GetFavoriteLines().ToArray();
+                favoriteLines = App.Lines.ToDictionary(l => l, l => lines.Contains(l));
+            }
+
+            return favoriteLines[me];
+        }
+        public static void SetIsFavorite(this Line me, bool value)
+        {
+            if (favoriteLines.ContainsKey(me) && favoriteLines[me] == value)
+                return;
+
+            favoriteLines[me] = value;
+
+            if (value)
+                App.Database.AddFavoriteLine(me);
+            else
+                App.Database.RemoveFavoriteLine(me);
+        }
+
+        public static bool GetIsFavorite(this Stop me)
+        {
+            if (favoriteStops == null)
+            {
+                Stop[] stops = App.Database.GetFavoriteStops().ToArray();
+                favoriteStops = App.Lines.SelectMany(l => l.Stops).ToDictionary(s => s, s => stops.Contains(s));
+            }
+
+            return favoriteStops[me];
+        }
+        public static void SetIsFavorite(this Stop me, bool value)
+        {
+            if (favoriteStops.ContainsKey(me) && favoriteStops[me] == value)
+                return;
+
+            favoriteStops[me] = value;
+
+            if (value)
+                App.Database.AddFavoriteStop(me);
+            else
+                App.Database.RemoveFavoriteStop(me);
+        }
+    }
 }

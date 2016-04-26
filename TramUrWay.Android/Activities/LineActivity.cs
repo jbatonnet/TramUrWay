@@ -231,7 +231,7 @@ namespace TramUrWay.Android
                 }
                 catch (Exception e)
                 {
-                    TimeTable timeTable = route.GetTimeTable();
+                    TimeTable timeTable = route.TimeTable;
 
                     // Offline data
                     if (timeTable != null)

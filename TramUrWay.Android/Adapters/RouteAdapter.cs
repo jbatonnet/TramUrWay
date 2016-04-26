@@ -88,10 +88,12 @@ namespace TramUrWay.Android
 
             DateTime now = DateTime.Now;
 
-            // Update tramways positions
+            // Update transport positions
             tramProgresses = new float?[Route.Steps.Length - 1];
             for (int i = 0; i < Route.Steps.Length - 1; i++)
             {
+                Step step = Route.Steps[i];
+
                 if (stepTimes[i + 1].Length == 0)
                     continue;
 
@@ -99,7 +101,9 @@ namespace TramUrWay.Android
                     continue;
 
                 TimeSpan diff = stepTimes[i + 1][0].Date - now;
-                tramProgresses[i] = (float)(1 - Math.Min(diff.TotalMinutes, 2) / 2);
+
+                tramProgresses[i] = (float)(1 - Math.Min(diff.TotalMinutes, step.Duration.Value.TotalMinutes) / step.Duration.Value.TotalMinutes);
+                //tramProgresses[i] = step.Speed.Evaluate(tramProgresses[i].Value);
             }
         }
 
@@ -127,7 +131,7 @@ namespace TramUrWay.Android
             }
 
             // Update texts
-            viewHolder.Favorite.SetImageResource(step.Stop.Favorite ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
+            viewHolder.Favorite.SetImageResource(step.Stop.GetIsFavorite() ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
 
             if (stepTimes != null)
             {
@@ -190,8 +194,8 @@ namespace TramUrWay.Android
             StepViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view.Parent);
             Step step = Route.Steps[viewHolder.AdapterPosition];
 
-            bool favorite = !step.Stop.Favorite;
-            step.Stop.Favorite = favorite;
+            bool favorite = !step.Stop.GetIsFavorite();
+            step.Stop.SetIsFavorite(favorite);
 
             NotifyItemChanged(viewHolder.AdapterPosition);
         }

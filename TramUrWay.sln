@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Dumper", "TramUrW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.UITest", "TramUrWay.UITest\TramUrWay.UITest.csproj", "{16672868-174B-41C6-815C-80FB76227C9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TramUrWay.Baker", "TramUrWay.Baker\TramUrWay.Baker.csproj", "{C7B47914-9E42-41B3-A0C0-3F6DB595374C}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\[Shared]\Android\Android.projitems*{985e6b0d-ba87-4a4c-ad63-ac50ad49f0ae}*SharedItemsImports = 4
@@ -22,6 +24,7 @@ Global
 		[Shared]\Android\Android.projitems*{e62a7ba6-14a0-4de8-927f-4a9af4279ff3}*SharedItemsImports = 13
 		..\[Shared]\Utilities\Utilities.projitems*{f0bb2a45-fa8e-4b22-8b5f-03709e27449b}*SharedItemsImports = 4
 		[Shared]\Utilities\Utilities.projitems*{6d77d9f7-85bb-45ea-a467-8ac2882608d0}*SharedItemsImports = 13
+		[Shared]\Utilities\Utilities.projitems*{c7b47914-9e42-41b3-a0c0-3f6db595374c}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +45,10 @@ Global
 		{16672868-174B-41C6-815C-80FB76227C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16672868-174B-41C6-815C-80FB76227C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16672868-174B-41C6-815C-80FB76227C9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7B47914-9E42-41B3-A0C0-3F6DB595374C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7B47914-9E42-41B3-A0C0-3F6DB595374C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7B47914-9E42-41B3-A0C0-3F6DB595374C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7B47914-9E42-41B3-A0C0-3F6DB595374C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

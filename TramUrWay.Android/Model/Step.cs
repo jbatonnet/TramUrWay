@@ -11,6 +11,10 @@ namespace TramUrWay.Android
         public bool Partial { get; set; }
         public string Direction { get; set; }
 
+        public TimeSpan? Duration { get; set; }
+        public Position[] Trajectory { get; set; }
+        public Curve Speed { get; set; }
+
         public Route Route { get; set; }
 
         public override string ToString()

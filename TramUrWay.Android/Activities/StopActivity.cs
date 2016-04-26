@@ -144,7 +144,7 @@ namespace TramUrWay.Android
                 IMenuItem item = menu.GetItem(i);
 
                 if (item.ItemId == Resource.Id.StopMenu_Favorite)
-                    item.SetIcon(stop.Favorite ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
+                    item.SetIcon(stop.GetIsFavorite() ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
             }
 
             return true;
@@ -158,8 +158,8 @@ namespace TramUrWay.Android
                     break;
 
                 case Resource.Id.StopMenu_Favorite:
-                    stop.Favorite = !stop.Favorite;
-                    item.SetIcon(stop.Favorite ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
+                    stop.SetIsFavorite(!stop.GetIsFavorite());
+                    item.SetIcon(stop.GetIsFavorite() ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
                     break;
             }
 
@@ -201,7 +201,7 @@ namespace TramUrWay.Android
                     DateTime now = DateTime.Now;
                     timeSteps = App.Lines.SelectMany(l => l.Routes)
                                          .SelectMany(r => r.Steps.Where(s => s.Stop.Name == stop.Name))
-                                         .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
+                                         .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
                                          .ToArray();
 
                     if (timeSteps.Length != 0)

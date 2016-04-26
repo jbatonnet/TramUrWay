@@ -120,7 +120,7 @@ namespace TramUrWay.Android
                     {
                         timeSteps = App.Lines.SelectMany(l => l.Routes)
                                              .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
-                                             .SelectMany(s => s.Route.GetTimeTable()?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
+                                             .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
                                              .Take(2)
                                              .ToArray();
                     }
