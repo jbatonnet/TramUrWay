@@ -20,7 +20,7 @@ using Android.Widget;
 
 namespace TramUrWay.Android
 {
-    public class LinesFragment : Fragment
+    public class LinesFragment : MainFragment
     {
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {

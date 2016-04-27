@@ -181,11 +181,11 @@ namespace TramUrWay.Android
             Refresh();
         }
 
-        private void Refresh()
+        private async void Refresh()
         {
             swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 // Online time steps
                 try

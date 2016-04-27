@@ -20,28 +20,35 @@ using Android.Widget;
 
 namespace TramUrWay.Android
 {
-    public class FavoritesFragment : Fragment
+    public class FavoritesFragment : MainFragment
     {
+        private bool favorites;
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.FavoritesFragment, container, false);
+            favorites = App.Database.GetFavoriteLines().Any() || App.Database.GetFavoriteStops().Any();
+
+            return inflater.Inflate(favorites ? Resource.Layout.FavoritesFragment : Resource.Layout.NoFavoritesFragment, container, false);
         }
 
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
 
-            RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
-            recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-            recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
-            recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(new LinesAdapter(App.Database.GetFavoriteLines()));
+            if (favorites)
+            {
+                RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
+                recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
+                recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
+                recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+                recyclerView.SetAdapter(new LinesAdapter(App.Database.GetFavoriteLines()));
 
-            recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
-            recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-            recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
-            recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(new StopsAdapter(App.Database.GetFavoriteStops()));
+                recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
+                recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
+                recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
+                recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+                recyclerView.SetAdapter(new StopsAdapter(App.Database.GetFavoriteStops()));
+            }
         }
     }
 }

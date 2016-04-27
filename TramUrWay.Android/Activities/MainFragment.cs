@@ -7,7 +7,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Database;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
@@ -20,12 +19,12 @@ using Android.Views;
 using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using System.Threading.Tasks;
-using System.Threading;
+using SearchView = Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
 {
-    public class RoutesFragment : MainFragment
+    public abstract class MainFragment : Fragment
     {
+        internal virtual void OnQueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e) { }
     }
 }

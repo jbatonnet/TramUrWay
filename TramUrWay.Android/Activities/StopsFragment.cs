@@ -20,8 +20,10 @@ using Android.Widget;
 
 namespace TramUrWay.Android
 {
-    public class StopsFragment : Fragment
+    public class StopsFragment : MainFragment
     {
+        private StopsAdapter stopsAdapter;
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.StopsFragment, container, false);
@@ -35,7 +37,12 @@ namespace TramUrWay.Android
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+            recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+        }
+
+        internal override void OnQueryTextChange(object sender, global::Android.Support.V7.Widget.SearchView.QueryTextChangeEventArgs e)
+        {
+            stopsAdapter.Filter = e.NewText;
         }
     }
 }

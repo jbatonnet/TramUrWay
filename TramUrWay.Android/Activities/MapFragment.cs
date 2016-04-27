@@ -29,7 +29,7 @@ using Android.Views.Animations;
 
 namespace TramUrWay.Android
 {
-    public class MapFragment : Fragment, IOnMapReadyCallback
+    public class MapFragment : MainFragment, IOnMapReadyCallback
     {
         public class Transport
         {
@@ -72,7 +72,7 @@ namespace TramUrWay.Android
             }
         }
 
-        private const int IconSize = 20;
+        private const int IconSize = 22;
 
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
         private global::Android.Gms.Maps.MapFragment mapFragment;
@@ -108,7 +108,7 @@ namespace TramUrWay.Android
             googleMap.MoveCamera(cameraUpdate);
 
             // Add polylines
-            foreach (Line line in App.Lines)
+            foreach (Line line in App.Lines.Where(l => l.Id < 6))
             {
                 foreach (Route route in line.Routes)
                 {
@@ -196,7 +196,7 @@ namespace TramUrWay.Android
                 if (App.Config.OfflineMode)
                     throw new Exception();
 
-                newTimeSteps = App.Service.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
+                newTimeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Route.Line.Id < 6).OrderBy(t => t.Date).ToArray();
             }
 
             // Offline time steps
@@ -204,7 +204,8 @@ namespace TramUrWay.Android
             {
                 DateTime now = DateTime.Now;
 
-                newTimeSteps = App.Lines.SelectMany(l => l.Routes)
+                newTimeSteps = App.Lines.Where(l => l.Id < 6)
+                                        .SelectMany(l => l.Routes)
                                         .SelectMany(r => r.Steps)
                                         .Select(s => s.Route.TimeTable?.GetStepsFromStep(s, now, false)?.Take(3))
                                         .Where(s => s != null)

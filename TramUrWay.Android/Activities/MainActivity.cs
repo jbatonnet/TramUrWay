@@ -19,6 +19,7 @@ using Android.Views;
 using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using SearchView = Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
 {
@@ -29,6 +30,7 @@ namespace TramUrWay.Android
 
         private DrawerLayout drawer;
         private NavigationView navigationView;
+        private MainFragment fragment;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -96,6 +98,27 @@ namespace TramUrWay.Android
             drawer.CloseDrawer(GravityCompat.Start);
             return true;
         }
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.MainMenu, menu);
+
+            for (int i = 0; i < menu.Size(); i++)
+            {
+                IMenuItem item = menu.GetItem(i);
+
+                if (item.ItemId == Resource.Id.MainMenu_Search)
+                {
+                    SearchManager searchManager = (SearchManager)GetSystemService(SearchService);
+
+                    SearchView searchView = item.ActionView as SearchView;
+                    searchView.SetSearchableInfo(searchManager.GetSearchableInfo(ComponentName));
+                    searchView.QueryHint = "Rechercher";
+                    searchView.QueryTextChange += (s, e) => fragment?.OnQueryTextChange(s, e);
+                }
+            }
+
+            return base.OnCreateOptionsMenu(menu);
+        }
 
         private void Refresh()
         {
@@ -117,31 +140,31 @@ namespace TramUrWay.Android
         private void RefreshFavorites()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new FavoritesFragment());
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new FavoritesFragment());
             fragmentTransaction.Commit();
         }
         private void RefreshLines()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new LinesFragment());
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new LinesFragment());
             fragmentTransaction.Commit();
         }
         private void RefreshStops()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new StopsFragment());
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new StopsFragment());
             fragmentTransaction.Commit();
         }
         private void RefreshRoutes()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new RoutesFragment());
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new RoutesFragment());
             fragmentTransaction.Commit();
         }
         private void RefreshMap()
         {
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, new MapFragment());
+            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new MapFragment());
             fragmentTransaction.Commit();
         }
     }

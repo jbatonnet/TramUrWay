@@ -27,7 +27,6 @@ namespace TramUrWay.Android
     [Register("net.thedju.TramUrWay.StepWidgetActivity")]
     [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetConfigure })]
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    [MetaData("android.app.searchable", Resource = "@xml/stepwidgetsearchable")]
     public class StepWidgetActivity : AppCompatActivity
     {
         private int appWidgetId = AppWidgetManager.InvalidAppwidgetId;
@@ -86,6 +85,7 @@ namespace TramUrWay.Android
 
                     SearchView searchView = item.ActionView as SearchView;
                     searchView.SetSearchableInfo(searchManager.GetSearchableInfo(ComponentName));
+                    searchView.QueryHint = "Rechercher";
                     searchView.QueryTextChange += SearchView_QueryTextChange;
                 }
             }
