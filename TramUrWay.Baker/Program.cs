@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -231,13 +232,58 @@ namespace TramUrWay.Baker
         }
         private static void LoadTrajectories()
         {
+            Regex positionRegex = new Regex(@"^[0-9.]+,[0-9.]+(,[0-9.]+)?$", RegexOptions.Compiled);
+
             foreach (Line line in Lines)
                 foreach (Route route in line.Routes)
+                {
                     for (int i = 0; i < route.Steps.Length - 1; i++)
                     {
                         Step step = route.Steps[i];
                         step.Trajectory = new Position[] { step.Stop.Position };
                     }
+
+                    string path = Path.Combine(inputDirectory, $@"L{line.Id}\L{line.Id}.R{route.Id}.Trajectory.txt");
+                    FileInfo file = new FileInfo(path);
+
+                    if (!file.Exists)
+                        continue;
+
+                    using (StreamReader streamReader = new StreamReader(file.OpenRead()))
+                    {
+                        Step step = null;
+                        List<Position> trajectory = new List<Position>();
+
+                        while (true)
+                        {
+                            string data = streamReader.ReadLine()?.Trim();
+                            if (data == "")
+                                continue;
+                            if (data == null)
+                                break;
+
+                            if (!positionRegex.IsMatch(data))
+                            {
+                                if (step != null && trajectory.Count > 0)
+                                    step.Trajectory = trajectory.ToArray();
+
+                                step = route.Steps.First(s => Likes(s.Stop.Name, data));
+                                trajectory.Clear();
+                            }
+                            else
+                            {
+                                string[] positionParts = data.Split(',');
+
+                                // Trajectory position is reversed
+                                Position position = new Position(float.Parse(positionParts[1], CultureInfo.InvariantCulture), float.Parse(positionParts[0], CultureInfo.InvariantCulture));
+                                trajectory.Add(position);
+                            }
+                        }
+
+                        if (step != null && trajectory.Count > 0)
+                            step.Trajectory = trajectory.ToArray();
+                    }
+                }
         }
         private static void LoadSpeedCurves()
         {

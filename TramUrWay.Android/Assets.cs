@@ -26,7 +26,9 @@ namespace TramUrWay.Android
         public IEnumerable<Line> LoadLines()
         {
             string[] files = context.Assets.List("");
+            Dictionary<int, string> orderedFiles = new Dictionary<int, string>();
 
+            // Order files
             foreach (string file in files)
             {
                 Match lineFileMatch = lineFileRegex.Match(file);
@@ -34,9 +36,14 @@ namespace TramUrWay.Android
                     continue;
 
                 int lineId = int.Parse(lineFileMatch.Groups[1].Value);
+                orderedFiles.Add(lineId, file);
+            }
 
-                using (Stream stream = context.Assets.Open(file))
-                    yield return LoadLine(lineId, stream);
+            // Build lines
+            foreach (var pair in orderedFiles.OrderBy(p => p.Key))
+            {
+                using (Stream stream = context.Assets.Open(pair.Value))
+                    yield return LoadLine(pair.Key, stream);
             }
         }
 

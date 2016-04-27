@@ -68,7 +68,11 @@ namespace TramUrWay.Android
                 WidgetUpdateService.Start(context);
 
             // Preload lines
-            Lines = Assets.LoadLines().OrderBy(l => l.Id).ToArray();
+#if DEBUG
+            Lines = Assets.LoadLines().Take(4).ToArray();
+#else
+            Lines = Assets.LoadLines().ToArray();
+#endif
         }
 
         public static Line GetLine(int id)
