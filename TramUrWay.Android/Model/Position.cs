@@ -29,4 +29,10 @@ namespace TramUrWay.Android
             return (float)(c * 6373 * 1000); // Return diff in meters
         }
     }
+
+    public class TrajectoryStep
+    {
+        public float Index { get; set; }
+        public Position Position { get; set; }
+    }
 }

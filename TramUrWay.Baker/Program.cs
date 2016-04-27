@@ -234,14 +234,20 @@ namespace TramUrWay.Baker
         {
             Regex positionRegex = new Regex(@"^[0-9.]+,[0-9.]+(,[0-9.]+)?$", RegexOptions.Compiled);
 
+            // Read trajectories
             foreach (Line line in Lines)
                 foreach (Route route in line.Routes)
                 {
                     for (int i = 0; i < route.Steps.Length - 1; i++)
                     {
                         Step step = route.Steps[i];
-                        step.Trajectory = new Position[] { step.Stop.Position };
+                        Step nextStep = route.Steps[i + 1];
+
+                        step.Trajectory = new TrajectoryStep[] { new TrajectoryStep() { Index = 0, Position = step.Stop.Position } };
                     }
+
+                    Step last = route.Steps.Last();
+                    last.Trajectory = new TrajectoryStep[] { new TrajectoryStep() { Index = 0, Position = last.Stop.Position } };
 
                     string path = Path.Combine(inputDirectory, $@"L{line.Id}\L{line.Id}.R{route.Id}.Trajectory.txt");
                     FileInfo file = new FileInfo(path);
@@ -252,7 +258,7 @@ namespace TramUrWay.Baker
                     using (StreamReader streamReader = new StreamReader(file.OpenRead()))
                     {
                         Step step = null;
-                        List<Position> trajectory = new List<Position>();
+                        List<TrajectoryStep> trajectory = new List<TrajectoryStep>();
 
                         while (true)
                         {
@@ -265,7 +271,7 @@ namespace TramUrWay.Baker
                             if (!positionRegex.IsMatch(data))
                             {
                                 if (step != null && trajectory.Count > 0)
-                                    step.Trajectory = trajectory.ToArray();
+                                    step.Trajectory = trajectory.Take(trajectory.Count - 1).ToArray();
 
                                 step = route.Steps.First(s => Likes(s.Stop.Name, data));
                                 trajectory.Clear();
@@ -276,14 +282,42 @@ namespace TramUrWay.Baker
 
                                 // Trajectory position is reversed
                                 Position position = new Position(float.Parse(positionParts[1], CultureInfo.InvariantCulture), float.Parse(positionParts[0], CultureInfo.InvariantCulture));
-                                trajectory.Add(position);
+                                trajectory.Add(new TrajectoryStep() { Index = 0, Position = position });
                             }
                         }
 
                         if (step != null && trajectory.Count > 0)
-                            step.Trajectory = trajectory.ToArray();
+                            step.Trajectory = trajectory.Take(trajectory.Count - 1).ToArray();
                     }
                 }
+
+            // Compute path length
+            foreach (Line line in Lines)
+                foreach (Route route in line.Routes)
+                    for (int i = 0; i < route.Steps.Length - 1; i++)
+                    {
+                        Step step = route.Steps[i];
+                        Step nextStep = route.Steps[i + 1];
+
+                        step.Length = (nextStep.Trajectory?.First()?.Position ?? nextStep.Stop.Position) - step.Trajectory.Last().Position;
+                        for (int j = 0; j < step.Trajectory.Length - 1; j++)
+                        {
+                            TrajectoryStep trajectoryStep = step.Trajectory[j];
+                            TrajectoryStep nextTrajectoryStep = step.Trajectory[j + 1];
+
+                            step.Length += nextTrajectoryStep.Position - trajectoryStep.Position;
+                        }
+
+                        float length = 0;
+                        for (int j = 1; j < step.Trajectory.Length; j++)
+                        {
+                            TrajectoryStep trajectoryStep = step.Trajectory[j - 1];
+                            TrajectoryStep nextTrajectoryStep = step.Trajectory[j];
+
+                            length += nextTrajectoryStep.Position - trajectoryStep.Position;
+                            step.Trajectory[j].Index = length / step.Length;
+                        }
+                    }
         }
         private static void LoadSpeedCurves()
         {
@@ -370,7 +404,7 @@ namespace TramUrWay.Baker
                             ["Partial"] = step.Partial,
                             ["Direction"] = step.Direction,
                             ["Duration"] = FormatTimeSpan(step.Duration),
-                            ["Trajectory"] = step.Trajectory == null ? null : new JArray(step.Trajectory.Select(p => new JArray { p.Latitude, p.Longitude })),
+                            ["Trajectory"] = step.Trajectory == null ? null : new JArray(step.Trajectory.Select(p => new JArray { p.Index, new JArray { p.Position.Latitude, p.Position.Longitude } })),
                             ["Speed"] = step.Speed == null ? null : Convert.ToBase64String(step.Speed.Data)
                         };
 

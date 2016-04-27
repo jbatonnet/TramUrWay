@@ -84,30 +84,6 @@ namespace TramUrWay.Android
             return steps.Where(s => s != null).Join(s => GetReadableTime(s, now, useLongStyle), ", ");
         }
 
-        public static int GetIconForLine(Line line)
-        {
-            switch (line.Id)
-            {
-                case 1: return Resource.Drawable.L1;
-                case 2: return Resource.Drawable.L2;
-                case 3: return Resource.Drawable.L3;
-                case 4: return Resource.Drawable.L4;
-                case 6: return Resource.Drawable.L6;
-                case 7: return Resource.Drawable.L7;
-                case 8: return Resource.Drawable.L8;
-                case 9: return Resource.Drawable.L9;
-                case 10: return Resource.Drawable.L10;
-                case 11: return Resource.Drawable.L11;
-                case 12: return Resource.Drawable.L12;
-                case 13: return Resource.Drawable.L13;
-                case 14: return Resource.Drawable.L14;
-                case 15: return Resource.Drawable.L15;
-                case 16: return Resource.Drawable.L16;
-                case 17: return Resource.Drawable.L17;
-                case 19: return Resource.Drawable.L19;
-                default: return 0;
-            }
-        }
         public static int GetResourceForLine(Line line)
         {
             if (line.Id <= 5)

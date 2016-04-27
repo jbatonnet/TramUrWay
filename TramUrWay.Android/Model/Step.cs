@@ -12,7 +12,8 @@ namespace TramUrWay.Android
         public string Direction { get; set; }
 
         public TimeSpan? Duration { get; set; }
-        public Position[] Trajectory { get; set; }
+        public TrajectoryStep[] Trajectory { get; set; }
+        public float Length { get; set; }
         public Curve Speed { get; set; }
 
         public Route Route { get; set; }

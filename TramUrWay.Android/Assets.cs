@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Android.Content;
 using Android.Content.Res;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -109,10 +111,10 @@ namespace TramUrWay.Android
                     JArray trajectoryArray = stepObject["Trajectory"] as JArray;
                     if (trajectoryArray != null)
                     {
-                        List<Position> stepTrajectory = new List<Position>();
+                        List<TrajectoryStep> stepTrajectory = new List<TrajectoryStep>();
 
                         foreach (JToken positionObject in stepObject["Trajectory"] as JArray)
-                            stepTrajectory.Add(new Position(positionObject[0].Value<float>(), positionObject[1].Value<float>()));
+                            stepTrajectory.Add(new TrajectoryStep() { Index = positionObject[0].Value<float>(), Position = new Position(positionObject[1][0].Value<float>(), positionObject[1][1].Value<float>()) });
 
                         step.Trajectory = stepTrajectory.ToArray();
                     }
@@ -177,6 +179,14 @@ namespace TramUrWay.Android
                 return null;
 
             return new Curve(Convert.FromBase64String(value));
+        }
+    }
+
+    public static class AssetsExtensions
+    {
+        public static Drawable GetIconDrawable(this Line me, Context context)
+        {
+            return new BitmapDrawable(context.Resources, BitmapFactory.DecodeByteArray(me.Image, 0, me.Image.Length));
         }
     }
 }
