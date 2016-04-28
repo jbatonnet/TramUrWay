@@ -108,27 +108,30 @@ namespace TramUrWay.Android
             googleMap.MoveCamera(cameraUpdate);
 
             // Add polylines
-            foreach (Line line in App.Lines.Where(l => l.Id < 6))
+            Task.Run(() =>
             {
-                foreach (Route route in line.Routes)
+                foreach (Line line in App.Lines.Where(l => l.Id < 6))
                 {
-                    PolylineOptions polyline = new PolylineOptions().InvokeWidth(5);
-                    Color color = Utils.GetColorForLine(Activity, line);
-
-                    polyline = polyline.InvokeColor(color.ToArgb());
-
-                    foreach (Step step in route.Steps.Take(route.Steps.Length - 1))
+                    foreach (Route route in line.Routes)
                     {
-                        foreach (TrajectoryStep trajectoryStep in step.Trajectory)
-                        {
-                            LatLng latLng = new LatLng(trajectoryStep.Position.Latitude, trajectoryStep.Position.Longitude);
-                            polyline = polyline.Add(latLng);
-                        }
-                    }
+                        PolylineOptions polyline = new PolylineOptions().InvokeWidth(5);
+                        Color color = Utils.GetColorForLine(Activity, line);
 
-                    routeLines.Add(route, googleMap.AddPolyline(polyline));
+                        polyline = polyline.InvokeColor(color.ToArgb());
+
+                        foreach (Step step in route.Steps.Take(route.Steps.Length - 1))
+                        {
+                            foreach (TrajectoryStep trajectoryStep in step.Trajectory)
+                            {
+                                LatLng latLng = new LatLng(trajectoryStep.Position.Latitude, trajectoryStep.Position.Longitude);
+                                polyline = polyline.Add(latLng);
+                            }
+                        }
+
+                        Activity.RunOnUiThread(() => routeLines.Add(route, googleMap.AddPolyline(polyline)));
+                    }
                 }
-            }
+            });
 
             // Prepare line icons
             float density = Resources.DisplayMetrics.Density;
@@ -230,7 +233,7 @@ namespace TramUrWay.Android
 
             // Sort time steps by step
             Dictionary<Step, TimeStep> steps = currentTimeSteps.GroupBy(s => s.Step)
-                                                               .ToDictionary(g => g.Key, g => g.OrderBy(s => s.Date).First());
+                                                               .ToDictionary(g => g.Key, g => g.Where(s => s.Date >= now).OrderBy(s => s.Date).First());
 
             // For each route, find transport positions
             List<Transport> transports = new List<Transport>();
