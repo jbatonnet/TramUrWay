@@ -45,12 +45,14 @@ namespace TramUrWay.Android
             private Activity activity;
             private Marker marker;
             private Transport transport;
+            private Action<LatLng> positionUpdater;
 
-            public MarkerAnimator(Activity activity, Marker marker, Transport transport)
+            public MarkerAnimator(Activity activity, Marker marker, Transport transport, Action<LatLng> positionUpdater)
             {
                 this.activity = activity;
                 this.marker = marker;
                 this.transport = transport;
+                this.positionUpdater = positionUpdater;
             }
 
             public void OnAnimationUpdate(ValueAnimator animation)
@@ -65,23 +67,26 @@ namespace TramUrWay.Android
                 progress = (progress - from.Index) / ((last ? 1 : to.Index) - from.Index);
                 LatLng position = new LatLng(from.Position.Latitude + (to.Position.Latitude - from.Position.Latitude) * progress, from.Position.Longitude + (to.Position.Longitude - from.Position.Longitude) * progress);
 
-                activity.RunOnUiThread(() =>
-                {
-                    marker.Position = position;
-                });
+                positionUpdater(position);
             }
         }
 
         private const int IconSize = 22;
         private const float BusZoomLimit = 100; //13;
+        private const float AnimationZoomLimit = 14.2f;
 
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
         private global::Android.Gms.Maps.MapFragment mapFragment;
         private GoogleMap googleMap;
+        private LatLngBounds cameraBounds;
+        private CameraPosition cameraPosition;
+
+        private string selectedMarkerId;
 
         private Dictionary<Route, Polyline> routeLines = new Dictionary<Route, Polyline>();
         private Dictionary<Step, Marker> stepMarkers = new Dictionary<Step, Marker>();
         private Dictionary<Transport, Marker> transportMarkers = new Dictionary<Transport, Marker>();
+        private Dictionary<Marker, bool> markersVisibility = new Dictionary<Marker, bool>();
         private Dictionary<Line, BitmapDescriptor> lineIcons = new Dictionary<Line, BitmapDescriptor>();
 
         private List<TimeStep> timeSteps = new List<TimeStep>();
@@ -103,7 +108,11 @@ namespace TramUrWay.Android
         public void OnMapReady(GoogleMap googleMap)
         {
             this.googleMap = googleMap;
+
+            // Register events
             googleMap.CameraChange += GoogleMap_CameraChange;
+            googleMap.MarkerClick += GoogleMap_MarkerClick;
+            googleMap.MapClick += GoogleMap_MapClick;
 
             // Set initial zoom level
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
@@ -156,8 +165,12 @@ namespace TramUrWay.Android
 
         private void GoogleMap_CameraChange(object sender, GoogleMap.CameraChangeEventArgs e)
         {
-            bool showBuses = e.Position.Zoom >= BusZoomLimit;
+            // Update bounds
+            cameraBounds = googleMap.Projection.VisibleRegion.LatLngBounds;
+            cameraPosition = googleMap.CameraPosition;
 
+            // Update lines visibility
+            bool showBuses = e.Position.Zoom >= BusZoomLimit;
             foreach (Line line in App.Lines)
                 foreach (Route route in line.Routes)
                 {
@@ -168,6 +181,25 @@ namespace TramUrWay.Android
                     if (line.Type == LineType.Bus)
                         polyline.Visible = showBuses;
                 }
+
+            // Update markers visibility
+            foreach (var pair in transportMarkers)
+            {
+                bool visible = pair.Key.Route.Line.Type == LineType.Tram || showBuses;
+                if (visible)
+                    visible = cameraBounds.Contains(pair.Value.Position);
+
+                pair.Value.Visible = visible;
+                markersVisibility[pair.Value] = visible;
+            }
+        }
+        private void GoogleMap_MarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)
+        {
+            selectedMarkerId = e.Marker.Id;
+        }
+        private void GoogleMap_MapClick(object sender, GoogleMap.MapClickEventArgs e)
+        {
+            selectedMarkerId = null;
         }
 
         public override void OnPause()
@@ -197,7 +229,7 @@ namespace TramUrWay.Android
                 CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
-                    UpdateLoop();
+                    UpdatePositions();
                     Thread.Sleep(1000);
                 }
             });
@@ -238,7 +270,7 @@ namespace TramUrWay.Android
                 timeSteps.AddRange(newTimeSteps);
             }
         }
-        private void UpdateLoop()
+        private void UpdatePositions()
         {
             TimeStep[] currentTimeSteps;
             DateTime now = DateTime.Now;
@@ -339,21 +371,60 @@ namespace TramUrWay.Android
                 Transport transport = pair.Key;
                 Marker marker = pair.Value;
 
+                // Compute quick position
+                Position quickFrom = transport.Step.Stop.Position;
+                Position quickTo = transport.TimeStep.Step.Stop.Position;
+                LatLng quickPosition = new LatLng(quickFrom.Latitude + (quickTo.Latitude - quickFrom.Latitude) * transport.Progress, quickFrom.Longitude + (quickTo.Longitude - quickFrom.Longitude) * transport.Progress);
+
                 // Update marker
-                Activity.RunOnUiThread(() => { marker.SetIcon(lineIcons[transport.Route.Line]); });
+                Activity.RunOnUiThread(() => marker.SetIcon(lineIcons[transport.Route.Line]));
+                bool visible;
+                if (markersVisibility.TryGetValue(marker, out visible) && !visible)
+                    continue;
 
-                /*ValueAnimator valueAnimator = new ValueAnimator();
-                valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport));
-                valueAnimator.SetFloatValues(0, 1); // Ignored.
-                valueAnimator.SetInterpolator(new LinearInterpolator());
-                valueAnimator.SetDuration(1000);
-                Activity.RunOnUiThread(valueAnimator.Start);*/
+                // Use animation only if zoomed enough
+                if (cameraPosition.Zoom >= AnimationZoomLimit)
+                {
+                    ValueAnimator valueAnimator = new ValueAnimator();
+                    valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p)));
+                    valueAnimator.SetFloatValues(0, 1); // Ignored.
+                    valueAnimator.SetInterpolator(new LinearInterpolator());
+                    valueAnimator.SetDuration(1000);
+                    Activity.RunOnUiThread(valueAnimator.Start);
+                }
+                else
+                {
+                    float progress = transport.Progress;
+                    int index = transport.Step.Trajectory.TakeWhile(s => s.Index <= progress).Count();
 
-                Position from = transport.Step.Stop.Position;
-                Position to = transport.TimeStep.Step.Stop.Position;
-                LatLng position = new LatLng(from.Latitude + (to.Latitude - from.Latitude) * transport.Progress, from.Longitude + (to.Longitude - from.Longitude) * transport.Progress);
-                Activity.RunOnUiThread(() => marker.Position = position);
+                    bool last = index >= transport.Step.Trajectory.Length;
+                    TrajectoryStep from = transport.Step.Trajectory[index - 1];
+                    TrajectoryStep to = last ? transport.TimeStep.Step.Trajectory.First() : transport.Step.Trajectory[index];
+
+                    progress = (progress - from.Index) / ((last ? 1 : to.Index) - from.Index);
+                    LatLng position = new LatLng(from.Position.Latitude + (to.Position.Latitude - from.Position.Latitude) * transport.Progress, from.Position.Longitude + (to.Position.Longitude - from.Position.Longitude) * transport.Progress);
+
+                    SetMarkerPosition(transport, marker, position);
+                }
+
+                // Follow selected transport
+                Activity.RunOnUiThread(() =>
+                {
+                    if (marker.Id == selectedMarkerId)
+                        googleMap.AnimateCamera(CameraUpdateFactory.NewLatLng(quickPosition));
+                });
             }
+        }
+
+        private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
+        {
+            Activity.RunOnUiThread(() =>
+            {
+                marker.Position = position;
+
+                //if (marker.Id == selectedMarkerId)
+                //    googleMap.AnimateCamera(CameraUpdateFactory.NewLatLng(position));
+            });
         }
     }
 }
