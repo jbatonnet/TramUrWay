@@ -73,6 +73,7 @@ namespace TramUrWay.Android
         }
 
         private const int IconSize = 22;
+        private const float BusZoomLimit = 100; //13;
 
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
         private global::Android.Gms.Maps.MapFragment mapFragment;
@@ -102,17 +103,18 @@ namespace TramUrWay.Android
         public void OnMapReady(GoogleMap googleMap)
         {
             this.googleMap = googleMap;
+            googleMap.CameraChange += GoogleMap_CameraChange;
 
             // Set initial zoom level
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
             googleMap.MoveCamera(cameraUpdate);
 
             // Add polylines
-            foreach (Line line in App.Lines.Where(l => l.Id < 6))
+            foreach (Line line in App.Lines)
             {
                 foreach (Route route in line.Routes)
                 {
-                    PolylineOptions polyline = new PolylineOptions().InvokeWidth(5);
+                    PolylineOptions polyline = new PolylineOptions().InvokeWidth(5).Visible(line.Type == LineType.Tram);
                     Color color = Utils.GetColorForLine(Activity, line);
 
                     polyline = polyline.InvokeColor(color.ToArgb());
@@ -152,6 +154,22 @@ namespace TramUrWay.Android
             }
         }
 
+        private void GoogleMap_CameraChange(object sender, GoogleMap.CameraChangeEventArgs e)
+        {
+            bool showBuses = e.Position.Zoom >= BusZoomLimit;
+
+            foreach (Line line in App.Lines)
+                foreach (Route route in line.Routes)
+                {
+                    Polyline polyline;
+                    if (!routeLines.TryGetValue(route, out polyline))
+                        continue;
+
+                    if (line.Type == LineType.Bus)
+                        polyline.Visible = showBuses;
+                }
+        }
+
         public override void OnPause()
         {
             refreshCancellationTokenSource?.Cancel();
@@ -167,16 +185,17 @@ namespace TramUrWay.Android
             // Run new refresh tasks
             Task.Run(() =>
             {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     UpdateTimeSteps();
                     Thread.Sleep(App.GlobalUpdateDelay / 2 * 1000);
                 }
             });
-
             Task.Run(() =>
             {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     UpdateLoop();
                     Thread.Sleep(1000);
@@ -323,12 +342,17 @@ namespace TramUrWay.Android
                 // Update marker
                 Activity.RunOnUiThread(() => { marker.SetIcon(lineIcons[transport.Route.Line]); });
 
-                ValueAnimator valueAnimator = new ValueAnimator();
+                /*ValueAnimator valueAnimator = new ValueAnimator();
                 valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport));
                 valueAnimator.SetFloatValues(0, 1); // Ignored.
                 valueAnimator.SetInterpolator(new LinearInterpolator());
                 valueAnimator.SetDuration(1000);
-                Activity.RunOnUiThread(valueAnimator.Start);
+                Activity.RunOnUiThread(valueAnimator.Start);*/
+
+                Position from = transport.Step.Stop.Position;
+                Position to = transport.TimeStep.Step.Stop.Position;
+                LatLng position = new LatLng(from.Latitude + (to.Latitude - from.Latitude) * transport.Progress, from.Longitude + (to.Longitude - from.Longitude) * transport.Progress);
+                Activity.RunOnUiThread(() => marker.Position = position);
             }
         }
     }

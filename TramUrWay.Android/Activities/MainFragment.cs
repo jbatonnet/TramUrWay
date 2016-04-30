@@ -25,6 +25,9 @@ namespace TramUrWay.Android
 {
     public abstract class MainFragment : Fragment
     {
-        internal virtual void OnQueryTextChange(object sender, SearchView.QueryTextChangeEventArgs e) { }
+        internal virtual bool HandleSearch(object sender, SearchView.QueryTextChangeEventArgs e)
+        {
+            return false;
+        }
     }
 }

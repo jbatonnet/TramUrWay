@@ -123,14 +123,17 @@ namespace TramUrWay.Android
             refreshCancellationTokenSource?.Cancel();
             refreshCancellationTokenSource = new CancellationTokenSource();
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     Refresh();
-                    Thread.Sleep(App.GlobalUpdateDelay * 1000);
+                    await Task.Delay(App.GlobalUpdateDelay * 1000);
                 }
             });
+
+            swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
             base.OnResume();
         }

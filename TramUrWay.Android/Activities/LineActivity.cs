@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Android.App;
 using Android.Content;
@@ -15,19 +17,37 @@ using Android.Support.V4.Widget;
 using Android.Support.V4.View;
 using Android.Support.V7.App;
 using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
-using System.Threading.Tasks;
-using System.Threading;
+using Object = Java.Lang.Object;
 
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
     public class LineActivity : AppCompatActivity
     {
+        public class RouteSwitcherAsyncTask : AsyncTask<object, int, object>
+        {
+            private RecyclerView recyclerView;
+            private Route route;
+
+            public RouteSwitcherAsyncTask(RecyclerView recyclerView, Route route)
+            {
+                this.recyclerView = recyclerView;
+                this.route = route;
+            }
+
+            protected override object RunInBackground(params object[] @params)
+            {
+                recyclerView.SetAdapter(new RouteAdapter(route));
+                return null;
+            }
+        }
+
         private Line line;
         private Route route;
 
@@ -106,8 +126,11 @@ namespace TramUrWay.Android
 
                 TextView switchLeftChoice = FindViewById<TextView>(Resource.Id.LineActivity_RouteSwitch_LeftChoice);
                 switchLeftChoice.Text = line.Routes[0].Steps.Last().Stop.Name;
+                switchLeftChoice.Click += RouteSwitchLeftChoice_Click;
+
                 TextView switchRightChoice = FindViewById<TextView>(Resource.Id.LineActivity_RouteSwitch_RightChoice);
                 switchRightChoice.Text = line.Routes[1].Steps.Last().Stop.Name;
+                switchRightChoice.Click += RouteSwitchRightChoice_Click;
 
                 routeSwitch = FindViewById<Switch>(Resource.Id.LineActivity_RouteSwitch);
                 routeSwitch.CheckedChange += RouteSwitch_CheckedChange;
@@ -131,8 +154,7 @@ namespace TramUrWay.Android
             recyclerView = FindViewById<RecyclerView>(Resource.Id.LineActivity_StopList);
             recyclerView.Focusable = false;
             recyclerView.HasFixedSize = true;
-            recyclerView.NestedScrollingEnabled = false;
-            recyclerView.SetLayoutManager(new WrapLayoutManager(recyclerView));
+            recyclerView.SetLayoutManager(new LinearLayoutManager(recyclerView.Context));
             recyclerView.AddItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
         }
@@ -144,37 +166,50 @@ namespace TramUrWay.Android
         }
         protected override void OnResume()
         {
+            base.OnResume();
+
             // Cancel refresh tasks
             refreshCancellationTokenSource?.Cancel();
             refreshCancellationTokenSource = new CancellationTokenSource();
 
             // Run new refresh tasks
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     Refresh();
-                    Thread.Sleep(App.GlobalUpdateDelay * 1000);
+                    await Task.Delay(App.GlobalUpdateDelay * 1000);
                 }
             });
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                while (!refreshCancellationTokenSource.IsCancellationRequested)
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     RefreshIcons();
-                    Thread.Sleep(App.GlobalUpdateDelay / 4 * 1000);
+                    await Task.Delay(App.GlobalUpdateDelay / 4 * 1000);
                 }
             });
 
-            base.OnResume();
+            swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
         }
 
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.LineMenu, menu);
+            return true;
+        }
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
             {
                 case global::Android.Resource.Id.Home:
                     OnBackPressed();
+                    break;
+
+                case Resource.Id.LineMenu_Refresh:
+                    Refresh();
                     break;
             }
 
@@ -191,6 +226,30 @@ namespace TramUrWay.Android
         private void RouteSwitch_CheckedChange(object sender, EventArgs e)
         {
             route = routeSwitch.Checked ? line.Routes[1] : line.Routes[0];
+            recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
+
+            snackbar?.Dismiss();
+            Refresh();
+        }
+        private void RouteSwitchLeftChoice_Click(object sender, EventArgs e)
+        {
+            if (routeSwitch.Checked == false)
+                return;
+
+            routeSwitch.Checked = false;
+            route = line.Routes[0];
+            recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
+
+            snackbar?.Dismiss();
+            Refresh();
+        }
+        private void RouteSwitchRightChoice_Click(object sender, EventArgs e)
+        {
+            if (routeSwitch.Checked == true)
+                return;
+
+            routeSwitch.Checked = true;
+            route = line.Routes[1];
             recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
 
             snackbar?.Dismiss();

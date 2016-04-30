@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/RouteChoiceItem_RouteSwitchLayout">
+
+        <Switch
+            android:id="@+id/RouteChoiceItem_RouteSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="8dp"
+            android:textOff="        "
+            android:textOn="        " />
+
+        <TextView
+            android:id="@+id/RouteChoiceItem_RouteSwitch_LeftChoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/RouteChoiceItem_RouteSwitch"
+            android:layout_toLeftOf="@+id/RouteChoiceItem_RouteSwitch"
+            android:text="Left stop" />
+
+        <TextView
+            android:id="@+id/RouteChoiceItem_RouteSwitch_RightChoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/RouteChoiceItem_RouteSwitch"
+            android:layout_toRightOf="@+id/RouteChoiceItem_RouteSwitch"
+            android:text="Right stop" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/RouteChoiceItem_RouteChoiceLayout">
+
+        <Spinner
+            android:id="@+id/RouteChoiceItem_RouteChoice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:spinnerMode="dropdown" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

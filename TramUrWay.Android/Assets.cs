@@ -48,7 +48,6 @@ namespace TramUrWay.Android
                     yield return LoadLine(pair.Key, stream);
             }
         }
-
         private Line LoadLine(int id, Stream stream)
         {
             string content;
@@ -62,6 +61,7 @@ namespace TramUrWay.Android
                 Id = lineObject["Id"].Value<int>(),
                 Name = lineObject["Name"].Value<string>(),
                 Color = Convert.ToInt32(lineObject["Color"].Value<string>().Replace("#", ""), 16),
+                Type = (LineType)Enum.Parse(typeof(LineType), lineObject["Type"].Value<string>()),
                 Image = Convert.FromBase64String(lineObject["Image"].Value<string>())
             };
 

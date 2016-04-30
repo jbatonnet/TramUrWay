@@ -20,6 +20,8 @@ using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using SearchView = Android.Support.V7.Widget.SearchView;
+using System.Threading.Tasks;
+using static Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
 {
@@ -31,6 +33,7 @@ namespace TramUrWay.Android
         private DrawerLayout drawer;
         private NavigationView navigationView;
         private MainFragment fragment;
+        private SearchView searchView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -77,16 +80,14 @@ namespace TramUrWay.Android
             {
                 case Resource.Id.SideMenu_Settings:
                 {
-                    Intent intent = new Intent(this, typeof(SettingsActivity));
-                    StartActivity(intent);
-                        break;
+                    StartActivity(new Intent(this, typeof(SettingsActivity)));
+                    break;
                 }
 
                 case Resource.Id.SideMenu_About:
                 {
-                    Intent intent = new Intent(this, typeof(AboutActivity));
-                    StartActivity(intent);
-                        break;
+                    StartActivity(new Intent(this, typeof(AboutActivity)));
+                    break;
                 }
 
                 default:
@@ -110,10 +111,10 @@ namespace TramUrWay.Android
                 {
                     SearchManager searchManager = (SearchManager)GetSystemService(SearchService);
 
-                    SearchView searchView = item.ActionView as SearchView;
+                    searchView = item.ActionView as SearchView;
                     searchView.SetSearchableInfo(searchManager.GetSearchableInfo(ComponentName));
                     searchView.QueryHint = "Rechercher";
-                    searchView.QueryTextChange += (s, e) => fragment?.OnQueryTextChange(s, e);
+                    searchView.QueryTextChange += SearchView_QueryTextChange;
                 }
             }
 
@@ -166,6 +167,17 @@ namespace TramUrWay.Android
             FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
             fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new MapFragment());
             fragmentTransaction.Commit();
+        }
+
+        private void SearchView_QueryTextChange(object sender, QueryTextChangeEventArgs e)
+        {
+            if (fragment?.HandleSearch(sender, e) == true)
+                return;
+
+            currentItem = Resource.Id.SideMenu_Stops;
+            Refresh();
+
+            searchView.Post(() => fragment?.HandleSearch(sender, e));
         }
     }
 }

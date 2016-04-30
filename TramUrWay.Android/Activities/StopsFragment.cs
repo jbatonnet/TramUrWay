@@ -17,6 +17,7 @@ using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
+using static Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
 {
@@ -40,9 +41,10 @@ namespace TramUrWay.Android
             recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
         }
 
-        internal override void OnQueryTextChange(object sender, global::Android.Support.V7.Widget.SearchView.QueryTextChangeEventArgs e)
+        internal override bool HandleSearch(object sender, QueryTextChangeEventArgs e)
         {
             stopsAdapter.Filter = e.NewText;
+            return true;
         }
     }
 }

@@ -69,7 +69,7 @@ namespace TramUrWay.Android
 
             // Preload lines
 #if DEBUG
-            Lines = Assets.LoadLines().Take(4).ToArray();
+            Lines = Assets.LoadLines()/*.Take(4)*/.ToArray();
 #else
             Lines = Assets.LoadLines().ToArray();
 #endif

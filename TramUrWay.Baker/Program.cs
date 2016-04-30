@@ -53,10 +53,11 @@ namespace TramUrWay.Baker
             foreach (JToken lineData in linesData)
             {
                 int lineId = lineData["route_number"].Value<int>();
-                string lineName = (lineId < 6 ? "Tramway" : "Bus") + " ligne " + lineId;
+                LineType lineType = lineId < 6 ? LineType.Tram : LineType.Bus;
+                string lineName = (lineType == LineType.Tram ? "Tramway" : "Bus") + " ligne " + lineId;
                 string lineColor = lineData["color"].Value<string>();
 
-                Line line = new Line() { Id = lineId, Name = lineName, Color = Convert.ToInt32(lineColor, 16) };
+                Line line = new Line() { Id = lineId, Name = lineName, Color = Convert.ToInt32(lineColor, 16), Type = lineType };
                 List<Stop> lineStops = new List<Stop>();
                 List<Route> lineRoutes = new List<Route>();
 
@@ -367,6 +368,7 @@ namespace TramUrWay.Baker
                     ["Id"] = line.Id,
                     ["Name"] = line.Name,
                     ["Color"] = $"#{line.Color:x6}",
+                    ["Type"] = line.Type.ToString(),
                     ["Image"] = line.Image == null ? null : Convert.ToBase64String(line.Image),
                     ["Stops"] = lineStopsObject = new JArray(),
                     ["Routes"] = lineRoutesObject = new JArray()
