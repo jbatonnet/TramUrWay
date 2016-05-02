@@ -15,6 +15,7 @@ namespace TramUrWay.Android
 {
     public class Assets
     {
+
         private static Regex lineFileRegex = new Regex("^L([0-9]+).json$", RegexOptions.Compiled);
 
         private Context context;

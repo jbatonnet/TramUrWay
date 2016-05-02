@@ -15,6 +15,20 @@ using TramUrWay.Android;
 
 namespace TramUrWay.Baker
 {
+    enum RouteLinkType
+    {
+        Tram,
+        Bus,
+        Walk
+    }
+    class RouteLink
+    {
+        public string From { get; set; }
+        public Step To { get; set; }
+        public RouteLinkType Type { get; set; }
+        public float Weight { get; set; }
+    }
+
     class Program
     {
         private const string inputDirectory = @"..\..\..\Data\Hiver 2015";
@@ -40,6 +54,8 @@ namespace TramUrWay.Baker
 
             // Dump everything
             DumpData();
+
+            FindRoutes(null, null);
         }
 
         private static void LoadStations()
@@ -448,6 +464,65 @@ namespace TramUrWay.Baker
                 using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
                     lineObject.WriteTo(jsonWriter);
             }
+        }
+
+        public static IEnumerable<Step[]> FindRoutes(Stop from, Stop to)
+        {
+            // Build steps cache
+            Dictionary<string, List<RouteLink>> routeLinks = new Dictionary<string, List<RouteLink>>();
+
+            foreach (Line line in Lines)
+                foreach (Route route in line.Routes)
+                    for (int i = 0; i < route.Steps.Length - 1; i++)
+                    {
+                        Step fromStep = route.Steps[i];
+                        Step toStep = route.Steps[i + 1];
+
+                        List<RouteLink> stepLinks;
+                        if (!routeLinks.TryGetValue(fromStep.Stop.Name, out stepLinks))
+                            routeLinks.Add(fromStep.Stop.Name, stepLinks = new List<RouteLink>());
+
+                        stepLinks.Add(new RouteLink() { From = fromStep.Stop.Name, To = toStep, Type = line.Type == LineType.Tram ? RouteLinkType.Tram : RouteLinkType.Bus, Weight = 1 });
+                    }
+
+            // Find nearest steps
+            Step[] allSteps = Lines.SelectMany(l => l.Routes).SelectMany(r => r.Steps).ToArray();
+            foreach (Step step in allSteps)
+            {
+                IEnumerable<Step> sortedSteps = allSteps.Where(s => s.Stop.Name != step.Stop.Name)
+                                                        .OrderBy(s => s.Stop.Position - step.Stop.Position);
+
+                List<RouteLink> stepLinks;
+                if (!routeLinks.TryGetValue(step.Stop.Name, out stepLinks))
+                    routeLinks.Add(step.Stop.Name, stepLinks = new List<RouteLink>());
+
+                foreach (Step toStep in sortedSteps.Take(3))
+                    stepLinks.Add(new RouteLink() { From = step.Stop.Name, To = toStep, Type = RouteLinkType.Walk, Weight = toStep.Stop.Position - step.Stop.Position });
+            }
+
+            // Now we have a graph, apply some path resolution
+            {
+                int rank = allSteps.Length;
+
+                float[,] L = new float[rank, rank];
+                float[] C = new float[rank];
+                float[] D = new float[rank];
+
+
+
+                for (int i = 0; i < rank; i++)
+                {
+                    C[i] = i;
+                    D[i] = L[0, i];
+                }
+
+                C[0] = -1;
+                for (int i = 1; i < rank; i++)
+                    D[i] = L[0, i];
+            }
+
+
+            return null;
         }
 
         // Helpers

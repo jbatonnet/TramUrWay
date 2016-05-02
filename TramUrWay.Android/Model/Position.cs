@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -20,13 +21,20 @@ namespace TramUrWay.Android
 
         public static float operator-(Position left, Position right)
         {
-            float latitudeDiff = right.Latitude - left.Latitude;
-            float longitudeDiff = right.Longitude - left.Longitude;
+            double latitudeDiff = (right.Latitude - left.Latitude) * PI / 180;
+            double longitudeDiff = (right.Longitude - left.Longitude) * PI / 180;
 
-            double a = Pow(Sin(latitudeDiff / 2), 2) + Cos(left.Latitude) * Cos(right.Latitude) * Pow(Sin(longitudeDiff / 2), 2);
+            double a = Sin(latitudeDiff / 2) * Sin(latitudeDiff / 2) +
+                       Cos(left.Latitude * PI / 180) * Cos(right.Latitude * PI / 180) *
+                       Sin(longitudeDiff / 2) * Sin(longitudeDiff / 2);
             double c = 2 * Atan2(Sqrt(a), Sqrt(1 - a));
 
             return (float)(c * 6373 * 1000); // Return diff in meters
+        }
+
+        public override string ToString()
+        {
+            return Latitude.ToString(CultureInfo.InvariantCulture) + ", " + Longitude.ToString(CultureInfo.InvariantCulture);
         }
     }
 

@@ -31,15 +31,6 @@ namespace TramUrWay.Android
 {
     public class MapFragment : MainFragment, IOnMapReadyCallback
     {
-        public class Transport
-        {
-            public Route Route { get; set; }
-            public TimeStep TimeStep { get; set; }
-
-            public Step Step { get; set; }
-            public float Progress { get; set; }
-            public float NextProgress { get; set; }
-        }
         public class MarkerAnimator : Java.Lang.Object, ValueAnimator.IAnimatorUpdateListener
         {
             private Activity activity;

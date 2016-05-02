@@ -133,6 +133,7 @@
     <Compile Include="Adapters\StopsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
     <Compile Include="Model\Curve.cs" />
+    <Compile Include="Model\Transport.cs" />
     <Compile Include="WebService.cs" />
     <Compile Include="Model\TimeTable.cs" />
     <Compile Include="Utils.cs" />
