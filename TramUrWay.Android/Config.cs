@@ -75,6 +75,22 @@ namespace TramUrWay.Android
             }
         }
 
+        [DisplayName("Afficher les favoris")]
+        [Description("Affiche les favoris au démarrage de l'application")]
+        public bool ShowFavorites
+        {
+            get
+            {
+                return preferences.GetBoolean("Config." + nameof(ShowFavorites), true);
+            }
+            set
+            {
+                ISharedPreferencesEditor editor = preferences.Edit();
+                editor.PutBoolean("Config." + nameof(ShowFavorites), value);
+                editor.Apply();
+            }
+        }
+
         private ISharedPreferences preferences;
 
         public Config(Context context)

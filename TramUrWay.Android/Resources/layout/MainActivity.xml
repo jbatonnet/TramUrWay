@@ -25,19 +25,18 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+            <android.support.design.widget.TabLayout
+                android:id="@+id/MainActivity_Tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            
         </android.support.design.widget.AppBarLayout>
-        
-        <RelativeLayout
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/MainActivity_ViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <FrameLayout
-                android:id="@+id/MainActivity_Fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </RelativeLayout>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
        
     </android.support.design.widget.CoordinatorLayout>
 

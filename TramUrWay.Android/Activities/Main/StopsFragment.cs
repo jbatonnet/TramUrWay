@@ -18,18 +18,20 @@ using Android.Utilities;
 using Android.Views;
 using Android.Widget;
 using static Android.Support.V7.Widget.SearchView;
+using Java.Lang;
 
 namespace TramUrWay.Android
 {
-    public class StopsFragment : MainFragment
+    public class StopsFragment : TabFragment
     {
+        public override string Title => "Stations";
+
         private StopsAdapter stopsAdapter;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.StopsFragment, container, false);
         }
-
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
@@ -41,10 +43,9 @@ namespace TramUrWay.Android
             recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
         }
 
-        internal override bool HandleSearch(object sender, QueryTextChangeEventArgs e)
+        public void OnQueryTextChanged(object sender, QueryTextChangeEventArgs e)
         {
             stopsAdapter.Filter = e.NewText;
-            return true;
         }
     }
 }

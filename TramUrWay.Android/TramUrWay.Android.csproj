@@ -116,20 +116,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\FavoritesFragment.cs" />
+    <Compile Include="Activities\Line\RouteFragment.cs" />
+    <Compile Include="Activities\Line\LineMapFragment.cs" />
+    <Compile Include="Activities\Main\FavoritesFragment.cs" />
     <Compile Include="Activities\AboutActivity.cs" />
-    <Compile Include="Activities\MainFragment.cs" />
     <Compile Include="Activities\SplashScreenActivity.cs" />
     <Compile Include="Activities\MapFragment.cs" />
-    <Compile Include="Activities\RoutesFragment.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\RouteActivity.cs" />
-    <Compile Include="Activities\StepWidgetActivity.cs" />
-    <Compile Include="Activities\StopsFragment.cs" />
-    <Compile Include="Activities\LinesFragment.cs" />
-    <Compile Include="Activities\MainActivity.cs" />
+    <Compile Include="Activities\Widgets\StepWidgetActivity.cs" />
+    <Compile Include="Activities\Main\StopsFragment.cs" />
+    <Compile Include="Activities\Main\LinesFragment.cs" />
+    <Compile Include="Activities\Main\MainActivity.cs" />
     <Compile Include="Activities\StopActivity.cs" />
-    <Compile Include="Activities\LineActivity.cs" />
+    <Compile Include="Activities\Line\LineActivity.cs" />
+    <Compile Include="Adapters\LineFragmentsAdapter.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
     <Compile Include="Model\Curve.cs" />
@@ -325,7 +326,7 @@
     <AndroidResource Include="Resources\drawable\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\RoutesFragment.xml" />
+    <AndroidResource Include="Resources\layout\RouteFragment.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_map.xml" />
@@ -358,9 +359,6 @@
     <AndroidResource Include="Resources\layout\MapFragment.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\NoFavoritesFragment.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\menu\MainMenu.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +372,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_refresh.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\LineMapFragment.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\LineRouteFragment.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_home.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="..\..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

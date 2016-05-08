@@ -17,6 +17,8 @@ namespace TramUrWay.Android
         public Curve Speed { get; set; }
 
         public Route Route { get; set; }
+        public Step Previous { get; set; }
+        public Step Next { get; set; }
 
         public override string ToString()
         {

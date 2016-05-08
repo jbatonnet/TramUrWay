@@ -53,9 +53,24 @@ namespace TramUrWay.Baker
             LoadSpeedCurves();
 
             // Dump everything
-            DumpData();
+            //DumpData();
 
-            FindRoutes(null, null);
+
+
+            // Temp
+            DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
+            DateTime secondDate = firstDate.AddSeconds(30);
+
+            TimeStep[] firstTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, firstDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
+            TimeStep[] secondTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, secondDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
+
+            List<Transport> transports = new List<Transport>();
+            transports.Update(firstTimeSteps, firstDate);
+            transports.Update(secondTimeSteps, secondDate);
+
+
+
+            //FindRoutes(null, null);
         }
 
         private static void LoadStations()
@@ -152,6 +167,15 @@ namespace TramUrWay.Baker
                 {
                     currentRoute.Steps = routeSteps.ToArray();
                     lineRoutes.Add(currentRoute);
+                }
+
+                foreach (Route route in lineRoutes)
+                {
+                    for (int i = 0; i < route.Steps.Length; i++)
+                    {
+                        route.Steps[i].Previous = i > 0 ? route.Steps[i - 1] : null;
+                        route.Steps[i].Next = i < route.Steps.Length - 1 ? route.Steps[i + 1] : null;
+                    }
                 }
 
                 line.Routes = lineRoutes.ToArray();

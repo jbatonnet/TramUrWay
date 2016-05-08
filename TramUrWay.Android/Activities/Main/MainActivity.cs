@@ -20,7 +20,9 @@ using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using SearchView = Android.Support.V7.Widget.SearchView;
+
 using System.Threading.Tasks;
+
 using static Android.Support.V7.Widget.SearchView;
 
 namespace TramUrWay.Android
@@ -28,12 +30,17 @@ namespace TramUrWay.Android
     [Activity(Theme = "@style/AppTheme.NoActionBar", LaunchMode = LaunchMode.SingleTask)]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private int currentItem = 0;
-
         private DrawerLayout drawer;
         private NavigationView navigationView;
-        private MainFragment fragment;
         private SearchView searchView;
+
+        private FavoritesFragment favoritesFragment = new FavoritesFragment();
+        private LinesFragment linesFragment = new LinesFragment();
+        private StopsFragment stopsFragment = new StopsFragment();
+        private ViewPager viewPager;
+        private TabFragmentsAdapter fragmentsAdapter;
+
+        private string lastSearch = "";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,18 +58,27 @@ namespace TramUrWay.Android
             drawer.SetDrawerListener(toggle);
             toggle.SyncState();
 
+            // Tabs
+            viewPager = FindViewById<ViewPager>(Resource.Id.MainActivity_ViewPager);
+            viewPager.Adapter = fragmentsAdapter = new TabFragmentsAdapter(SupportFragmentManager, favoritesFragment, linesFragment, stopsFragment);
+
+            TabLayout tabLayout = FindViewById<TabLayout>(Resource.Id.MainActivity_Tabs);
+            tabLayout.SetupWithViewPager(viewPager);
+
+            // Setup navigation view
             navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             navigationView.SetNavigationItemSelectedListener(this);
 
-            if (App.Database.GetFavoriteStops().Any())
-                currentItem = Resource.Id.SideMenu_Favorites;
+            for (int i = 0; i < navigationView.Menu.Size(); i++)
+            {
+                IMenuItem menuItem = navigationView.Menu.GetItem(i);
+                menuItem.SetChecked(menuItem.ItemId == Resource.Id.SideMenu_Home);
+            }
+
+            if (App.Config.ShowFavorites && App.Database.GetFavoriteStops().Any())
+                viewPager.SetCurrentItem(0, true);
             else
-                currentItem = Resource.Id.SideMenu_Lines;
-        }
-        protected override void OnResume()
-        {
-            base.OnResume();
-            Refresh();
+                viewPager.SetCurrentItem(1, true);
         }
 
         public override void OnBackPressed()
@@ -89,11 +105,6 @@ namespace TramUrWay.Android
                     StartActivity(new Intent(this, typeof(AboutActivity)));
                     break;
                 }
-
-                default:
-                    currentItem = item.ItemId;
-                    Refresh();
-                    break;
             }
 
             drawer.CloseDrawer(GravityCompat.Start);
@@ -121,63 +132,24 @@ namespace TramUrWay.Android
             return base.OnCreateOptionsMenu(menu);
         }
 
-        private void Refresh()
-        {
-            for (int i = 0; i < navigationView.Menu.Size(); i++)
-            {
-                IMenuItem menuItem = navigationView.Menu.GetItem(i);
-                menuItem.SetChecked(menuItem.ItemId == currentItem);
-            }
-
-            switch (currentItem)
-            {
-                case Resource.Id.SideMenu_Favorites: RefreshFavorites(); break;
-                case Resource.Id.SideMenu_Lines: RefreshLines(); break;
-                case Resource.Id.SideMenu_Stops: RefreshStops(); break;
-                case Resource.Id.SideMenu_Routes: RefreshRoutes(); break;
-                case Resource.Id.SideMenu_Map: RefreshMap(); break;
-            }
-        }
-        private void RefreshFavorites()
-        {
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new FavoritesFragment());
-            fragmentTransaction.Commit();
-        }
-        private void RefreshLines()
-        {
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new LinesFragment());
-            fragmentTransaction.Commit();
-        }
-        private void RefreshStops()
-        {
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new StopsFragment());
-            fragmentTransaction.Commit();
-        }
-        private void RefreshRoutes()
-        {
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new RoutesFragment());
-            fragmentTransaction.Commit();
-        }
-        private void RefreshMap()
-        {
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MainActivity_Fragment, fragment = new MapFragment());
-            fragmentTransaction.Commit();
-        }
-
         private void SearchView_QueryTextChange(object sender, QueryTextChangeEventArgs e)
         {
-            if (fragment?.HandleSearch(sender, e) == true)
-                return;
+            searchView.Post(() =>
+            {
+                viewPager.SetCurrentItem(2, true);
+                stopsFragment.OnQueryTextChanged(sender, e);
+            });
 
-            currentItem = Resource.Id.SideMenu_Stops;
-            Refresh();
+            if (lastSearch.Length > 1 && e.NewText.Length == 0)
+            {
+                searchView.Post(() =>
+                {
+                    searchView.ClearFocus();
+                    searchView.Iconified = true;
+                });
+            }
 
-            searchView.Post(() => fragment?.HandleSearch(sender, e));
+            lastSearch = e.NewText;
         }
     }
 }

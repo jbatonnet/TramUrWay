@@ -17,11 +17,14 @@ using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
+using Java.Lang;
 
 namespace TramUrWay.Android
 {
-    public class LinesFragment : MainFragment
+    public class LinesFragment : TabFragment
     {
+        public override string Title => "Lignes";
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.LinesFragment, container, false);

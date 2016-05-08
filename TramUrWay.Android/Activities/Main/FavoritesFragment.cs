@@ -17,34 +17,39 @@ using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
+using Java.Lang;
 
 namespace TramUrWay.Android
 {
-    public class FavoritesFragment : MainFragment
+    public class FavoritesFragment : TabFragment
     {
-        private bool favorites;
+        public override string Title => "Favoris";
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            favorites = App.Database.GetFavoriteLines().Any() || App.Database.GetFavoriteStops().Any();
-
-            return inflater.Inflate(favorites ? Resource.Layout.FavoritesFragment : Resource.Layout.NoFavoritesFragment, container, false);
+            return inflater.Inflate(Resource.Layout.FavoritesFragment, container, false);
         }
 
-        public override void OnActivityCreated(Bundle savedInstanceState)
+        public override void OnResume()
         {
-            base.OnActivityCreated(savedInstanceState);
+            base.OnResume();
+
+            bool favorites = App.Database.GetFavoriteLines().Any() || App.Database.GetFavoriteStops().Any();
+
+            View favoritesView = View.FindViewById(Resource.Id.FavoritesFragment_Favorites);
+            favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
+
+            View noFavoritesView = View.FindViewById(Resource.Id.FavoritesFragment_NoFavorites);
+            noFavoritesView.Visibility = favorites ? ViewStates.Gone : ViewStates.Visible;
 
             if (favorites)
             {
                 RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
-                recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                 recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
                 recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
                 recyclerView.SetAdapter(new LinesAdapter(App.Database.GetFavoriteLines()));
 
                 recyclerView = View.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
-                recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
                 recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
                 recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
                 recyclerView.SetAdapter(new StopsAdapter(App.Database.GetFavoriteStops()));

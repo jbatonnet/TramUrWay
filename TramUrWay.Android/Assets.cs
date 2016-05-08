@@ -159,9 +159,16 @@ namespace TramUrWay.Android
                     route.TimeTable = timeTable;
                 }
 
+                // Post process each step to build the linked list
+                for (int i = 0; i < route.Steps.Length; i++)
+                {
+                    route.Steps[i].Previous = i > 0 ? route.Steps[i - 1] : null;
+                    route.Steps[i].Next = i < route.Steps.Length - 1 ? route.Steps[i + 1] : null;
+                }
+                
                 lineRoutes.Add(route);
             }
-
+            
             line.Routes = lineRoutes.ToArray();
 
             return line;

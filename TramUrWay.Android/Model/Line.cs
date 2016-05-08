@@ -21,5 +21,7 @@ namespace TramUrWay.Android
 
         public Stop[] Stops { get; set; }
         public Route[] Routes { get; set; }
+
+        public override string ToString() => Name ?? $"{Type} ligne {Id}";
     }
 }

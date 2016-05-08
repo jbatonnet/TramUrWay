@@ -21,6 +21,8 @@ using Android.Views;
 using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
+using FragmentTransaction = Android.Support.V4.App.FragmentTransaction;
+
 using System.Threading.Tasks;
 using System.Threading;
 using Android.Gms.Maps.Model;
@@ -29,7 +31,7 @@ using Android.Views.Animations;
 
 namespace TramUrWay.Android
 {
-    public class MapFragment : MainFragment, IOnMapReadyCallback
+    public class MapFragment : Fragment, IOnMapReadyCallback
     {
         public class MarkerAnimator : Java.Lang.Object, ValueAnimator.IAnimatorUpdateListener
         {
@@ -67,7 +69,7 @@ namespace TramUrWay.Android
         private const float AnimationZoomLimit = 14.2f;
 
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
-        private global::Android.Gms.Maps.MapFragment mapFragment;
+        private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
         private LatLngBounds cameraBounds;
         private CameraPosition cameraPosition;
@@ -87,12 +89,12 @@ namespace TramUrWay.Android
             View view = inflater.Inflate(Resource.Layout.MapFragment, container, false);
 
             // Setup maps fragment
-            mapFragment = global::Android.Gms.Maps.MapFragment.NewInstance();
+            mapFragment = SupportMapFragment.NewInstance();
             mapFragment.GetMapAsync(this);
 
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MapFragment_Map, mapFragment);
-            fragmentTransaction.Commit();
+            //FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+            //fragmentTransaction.Replace(Resource.Id.MapFragment_Map, mapFragment);
+            //fragmentTransaction.Commit();
 
             return view;
         }
