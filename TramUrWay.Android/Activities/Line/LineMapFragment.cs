@@ -55,15 +55,21 @@ namespace TramUrWay.Android
             //googleMap.MarkerClick += GoogleMap_MarkerClick;
             //googleMap.MapClick += GoogleMap_MapClick;
 
-            // Set initial zoom level
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
+            // Compute global line bounds to initialize camera
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            foreach (Route route in line.Routes)
+                foreach (Step step in route.Steps)
+                    boundsBuilder.Include(new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude));
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
             googleMap.MoveCamera(cameraUpdate);
 
             // Add a polyline between steps
             foreach (Route route in line.Routes)
             {
                 PolylineOptions polyline = new PolylineOptions()
-                    .InvokeWidth(10)
+                    .InvokeWidth(5)
+                    .InvokeZIndex(1)
                     .InvokeColor(color.ToArgb());
 
                 foreach (Step step in route.Steps.Take(route.Steps.Length - 1))
@@ -78,18 +84,30 @@ namespace TramUrWay.Android
                 googleMap.AddPolyline(polyline);
             }
 
-            // Add a point for each station
-            /*foreach (Route route in line.Routes)
+            // Add a marker for each station
+            foreach (Route route in line.Routes)
                 foreach (Step step in route.Steps)
                 {
+                    LatLng latLng = new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude);
+
+                    // TODO: Use markers
                     CircleOptions circle = new CircleOptions()
-                        //.InvokeRadius(20)
+                        .InvokeCenter(latLng)
+                        .InvokeRadius(40)
+                        .InvokeZIndex(2)
                         .InvokeFillColor(unchecked((int)0xFFFFFFFF))
-                        .InvokeStrokeColor(color.ToArgb());
-                        //.InvokeStrokeWidth(5);
+                        .InvokeStrokeColor(color.ToArgb())
+                        .InvokeStrokeWidth(5);
 
                     googleMap.AddCircle(circle);
-                }*/
+                }
+        }
+
+        public void OnRefreshing()
+        {
+        }
+        public void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
+        {
         }
     }
 }

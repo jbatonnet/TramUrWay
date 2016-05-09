@@ -326,9 +326,6 @@
     <AndroidResource Include="Resources\drawable\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\RouteFragment.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable-v21\ic_map.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -377,7 +374,7 @@
     <AndroidResource Include="Resources\layout\LineMapFragment.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\LineRouteFragment.xml" />
+    <AndroidResource Include="Resources\layout\RouteFragment.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_home.png" />

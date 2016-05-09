@@ -31,15 +31,16 @@ namespace TramUrWay.Android
     {
         public override string Title => "Vers " + route.Steps.Last().Stop.Name;
 
+        public event EventHandler QueryRefresh;
+
         private Route route;
         private Color color;
         private RouteAdapter routeAdapter;
+        private TimeStep[] lastTimeSteps;
+        private Transport[] lastTransports;
 
         private SwipeRefreshLayout swipeRefresh;
         private RecyclerView recyclerView;
-        private Snackbar snackbar;
-
-        private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
 
         public RouteFragment(Route route, Color color)
         {
@@ -53,7 +54,7 @@ namespace TramUrWay.Android
 
             // Refresh widget
             swipeRefresh = view.FindViewById<SwipeRefreshLayout>(Resource.Id.RouteFragment_SwipeRefresh);
-            swipeRefresh.Refresh += SwipeRefresh_Refresh;
+            swipeRefresh.Refresh += (s, e) => QueryRefresh?.Invoke(s, e);
             swipeRefresh.SetColorSchemeColors(color.ToArgb());
 
             // Steps list
@@ -64,141 +65,23 @@ namespace TramUrWay.Android
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(routeAdapter = new RouteAdapter(route));
 
+            if (lastTimeSteps != null)
+                routeAdapter.Update(lastTimeSteps, lastTransports);
+
             return view;
         }
-        public override void OnPause()
-        {
-            refreshCancellationTokenSource?.Cancel();
-            snackbar?.Dismiss();
 
-            base.OnPause();
+        public void OnRefreshing()
+        {
+            swipeRefresh?.Post(() => swipeRefresh.Refreshing = true);
         }
-        public override void OnResume()
+        public void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
         {
-            base.OnResume();
+            lastTimeSteps = timeSteps.Where(t => t.Step.Route == route).ToArray();
+            lastTransports = transports.Where(t => t.TimeStep.Step.Route == route).ToArray();
 
-            // Cancel refresh tasks
-            refreshCancellationTokenSource?.Cancel();
-            refreshCancellationTokenSource = new CancellationTokenSource();
-
-            // Run new refresh tasks
-            Task.Run(async () =>
-            {
-                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
-                while (!cancellationTokenSource.IsCancellationRequested)
-                {
-                    Refresh();
-                    await Task.Delay(App.GlobalUpdateDelay * 1000);
-                }
-            });
-            Task.Run(async () =>
-            {
-                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
-                while (!cancellationTokenSource.IsCancellationRequested)
-                {
-                    RefreshIcons();
-                    await Task.Delay(App.GlobalUpdateDelay / 4 * 1000);
-                }
-            });
-
-            swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
-        }
-
-        private void SwipeRefresh_Refresh(object sender, EventArgs e)
-        {
-            if (snackbar?.IsShown == false)
-                snackbar = null;
-
-            Refresh();
-        }
-        private void Snackbar_Retry(View v)
-        {
-            snackbar?.Dismiss();
-            snackbar = null;
-
-            Refresh();
-        }
-        private void Snackbar_Activate(View v)
-        {
-            snackbar?.Dismiss();
-            snackbar = null;
-
-            Intent intent = new Intent(Activity, typeof(SettingsActivity));
-            StartActivity(intent);
-        }
-
-        public override async void Refresh()
-        {
-            await Task.Run(() =>
-            {
-                TimeStep[] timeSteps;
-
-                // Online time steps
-                try
-                {
-                    if (App.Config.OfflineMode)
-                        throw new Exception();
-
-                    swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
-
-                    timeSteps = App.Service.GetLiveTimeSteps().OrderBy(t => t.Date).ToArray();
-                    snackbar?.Dismiss();
-                }
-                catch (Exception e)
-                {
-                    TimeTable timeTable = route.TimeTable;
-
-                    // Offline data
-                    if (timeTable != null)
-                    {
-                        DateTime now = DateTime.Now;
-                        timeSteps = route.Steps.SelectMany(s => timeTable.GetStepsFromStep(s, now).Take(3)).ToArray();
-
-                        if (snackbar == null)
-                        {
-                            snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite);
-                            if (App.Config.OfflineMode)
-                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
-                            else
-                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
-
-                            snackbar.Show();
-                        }
-                    }
-
-                    // No data
-                    else
-                    {
-                        timeSteps = null;
-
-                        if (snackbar == null)
-                        {
-                            snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite);
-                            if (App.Config.OfflineMode)
-                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
-                            else
-                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
-
-                            snackbar.Show();
-                        }
-                    }
-                }
-
-                routeAdapter.UpdateSteps(timeSteps);
-
-                swipeRefresh.Post(() => swipeRefresh.Refreshing = false);
-
-                Activity.RunOnUiThread(OnRefreshed);
-            });
-        }
-        private void RefreshIcons()
-        {
-            routeAdapter.UpdateIcons();
-            Activity.RunOnUiThread(OnRefreshed);
-        }
-        private void OnRefreshed()
-        {
-            routeAdapter?.NotifyDataSetChanged();
+            routeAdapter?.Update(lastTimeSteps, lastTransports);
+            swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
         }
     }
 }

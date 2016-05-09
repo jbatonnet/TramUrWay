@@ -55,7 +55,7 @@ namespace TramUrWay.Android
 
         private List<StepViewHolder> viewHolders = new List<StepViewHolder>();
         private TimeStep[][] stepTimes;
-        private float?[] tramProgresses;
+        private Transport[] stepTransports;
         private Color color;
 
         public RouteAdapter(Route route)
@@ -64,47 +64,20 @@ namespace TramUrWay.Android
             color = Utils.GetColorForLine(null, route.Line);
         }
 
-        public void UpdateSteps(IEnumerable<TimeStep> timeSteps)
+        public void Update(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
         {
             if (timeSteps == null)
             {
                 stepTimes = null;
-                tramProgresses = null;
+                stepTransports = null;
 
                 return;
             }
 
-            DateTime now = DateTime.Now;
-
-            // Update timesteps
             stepTimes = Route.Steps.Select(s => timeSteps.Where(t => t.Step == s).ToArray()).ToArray();
+            stepTransports = Route.Steps.Select(s => transports.FirstOrDefault(t => t.TimeStep.Step == s)).ToArray();
 
-            UpdateIcons();
-        }
-        public void UpdateIcons()
-        {
-            if (Route == null || stepTimes == null)
-                return;
-
-            DateTime now = DateTime.Now;
-
-            // Update transport positions
-            tramProgresses = new float?[Route.Steps.Length - 1];
-            for (int i = 0; i < Route.Steps.Length - 1; i++)
-            {
-                Step step = Route.Steps[i];
-
-                if (stepTimes[i + 1].Length == 0)
-                    continue;
-
-                if (stepTimes[i].Length > 0 && stepTimes[i][0].Date < stepTimes[i + 1][0].Date)
-                    continue;
-
-                TimeSpan diff = stepTimes[i + 1][0].Date - now;
-
-                tramProgresses[i] = (float)(1 - Math.Min(diff.TotalMinutes, step.Duration.Value.TotalMinutes) / step.Duration.Value.TotalMinutes);
-                //tramProgresses[i] = step.Speed.Evaluate(tramProgresses[i].Value);
-            }
+            NotifyDataSetChanged();
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -146,13 +119,13 @@ namespace TramUrWay.Android
                 viewHolder.Description.Text = "Informations non disponibles";
 
             // Update icon positions
-            if (tramProgresses != null)
+            if (stepTransports != null)
             {
                 float density = viewHolder.ItemView.Context.Resources.DisplayMetrics.Density;
 
                 {
-                    float? currentProgress = position == tramProgresses.Length ? null : tramProgresses[position];
-                    float currentPosition = currentProgress == null ? 72 : (int)(1 + 36 - 16 + 72 * currentProgress.Value);
+                    Transport currentTransport = position == stepTransports.Length ? null : stepTransports[position];
+                    float currentPosition = currentTransport == null ? 72 : (int)(1 + 36 - 16 + 72 * currentTransport.Progress);
 
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)(32 * density), (int)(32 * density));
                     layoutParams.AddRule(LayoutRules.CenterHorizontal);
@@ -162,8 +135,8 @@ namespace TramUrWay.Android
                 }
 
                 {
-                    float? previousProgress = position == 0 ? null : tramProgresses[position - 1];
-                    float previousPosition = previousProgress == null ? 72 : (int)(-1 - 36 - 16 + 72 * previousProgress.Value);
+                    Transport previousTransport = position == 0 ? null : stepTransports[position - 1];
+                    float previousPosition = previousTransport == null ? 72 : (int)(-1 - 36 - 16 + 72 * previousTransport.Progress);
 
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams((int)(32 * density), (int)(32 * density));
                     layoutParams.AddRule(LayoutRules.CenterHorizontal);

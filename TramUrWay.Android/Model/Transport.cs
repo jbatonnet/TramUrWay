@@ -133,6 +133,11 @@ namespace TramUrWay.Android
             }
 
             // Recompute progresses for each transport
+            me.UpdateProgress(dateTime);
+        }
+        public static void UpdateProgress(this List<Transport> me, DateTime dateTime)
+        {
+            // Recompute progresses for each transport
             foreach (Transport transport in me)
             {
                 if (transport.Step == null)
