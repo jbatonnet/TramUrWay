@@ -330,6 +330,10 @@ namespace TramUrWay.Baker
                         if (step != null && trajectory.Count > 0)
                             step.Trajectory = trajectory.Take(trajectory.Count - 1).ToArray();
                     }
+
+                    // Update stop position with the new trajectory
+                    for (int i = 0; i < route.Steps.Length - 1; i++)
+                        route.Steps[i].Stop.Position = route.Steps[i].Trajectory[0].Position;
                 }
 
             // Compute path length

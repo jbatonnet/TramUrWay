@@ -94,12 +94,13 @@ namespace TramUrWay.Android
             }
 
             viewPager = FindViewById<ViewPager>(Resource.Id.LineActivity_ViewPager);
+            viewPager.OffscreenPageLimit = fragments.Count;
             viewPager.Adapter = new TabFragmentsAdapter(SupportFragmentManager, fragments.ToArray());
             viewPager.SetCurrentItem(1, false);
-            viewPager.OffscreenPageLimit = fragments.Count;
 
             TabLayout tabLayout = FindViewById<TabLayout>(Resource.Id.LineActivity_Tabs);
             tabLayout.SetBackgroundColor(color);
+            tabLayout.SetSelectedTabIndicatorColor(unchecked((int)0xFFFFFFFF));
             tabLayout.SetupWithViewPager(viewPager);
             tabLayout.GetTabAt(0).SetIcon(Resource.Drawable.ic_map).SetText("");
         }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Utilities;
@@ -18,6 +19,9 @@ namespace TramUrWay.Android
 {
     public class LineMapFragment : TabFragment, IOnMapReadyCallback
     {
+        private const int StopIconSize = 10;
+        private const int TransportIconSize = 22;
+
         public override string Title => "Map";
 
         private Line line;
@@ -25,6 +29,9 @@ namespace TramUrWay.Android
 
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
+
+        private BitmapDescriptor stopBitmapDescriptor;
+        private BitmapDescriptor transportBitmapDescriptor;
 
         public LineMapFragment(Line line, Color color)
         {
@@ -34,26 +41,72 @@ namespace TramUrWay.Android
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.LineMapFragment, container, false);
+            return inflater.Inflate(Resource.Layout.LineMapFragment, container, false);
+        }
+        protected override void OnGotFocus()
+        {
+            base.OnGotFocus();
 
-            // Setup maps fragment
-            mapFragment = SupportMapFragment.NewInstance();
-            mapFragment.GetMapAsync(this);
+            // Late load map
+            if (mapFragment == null)
+            {
+                mapFragment = SupportMapFragment.NewInstance();
+                mapFragment.GetMapAsync(this);
 
-            FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.MapFragment_Map, mapFragment);
-            fragmentTransaction.Commit();
-         
-            return view;
+                FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
+                fragmentTransaction.Replace(Resource.Id.MapFragment_Map, mapFragment);
+                fragmentTransaction.Commit();
+            }
         }
         public void OnMapReady(GoogleMap googleMap)
         {
             this.googleMap = googleMap;
 
+            // Configure map
+            googleMap.UiSettings.MyLocationButtonEnabled = true;
+            googleMap.UiSettings.MapToolbarEnabled = true;
+
             // Register events
             //googleMap.CameraChange += GoogleMap_CameraChange;
             //googleMap.MarkerClick += GoogleMap_MarkerClick;
             //googleMap.MapClick += GoogleMap_MapClick;
+
+            // Preload icons
+            Task iconLoader = Task.Run(() =>
+            {
+                float density = Resources.DisplayMetrics.Density;
+                Paint paint = new Paint();
+
+                // Station icon
+                int stopIconSize = (int)(StopIconSize * density);
+                Bitmap stopBitmap = Bitmap.CreateBitmap(stopIconSize, stopIconSize, Bitmap.Config.Argb8888);
+                Canvas stopCanvas = new Canvas(stopBitmap);
+
+                paint.SetARGB(color.A, color.R, color.G, color.B);
+                stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2, paint);
+
+                paint.SetARGB(0xFF, 0xFF, 0xFF, 0xFF);
+                stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2 - (int)(density * 2), paint);
+
+                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(stopBitmap);
+
+                // Line icon
+                int transportIconSize = (int)(TransportIconSize * density);
+                Drawable transportDrawable = Resources.GetDrawable(Resource.Drawable.train);
+                Drawable transportDrawableOutline = Resources.GetDrawable(Resource.Drawable.train_glow);
+
+                Bitmap transportBitmap = Bitmap.CreateBitmap(transportIconSize, transportIconSize, Bitmap.Config.Argb8888);
+                Canvas transportCanvas = new Canvas(transportBitmap);
+
+                transportDrawableOutline.SetBounds(0, 0, transportIconSize, transportIconSize);
+                transportDrawableOutline.Draw(transportCanvas);
+
+                transportDrawable.SetColorFilter(color, PorterDuff.Mode.SrcIn);
+                transportDrawable.SetBounds(0, 0, transportIconSize, transportIconSize);
+                transportDrawable.Draw(transportCanvas);
+
+                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(transportBitmap);
+            });
 
             // Compute global line bounds to initialize camera
             LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
@@ -85,21 +138,19 @@ namespace TramUrWay.Android
             }
 
             // Add a marker for each station
+            iconLoader.Wait();
+
             foreach (Route route in line.Routes)
                 foreach (Step step in route.Steps)
                 {
                     LatLng latLng = new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude);
 
-                    // TODO: Use markers
-                    CircleOptions circle = new CircleOptions()
-                        .InvokeCenter(latLng)
-                        .InvokeRadius(40)
-                        .InvokeZIndex(2)
-                        .InvokeFillColor(unchecked((int)0xFFFFFFFF))
-                        .InvokeStrokeColor(color.ToArgb())
-                        .InvokeStrokeWidth(5);
+                    MarkerOptions marker = new MarkerOptions()
+                        .Anchor(0.5f, 0.5f)
+                        .SetPosition(latLng)
+                        .SetIcon(stopBitmapDescriptor);
 
-                    googleMap.AddCircle(circle);
+                    googleMap.AddMarker(marker);
                 }
         }
 
