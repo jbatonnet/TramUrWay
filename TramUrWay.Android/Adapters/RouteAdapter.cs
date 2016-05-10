@@ -20,9 +20,11 @@ namespace TramUrWay.Android
 {
     public class StepViewHolder : RecyclerView.ViewHolder
     {
-        public View Rail { get; }
+        public View Rail1 { get; }
+        public View Rail2 { get; }
         public ImageView Icon1 { get; }
         public ImageView Icon2 { get; }
+        public ImageView Dot { get; }
         public TextView Name { get; }
         public TextView Description { get; }
         public ImageView Favorite { get; }
@@ -31,9 +33,11 @@ namespace TramUrWay.Android
 
         public StepViewHolder(View itemView) : base(itemView)
         {
-            Rail = itemView.FindViewById(Resource.Id.StepItem_Rail);
+            Rail1 = itemView.FindViewById(Resource.Id.StepItem_Rail1);
+            Rail2 = itemView.FindViewById(Resource.Id.StepItem_Rail2);
             Icon1 = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Icon1);
             Icon2 = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Icon2);
+            Dot = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Dot);
             Name = itemView.FindViewById<TextView>(Resource.Id.StepItem_Name);
             Description = itemView.FindViewById<TextView>(Resource.Id.StepItem_Description);
             Favorite = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Favorite);
@@ -44,6 +48,9 @@ namespace TramUrWay.Android
 
     public class RouteAdapter : RecyclerView.Adapter, View.IOnClickListener
     {
+        private const int StopIconSize = 32;
+        private const int TransportIconSize = 48;
+
         public override int ItemCount
         {
             get
@@ -57,6 +64,9 @@ namespace TramUrWay.Android
         private TimeStep[][] stepTimes;
         private Transport[] stepTransports;
         private Color color;
+
+        private Bitmap stopBitmap;
+        private Bitmap transportBitmap;
 
         public RouteAdapter(Route route)
         {
@@ -75,17 +85,30 @@ namespace TramUrWay.Android
             }
 
             stepTimes = Route.Steps.Select(s => timeSteps.Where(t => t.Step == s).ToArray()).ToArray();
-            stepTransports = Route.Steps.Select(s => transports.FirstOrDefault(t => t.TimeStep.Step == s)).ToArray();
+            stepTransports = Route.Steps.Select(s => transports.FirstOrDefault(t => t.Step == s)).ToArray();
 
             NotifyDataSetChanged();
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
+            // Late load icons
+            if (stopBitmap == null)
+            {
+                stopBitmap = Utils.GetStopIconForLine(parent.Context, Route.Line, StopIconSize);
+                transportBitmap = Utils.GetTransportIconForLine(parent.Context, Route.Line, TransportIconSize);
+            }
+
             View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.StepItem, parent, false);
             itemView.SetOnClickListener(this);
 
-            return new StepViewHolder(itemView) { FavoriteClick = Favorite_Click };
+            StepViewHolder viewHolder = new StepViewHolder(itemView) { FavoriteClick = Favorite_Click };
+
+            viewHolder.Icon1.SetImageBitmap(transportBitmap);
+            viewHolder.Icon2.SetImageBitmap(transportBitmap);
+            viewHolder.Dot.SetImageBitmap(stopBitmap);
+
+            return viewHolder;
         }
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
@@ -97,10 +120,11 @@ namespace TramUrWay.Android
             {
                 viewHolder.Name.Text = step.Stop.Name;
 
-                // Update colors
-                viewHolder.Rail.SetBackgroundColor(color);
-                viewHolder.Icon1.SetColorFilter(color);
-                viewHolder.Icon2.SetColorFilter(color);
+                viewHolder.Rail1.SetBackgroundColor(color);
+                viewHolder.Rail2.SetBackgroundColor(color);
+
+                viewHolder.Rail1.Visibility = position == 0 ? ViewStates.Gone : ViewStates.Visible;
+                viewHolder.Rail2.Visibility = position == Route.Steps.Length - 1 ? ViewStates.Gone : ViewStates.Visible;
             }
 
             // Update texts

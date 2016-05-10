@@ -72,6 +72,12 @@ namespace TramUrWay.Android
         {
             TimeStepViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view);
             TimeStep timeStep = timeSteps[viewHolder.AdapterPosition];
+
+            Intent intent = new Intent(view.Context, typeof(LineActivity));
+            intent.PutExtra("Line", timeStep.Step.Route.Line.Id);
+            intent.PutExtra("Route", timeStep.Step.Route.Id);
+
+            view.Context.StartActivity(intent);
         }
     }
 }

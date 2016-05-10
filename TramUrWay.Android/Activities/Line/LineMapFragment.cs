@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Android.Animation;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
@@ -13,12 +13,43 @@ using Android.Support.V4.App;
 using Android.Utilities;
 using Android.Views;
 
-using Java.Lang;
+using Activity = Android.App.Activity;
 
 namespace TramUrWay.Android
 {
-    public class LineMapFragment : TabFragment, IOnMapReadyCallback
+    public class LineMapFragment : TabFragment, IOnMapReadyCallback, GoogleMap.IOnMapLoadedCallback
     {
+        public class MarkerAnimator : Java.Lang.Object, ValueAnimator.IAnimatorUpdateListener
+        {
+            private Activity activity;
+            private Marker marker;
+            private Transport transport;
+            private Action<LatLng> positionUpdater;
+
+            public MarkerAnimator(Activity activity, Marker marker, Transport transport, Action<LatLng> positionUpdater)
+            {
+                this.activity = activity;
+                this.marker = marker;
+                this.transport = transport;
+                this.positionUpdater = positionUpdater;
+            }
+
+            public void OnAnimationUpdate(ValueAnimator animation)
+            {
+                float progress = transport.Progress + (transport.NextProgress - transport.Progress) * animation.AnimatedFraction;
+                int index = transport.Step.Trajectory.TakeWhile(s => s.Index <= progress).Count();
+
+                bool last = index >= transport.Step.Trajectory.Length;
+                TrajectoryStep from = transport.Step.Trajectory[index - 1];
+                TrajectoryStep to = last ? transport.TimeStep.Step.Trajectory.First() : transport.Step.Trajectory[index];
+
+                progress = (progress - from.Index) / ((last ? 1 : to.Index) - from.Index);
+                LatLng position = new LatLng(from.Position.Latitude + (to.Position.Latitude - from.Position.Latitude) * progress, from.Position.Longitude + (to.Position.Longitude - from.Position.Longitude) * progress);
+
+                positionUpdater(position);
+            }
+        }
+
         private const int StopIconSize = 10;
         private const int TransportIconSize = 22;
 
@@ -29,6 +60,7 @@ namespace TramUrWay.Android
 
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
+        private Dictionary<Transport, Marker> transportMarkers = new Dictionary<Transport, Marker>();
 
         private BitmapDescriptor stopBitmapDescriptor;
         private BitmapDescriptor transportBitmapDescriptor;
@@ -67,6 +99,7 @@ namespace TramUrWay.Android
             googleMap.UiSettings.MapToolbarEnabled = true;
 
             // Register events
+            mapFragment.View.Post(OnMapLoaded);
             //googleMap.CameraChange += GoogleMap_CameraChange;
             //googleMap.MarkerClick += GoogleMap_MarkerClick;
             //googleMap.MapClick += GoogleMap_MapClick;
@@ -74,48 +107,9 @@ namespace TramUrWay.Android
             // Preload icons
             Task iconLoader = Task.Run(() =>
             {
-                float density = Resources.DisplayMetrics.Density;
-                Paint paint = new Paint();
-
-                // Station icon
-                int stopIconSize = (int)(StopIconSize * density);
-                Bitmap stopBitmap = Bitmap.CreateBitmap(stopIconSize, stopIconSize, Bitmap.Config.Argb8888);
-                Canvas stopCanvas = new Canvas(stopBitmap);
-
-                paint.SetARGB(color.A, color.R, color.G, color.B);
-                stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2, paint);
-
-                paint.SetARGB(0xFF, 0xFF, 0xFF, 0xFF);
-                stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2 - (int)(density * 2), paint);
-
-                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(stopBitmap);
-
-                // Line icon
-                int transportIconSize = (int)(TransportIconSize * density);
-                Drawable transportDrawable = Resources.GetDrawable(Resource.Drawable.train);
-                Drawable transportDrawableOutline = Resources.GetDrawable(Resource.Drawable.train_glow);
-
-                Bitmap transportBitmap = Bitmap.CreateBitmap(transportIconSize, transportIconSize, Bitmap.Config.Argb8888);
-                Canvas transportCanvas = new Canvas(transportBitmap);
-
-                transportDrawableOutline.SetBounds(0, 0, transportIconSize, transportIconSize);
-                transportDrawableOutline.Draw(transportCanvas);
-
-                transportDrawable.SetColorFilter(color, PorterDuff.Mode.SrcIn);
-                transportDrawable.SetBounds(0, 0, transportIconSize, transportIconSize);
-                transportDrawable.Draw(transportCanvas);
-
-                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(transportBitmap);
+                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetStopIconForLine(Activity, line, StopIconSize));
+                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetTransportIconForLine(Activity, line, TransportIconSize));
             });
-
-            // Compute global line bounds to initialize camera
-            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-            foreach (Route route in line.Routes)
-                foreach (Step step in route.Steps)
-                    boundsBuilder.Include(new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude));
-
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
-            googleMap.MoveCamera(cameraUpdate);
 
             // Add a polyline between steps
             foreach (Route route in line.Routes)
@@ -154,12 +148,38 @@ namespace TramUrWay.Android
                     googleMap.AddMarker(marker);
                 }
         }
+        public void OnMapLoaded()
+        {
+            // Compute global line bounds to initialize camera
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            foreach (Route route in line.Routes)
+                foreach (Step step in route.Steps)
+                    boundsBuilder.Include(new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude));
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
+            googleMap.MoveCamera(cameraUpdate);
+        }
 
         public void OnRefreshing()
         {
         }
         public void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
         {
+            List<Transport> unusedTransports = transportMarkers.Keys.ToList();
+
+            foreach (Transport transport in transports)
+            {
+                Marker marker;
+
+                if (!transportMarkers.TryGetValue(transport, out marker))
+                {
+
+                }
+                else
+                {
+                    unusedTransports.Remove(transport);
+                }
+            }
         }
     }
 }

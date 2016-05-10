@@ -38,19 +38,22 @@ namespace TramUrWay.Android
                 {
                     Dictionary<Step, TimeStep> stepTimeSteps = timeSteps.GroupBy(s => s.Step)
                                                                         .ToDictionary(g => g.Key, g => g.OrderBy(s => s.Date).First());
-                    Step step = route.Steps.First();
-                    Step nextStep = step.Next;
+                    Step step = null;
+                    Step nextStep = route.Steps.First();
 
                     for (; nextStep != null; step = nextStep, nextStep = nextStep.Next)
                     {
-                        TimeStep timeStep, nextTimeStep;
+                        TimeStep nextTimeStep;
                         if (!stepTimeSteps.TryGetValue(nextStep, out nextTimeStep))
                             continue;
 
-                        stepTimeSteps.TryGetValue(step, out timeStep);
-                        if (timeStep != null && timeStep.Date < nextTimeStep.Date)
+                        TimeStep timeStep = null;
+                        if (step != null)
+                            stepTimeSteps.TryGetValue(step, out timeStep);
+
+                        if (step == null || (timeStep != null && timeStep.Date < nextTimeStep.Date))
                         {
-                            timeSteps.Remove(timeStep);
+                            timeSteps.Remove(nextTimeStep);
                             //if (nextTimeStep != null)
                             //    timeSteps.Remove(nextTimeStep);
                         }
@@ -152,11 +155,11 @@ namespace TramUrWay.Android
                 if (duration == TimeSpan.Zero)
                     duration = TimeSpan.FromMinutes(2);
 
-                float progress = (float)(1 - Math.Min(diff.TotalMinutes, duration.TotalMinutes) / duration.TotalMinutes);
+                float progress = (float)(1 - diff.TotalMinutes / duration.TotalMinutes);
                 if (progress < 0) progress = 0;
                 if (progress > 1) progress = 1;
 
-                float nextProgress = (float)(1 - Math.Min(diff.Subtract(TimeSpan.FromSeconds(1)).TotalMinutes, duration.TotalMinutes) / duration.TotalMinutes);
+                float nextProgress = (float)(1 - diff.Subtract(TimeSpan.FromSeconds(1)).TotalMinutes / duration.TotalMinutes);
                 if (nextProgress < 0) nextProgress = 0;
                 if (nextProgress > 1) nextProgress = 1;
 

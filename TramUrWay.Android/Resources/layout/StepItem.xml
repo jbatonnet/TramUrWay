@@ -16,43 +16,39 @@
             android:layout_height="match_parent"
             android:background="#f29400"
             android:layout_centerHorizontal="true"
-            android:id="@+id/StepItem_Rail"
-            android:orientation="vertical" />
+            android:id="@+id/StepItem_Rail1"
+            android:orientation="vertical"
+            android:layout_marginBottom="-4dp"
+            android:layout_above="@+id/StepItem_Dot" />
 
-        <TopAlignedImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/train_glow"
-            android:layout_alignTop="@+id/StepItem_Icon1"
-            android:layout_alignBottom="@+id/StepItem_Icon1"
-            android:layout_alignLeft="@+id/StepItem_Icon1"
-            android:layout_alignRight="@+id/StepItem_Icon1" />
+        <LinearLayout
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:background="#f29400"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/StepItem_Rail2"
+            android:orientation="vertical"
+            android:layout_below="@+id/StepItem_Dot"
+            android:layout_marginTop="-4dp" />
+
+        <ImageView
+            android:id="@+id/StepItem_Dot"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_centerInParent="true" />
 
         <TopAlignedImageView
             android:id="@+id/StepItem_Icon1"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/train"
             android:layout_centerHorizontal="true"
-            android:tint="#ffffff"
             android:layout_marginTop="72dp" />
-
-        <TopAlignedImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/train_glow"
-            android:layout_alignTop="@+id/StepItem_Icon2"
-            android:layout_alignBottom="@+id/StepItem_Icon2"
-            android:layout_alignLeft="@+id/StepItem_Icon2"
-            android:layout_alignRight="@+id/StepItem_Icon2" />
 
         <TopAlignedImageView
             android:id="@+id/StepItem_Icon2"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/train"
             android:layout_centerHorizontal="true"
-            android:tint="#ffffff"
             android:layout_marginTop="72dp" />
 
     </RelativeLayout>
@@ -101,5 +97,5 @@
         android:clickable="true"
         android:background="?android:attr/selectableItemBackground"
         android:padding="12dp" />
-    
+
 </RelativeLayout>

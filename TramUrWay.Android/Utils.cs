@@ -22,6 +22,8 @@ using Android.Widget;
 using Android.Appwidget;
 using System.Globalization;
 using System.Text;
+using System.Threading.Tasks;
+using Android.Graphics.Drawables;
 
 namespace TramUrWay.Android
 {
@@ -104,6 +106,49 @@ namespace TramUrWay.Android
                 color = context?.Resources?.GetColor(Resource.Color.colorAccent) ?? default(Color);
 
             return color;
+        }
+
+        public static Bitmap GetStopIconForLine(Context context, Line line, int stopIconSize = 16)
+        {
+            Color color = GetColorForLine(context, line);
+            float density = context.Resources.DisplayMetrics.Density;
+
+            Paint paint = new Paint();
+            paint.AntiAlias = true;
+
+            stopIconSize = (int)(stopIconSize * density);
+            Bitmap stopBitmap = Bitmap.CreateBitmap(stopIconSize, stopIconSize, Bitmap.Config.Argb8888);
+            Canvas stopCanvas = new Canvas(stopBitmap);
+
+            paint.SetARGB(color.A, color.R, color.G, color.B);
+            stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2, paint);
+
+            paint.SetARGB(0xFF, 0xFF, 0xFF, 0xFF);
+            stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2 - (int)(density * (1 + stopIconSize / 16)), paint);
+
+            return stopBitmap;
+        }
+        public static Bitmap GetTransportIconForLine(Context context, Line line, int transportIconSize = 24)
+        {
+            Color color = GetColorForLine(context, line);
+            float density = context.Resources.DisplayMetrics.Density;
+            Paint paint = new Paint();
+
+            transportIconSize = (int)(transportIconSize * density);
+            Drawable transportDrawable = context.Resources.GetDrawable(Resource.Drawable.train);
+            Drawable transportDrawableOutline = context.Resources.GetDrawable(Resource.Drawable.train_glow);
+
+            Bitmap transportBitmap = Bitmap.CreateBitmap(transportIconSize, transportIconSize, Bitmap.Config.Argb8888);
+            Canvas transportCanvas = new Canvas(transportBitmap);
+
+            transportDrawableOutline.SetBounds(0, 0, transportIconSize, transportIconSize);
+            transportDrawableOutline.Draw(transportCanvas);
+
+            transportDrawable.SetColorFilter(color, PorterDuff.Mode.SrcIn);
+            transportDrawable.SetBounds(0, 0, transportIconSize, transportIconSize);
+            transportDrawable.Draw(transportCanvas);
+
+            return transportBitmap;
         }
     }
 }

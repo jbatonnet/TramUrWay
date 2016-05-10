@@ -254,6 +254,8 @@ namespace TramUrWay.Android
         }
         private void OnRefreshed()
         {
+            swipeRefresh.Post(() => swipeRefresh.Refreshing = false);
+
             if (stop != null && timeSteps != null)
             {
                 TimeStep[] lineSteps = timeSteps.Where(s => s.Step.Stop.Line == line)
@@ -268,6 +270,8 @@ namespace TramUrWay.Android
 
                 otherLabel.Visibility = otherSteps.Length == 0 ? ViewStates.Gone : ViewStates.Visible;
             }
+
+            swipeRefresh.PostDelayed(() => swipeRefresh.Refreshing = false, 1000);
         }
     }
 }

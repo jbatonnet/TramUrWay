@@ -61,6 +61,7 @@ namespace TramUrWay.Android
             // Tabs
             viewPager = FindViewById<ViewPager>(Resource.Id.MainActivity_ViewPager);
             viewPager.Adapter = fragmentsAdapter = new TabFragmentsAdapter(SupportFragmentManager, favoritesFragment, linesFragment, stopsFragment);
+            viewPager.PageSelected += ViewPager_PageSelected;
 
             TabLayout tabLayout = FindViewById<TabLayout>(Resource.Id.MainActivity_Tabs);
             tabLayout.SetupWithViewPager(viewPager);
@@ -132,17 +133,35 @@ namespace TramUrWay.Android
             return base.OnCreateOptionsMenu(menu);
         }
 
+        private void ViewPager_PageSelected(object sender, ViewPager.PageSelectedEventArgs e)
+        {
+            if (e.Position != 2 && !string.IsNullOrEmpty(searchView?.Query))
+            {
+                RunOnUiThread(() =>
+                {
+                    lastSearch = "  ";
+
+                    searchView.SetQuery("", true);
+                    stopsFragment.OnQueryTextChanged(sender, new QueryTextChangeEventArgs(true, ""));
+                });
+            }
+        }
         private void SearchView_QueryTextChange(object sender, QueryTextChangeEventArgs e)
         {
-            searchView.Post(() =>
+            if (e.NewText.Length > 0)
             {
-                viewPager.SetCurrentItem(2, true);
-                stopsFragment.OnQueryTextChanged(sender, e);
-            });
+                RunOnUiThread(() =>
+                {
+                    if (viewPager.CurrentItem != 2)
+                        viewPager.SetCurrentItem(2, true);
+
+                    stopsFragment.OnQueryTextChanged(sender, e);
+                });
+            }
 
             if (lastSearch.Length > 1 && e.NewText.Length == 0)
             {
-                searchView.Post(() =>
+                RunOnUiThread(() =>
                 {
                     searchView.ClearFocus();
                     searchView.Iconified = true;

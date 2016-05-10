@@ -53,12 +53,12 @@ namespace TramUrWay.Baker
             LoadSpeedCurves();
 
             // Dump everything
-            //DumpData();
+            DumpData();
 
 
 
             // Temp
-            DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
+            /*DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
             DateTime secondDate = firstDate.AddSeconds(30);
 
             TimeStep[] firstTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, firstDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
@@ -66,7 +66,7 @@ namespace TramUrWay.Baker
 
             List<Transport> transports = new List<Transport>();
             transports.Update(firstTimeSteps, firstDate);
-            transports.Update(secondTimeSteps, secondDate);
+            transports.Update(secondTimeSteps, secondDate);*/
 
 
 
@@ -330,10 +330,6 @@ namespace TramUrWay.Baker
                         if (step != null && trajectory.Count > 0)
                             step.Trajectory = trajectory.Take(trajectory.Count - 1).ToArray();
                     }
-
-                    // Update stop position with the new trajectory
-                    for (int i = 0; i < route.Steps.Length - 1; i++)
-                        route.Steps[i].Stop.Position = route.Steps[i].Trajectory[0].Position;
                 }
 
             // Compute path length
