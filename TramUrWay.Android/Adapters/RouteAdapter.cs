@@ -32,7 +32,7 @@ namespace TramUrWay.Android
         public StepViewHolder(View itemView) : base(itemView)
         {
             Rail = itemView.FindViewById(Resource.Id.StepItem_Rail);
-            Icon1 = itemView.FindViewById< ImageView>(Resource.Id.StepItem_Icon1);
+            Icon1 = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Icon1);
             Icon2 = itemView.FindViewById<ImageView>(Resource.Id.StepItem_Icon2);
             Name = itemView.FindViewById<TextView>(Resource.Id.StepItem_Name);
             Description = itemView.FindViewById<TextView>(Resource.Id.StepItem_Description);

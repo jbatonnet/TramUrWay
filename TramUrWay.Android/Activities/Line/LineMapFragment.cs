@@ -143,7 +143,8 @@ namespace TramUrWay.Android
             foreach (Route route in line.Routes)
                 foreach (Step step in route.Steps)
                 {
-                    LatLng latLng = new LatLng(step.Stop.Position.Latitude, step.Stop.Position.Longitude);
+                    Position position = step.Trajectory == null ? step.Stop.Position : step.Trajectory[0].Position;
+                    LatLng latLng = new LatLng(position.Latitude, position.Longitude);
 
                     MarkerOptions marker = new MarkerOptions()
                         .Anchor(0.5f, 0.5f)
