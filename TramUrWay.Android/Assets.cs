@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
@@ -26,28 +28,24 @@ namespace TramUrWay.Android
             this.context = context;
         }
 
-        public IEnumerable<Line> LoadLines()
+        public Line[] LoadLines()
         {
             string[] files = context.Assets.List("");
-            Dictionary<int, string> orderedFiles = new Dictionary<int, string>();
+            ConcurrentBag<Line> lines = new ConcurrentBag<Line>();
 
-            // Order files
-            foreach (string file in files)
+            // Load lines
+            Parallel.ForEach(files, file =>
             {
                 Match lineFileMatch = lineFileRegex.Match(file);
                 if (!lineFileMatch.Success)
-                    continue;
+                    return;
 
                 int lineId = int.Parse(lineFileMatch.Groups[1].Value);
-                orderedFiles.Add(lineId, file);
-            }
+                using (Stream stream = context.Assets.Open(file))
+                    lines.Add(LoadLine(lineId, stream));
+            });
 
-            // Build lines
-            foreach (var pair in orderedFiles.OrderBy(p => p.Key))
-            {
-                using (Stream stream = context.Assets.Open(pair.Value))
-                    yield return LoadLine(pair.Key, stream);
-            }
+            return lines.OrderBy(l => l.Id).ToArray();
         }
         private Line LoadLine(int id, Stream stream)
         {

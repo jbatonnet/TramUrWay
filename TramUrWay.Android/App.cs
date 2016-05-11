@@ -21,6 +21,8 @@ using Android.Views;
 using Android.Widget;
 using Android.Appwidget;
 
+using LogPriority = Android.Util.LogPriority;
+
 namespace TramUrWay.Android
 {
     public static class App
@@ -45,12 +47,12 @@ namespace TramUrWay.Android
             
             // Initialize logging
 #if DEBUG
-            Log.TraceStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Verbose);
-            Log.DebugStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Debug);
+            Log.TraceStream = new LogcatWriter(App.Name, LogPriority.Verbose);
+            Log.DebugStream = new LogcatWriter(App.Name, LogPriority.Debug);
 #endif
-            Log.InfoStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Info);
-            Log.WarningStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Warn);
-            Log.ErrorStream = new LogcatWriter(App.Name, global::Android.Util.LogPriority.Error);
+            Log.InfoStream = new LogcatWriter(App.Name, LogPriority.Info);
+            Log.WarningStream = new LogcatWriter(App.Name, LogPriority.Warn);
+            Log.ErrorStream = new LogcatWriter(App.Name, LogPriority.Error);
 
             // Load data
             Config = new Config(context);
@@ -71,7 +73,7 @@ namespace TramUrWay.Android
 #if DEBUG
             Lines = Assets.LoadLines()/*.Take(4)*/.ToArray();
 #else
-            Lines = Assets.LoadLines().ToArray();
+            Lines = Assets.LoadLines();
 #endif
         }
 
