@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.Animation;
+using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
@@ -12,7 +13,7 @@ using Android.OS;
 using Android.Support.V4.App;
 using Android.Utilities;
 using Android.Views;
-
+using Android.Views.Animations;
 using Activity = Android.App.Activity;
 
 namespace TramUrWay.Android
@@ -61,9 +62,14 @@ namespace TramUrWay.Android
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
         private Dictionary<Transport, Marker> transportMarkers = new Dictionary<Transport, Marker>();
+        private Dictionary<string, Step> markerSteps = new Dictionary<string, Step>();
+        private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
 
         private BitmapDescriptor stopBitmapDescriptor;
         private BitmapDescriptor transportBitmapDescriptor;
+
+        private TimeStep[] timeStepsCache;
+        private Transport[] transportsCache;
 
         public LineMapFragment(Line line, Color color)
         {
@@ -74,6 +80,31 @@ namespace TramUrWay.Android
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.LineMapFragment, container, false);
+        }
+        public override void OnPause()
+        {
+            refreshCancellationTokenSource?.Cancel();
+
+            base.OnPause();
+        }
+        public override void OnResume()
+        {
+            base.OnResume();
+
+            // Cancel refresh tasks
+            refreshCancellationTokenSource?.Cancel();
+            refreshCancellationTokenSource = new CancellationTokenSource();
+
+            // Run new refresh tasks
+            Task.Run(async () =>
+            {
+                CancellationTokenSource cancellationTokenSource = refreshCancellationTokenSource;
+                while (!cancellationTokenSource.IsCancellationRequested)
+                {
+                    RefreshTimes();
+                    await Task.Delay(1000);
+                }
+            });
         }
         protected override void OnGotFocus()
         {
@@ -103,6 +134,7 @@ namespace TramUrWay.Android
             //googleMap.CameraChange += GoogleMap_CameraChange;
             //googleMap.MarkerClick += GoogleMap_MarkerClick;
             //googleMap.MapClick += GoogleMap_MapClick;
+            googleMap.InfoWindowClick += GoogleMap_InfoWindowClick;
 
             // Preload icons
             Task iconLoader = Task.Run(() =>
@@ -140,14 +172,31 @@ namespace TramUrWay.Android
                     Position position = step.Trajectory == null ? step.Stop.Position : step.Trajectory[0].Position;
                     LatLng latLng = new LatLng(position.Latitude, position.Longitude);
 
-                    MarkerOptions marker = new MarkerOptions()
+                    MarkerOptions markerOptions = new MarkerOptions()
                         .Anchor(0.5f, 0.5f)
                         .SetPosition(latLng)
+                        .SetTitle(step.Stop.Name)
                         .SetIcon(stopBitmapDescriptor);
 
-                    googleMap.AddMarker(marker);
+                    Marker marker = googleMap.AddMarker(markerOptions);
+                    markerSteps.Add(marker.Id, step);
                 }
+
+            if (timeStepsCache != null)
+                OnRefreshed(timeStepsCache, transportsCache);
         }
+
+        private void GoogleMap_InfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
+        {
+            Step step = markerSteps[e.Marker.Id];
+
+            Intent intent = new Intent(Activity, typeof(StopActivity));
+            intent.PutExtra("Stop", step.Stop.Id);
+            intent.PutExtra("Line", step.Route.Line.Id);
+
+            Activity.StartActivity(intent);
+        }
+
         public void OnMapLoaded()
         {
             // Compute global line bounds to initialize camera
@@ -159,27 +208,97 @@ namespace TramUrWay.Android
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
             googleMap.MoveCamera(cameraUpdate);
         }
-
         public void OnRefreshing()
         {
         }
         public void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
         {
+            timeStepsCache = timeSteps.ToArray();
+            transportsCache = transports.ToArray();
+
+            if (googleMap == null)
+                return;
+
             List<Transport> unusedTransports = transportMarkers.Keys.ToList();
+            AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
             foreach (Transport transport in transports)
             {
                 Marker marker;
 
+                // Create a new marker if needed
                 if (!transportMarkers.TryGetValue(transport, out marker))
                 {
+                    Activity.RunOnUiThread(() =>
+                    {
+                        MarkerOptions markerOptions = new MarkerOptions()
+                            .Anchor(0.5f, 0.5f)
+                            .SetIcon(transportBitmapDescriptor)
+                            .SetPosition(new LatLng(0, 0));
 
+                        marker = googleMap.AddMarker(markerOptions);
+                        transportMarkers.Add(transport, marker);
+
+                        autoResetEvent.Set();
+                    });
+
+                    autoResetEvent.WaitOne();
                 }
                 else
-                {
                     unusedTransports.Remove(transport);
-                }
             }
+
+            // Clean old markers
+            foreach (Transport transport in unusedTransports)
+            {
+                Marker marker = transportMarkers[transport];
+                transportMarkers.Remove(transport);
+
+                Activity.RunOnUiThread(marker.Remove);
+            }
+
+            RefreshMarkers();
+        }
+
+        private void RefreshTimes()
+        {
+            DateTime now = DateTime.Now;
+            transportMarkers.Keys.UpdateProgress(now);
+
+            RefreshMarkers();
+        }
+        private void RefreshMarkers()
+        {
+            // Update each marker position
+            foreach (var pair in transportMarkers)
+            {
+                Transport transport = pair.Key;
+                Marker marker = pair.Value;
+
+                // Compute quick position
+                Position quickFrom = transport.Step.Stop.Position;
+                Position quickTo = transport.TimeStep.Step.Stop.Position;
+                LatLng quickPosition = new LatLng(quickFrom.Latitude + (quickTo.Latitude - quickFrom.Latitude) * transport.Progress, quickFrom.Longitude + (quickTo.Longitude - quickFrom.Longitude) * transport.Progress);
+
+                // Update marker
+                ValueAnimator valueAnimator = new ValueAnimator();
+                valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p)));
+                valueAnimator.SetFloatValues(0, 1);
+                valueAnimator.SetInterpolator(new LinearInterpolator());
+                valueAnimator.SetDuration(1000);
+                Activity.RunOnUiThread(valueAnimator.Start);
+            }
+        }
+
+        private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
+        {
+            Activity.RunOnUiThread(() =>
+            {
+                marker.Position = position;
+
+                //if (marker.Id == selectedMarkerId)
+                //    googleMap.AnimateCamera(CameraUpdateFactory.NewLatLng(position));
+            });
         }
     }
 }

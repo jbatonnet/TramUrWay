@@ -138,7 +138,7 @@ namespace TramUrWay.Android
             // Recompute progresses for each transport
             me.UpdateProgress(dateTime);
         }
-        public static void UpdateProgress(this List<Transport> me, DateTime dateTime)
+        public static void UpdateProgress(this IEnumerable<Transport> me, DateTime dateTime)
         {
             // Recompute progresses for each transport
             foreach (Transport transport in me)
@@ -150,21 +150,36 @@ namespace TramUrWay.Android
                 }
 
                 TimeSpan diff = transport.TimeStep.Date - dateTime;
-                TimeSpan duration = transport.Step.Duration ?? TimeSpan.Zero;
+                transport.Step = transport.TimeStep.Step.Previous;
 
-                if (duration == TimeSpan.Zero)
-                    duration = TimeSpan.FromMinutes(2);
+                while (true)
+                {
+                    TimeSpan duration = transport.Step.Duration ?? TimeSpan.Zero;
 
-                float progress = (float)(1 - diff.TotalMinutes / duration.TotalMinutes);
-                if (progress < 0) progress = 0;
-                if (progress > 1) progress = 1;
+                    if (duration == TimeSpan.Zero)
+                        duration = TimeSpan.FromMinutes(2);
 
-                float nextProgress = (float)(1 - diff.Subtract(TimeSpan.FromSeconds(1)).TotalMinutes / duration.TotalMinutes);
-                if (nextProgress < 0) nextProgress = 0;
-                if (nextProgress > 1) nextProgress = 1;
+                    float progress = (float)(1 - diff.TotalMinutes / duration.TotalMinutes);
+                    if (progress > 1 && transport.Step.Next != null)
+                    {
+                        transport.Step = transport.Step.Next;
+                        diff = diff.Add(duration);
 
-                transport.Progress = transport.Step.Speed.Evaluate(progress);
-                transport.NextProgress = transport.Step.Speed.Evaluate(nextProgress);
+                        continue;
+                    }
+
+                    if (progress < 0) progress = 0;
+                    if (progress > 1) progress = 1;
+
+                    float nextProgress = (float)(1 - diff.Subtract(TimeSpan.FromSeconds(1)).TotalMinutes / duration.TotalMinutes);
+                    if (nextProgress < 0) nextProgress = 0;
+                    if (nextProgress > 1) nextProgress = 1;
+
+                    transport.Progress = transport.Step.Speed.Evaluate(progress);
+                    transport.NextProgress = transport.Step.Speed.Evaluate(nextProgress);
+
+                    break;
+                }
             }
         }
     }
