@@ -26,21 +26,14 @@ using System.Threading;
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class RouteActivity : AppCompatActivity
+    public class RoutesActivity : NavigationActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
+            SetContentView(Resource.Layout.RoutesActivity);
+            NavigationItemId = Resource.Id.SideMenu_Routes;
 
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.LineActivity);
-
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
-            SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-
-            // Initialize UI
-            // TODO
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

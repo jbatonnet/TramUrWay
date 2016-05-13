@@ -524,6 +524,12 @@ namespace TramUrWay.Baker
                     stepLinks.Add(new RouteLink() { From = step.Stop.Name, To = toStep, Type = RouteLinkType.Walk, Weight = toStep.Stop.Position - step.Stop.Position });
             }
 
+
+
+
+
+
+
             // Now we have a graph, apply some path resolution
             {
                 int rank = allSteps.Length;

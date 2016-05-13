@@ -13,7 +13,6 @@
         <item
             android:id="@+id/SideMenu_Routes"
             android:icon="@drawable/ic_directions"
-            android:enabled="false"
             android:title="Itinéraires" />
         <item
             android:id="@+id/SideMenu_Map"

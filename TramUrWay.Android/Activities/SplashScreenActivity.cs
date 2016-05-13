@@ -35,7 +35,7 @@ namespace TramUrWay.Android
                 App.Initialize(this);
             }).ContinueWith(t =>
             {
-                Intent intent = new Intent(this, typeof(MainActivity));
+                Intent intent = new Intent(this, typeof(HomeActivity));
                 StartActivity(intent);
             });
         }
