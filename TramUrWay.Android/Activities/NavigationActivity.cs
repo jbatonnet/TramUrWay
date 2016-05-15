@@ -74,13 +74,15 @@ namespace TramUrWay.Android
             {
                 case Resource.Id.SideMenu_Home:
                 {
-                    StartActivity(new Intent(this, typeof(HomeActivity)));
+                    if (!(this is HomeActivity))
+                        StartActivity(new Intent(this, typeof(HomeActivity)));
                     break;
                 }
 
                 case Resource.Id.SideMenu_Routes:
                 {
-                    StartActivity(new Intent(this, typeof(RoutesActivity)));
+                    if (!(this is RoutesActivity))
+                        StartActivity(new Intent(this, typeof(RoutesActivity)));
                     break;
                 }
 

@@ -133,8 +133,10 @@
     <Compile Include="Activities\Line\LineActivity.cs" />
     <Compile Include="Adapters\LineFragmentsAdapter.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
+    <Compile Include="Adapters\RouteSegmentsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
     <Compile Include="Model\Curve.cs" />
+    <Compile Include="Model\Routes.cs" />
     <Compile Include="Model\Transport.cs" />
     <Compile Include="WebService.cs" />
     <Compile Include="Model\TimeTable.cs" />
@@ -385,6 +387,18 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\RoutesActivity.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_keyboard_arrow_down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_keyboard_arrow_down.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ic_schedule.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable-v21\ic_schedule.xml" />
   </ItemGroup>
   <Import Project="..\..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

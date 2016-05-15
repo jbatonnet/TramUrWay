@@ -16,20 +16,6 @@ using TramUrWay.Android;
 
 namespace TramUrWay.Baker
 {
-    class RouteLink
-    {
-        public string From { get; set; }
-        public Step To { get; set; }
-        public Line Line { get; set; }
-
-        internal float Weight;
-
-        public override string ToString()
-        {
-            return $"[{Line?.Id.ToString() ?? "W"}] {From} > {To.Stop.Name} ({Weight})";
-        }
-    }
-
     class Program
     {
         private const string inputDirectory = @"..\..\..\Data\Hiver 2015";
@@ -69,27 +55,7 @@ namespace TramUrWay.Baker
             transports.Update(firstTimeSteps, firstDate);
             transports.Update(secondTimeSteps, secondDate);*/
 
-
-            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Saint-Lazare"));
-            Stop to = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Pierre de Coubertin"));
-
-            PrepareRoutes();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            RouteLink[][] routes = FindRoutes(from, to, TimeSpan.FromSeconds(2)).ToArray();
-            stopwatch.Stop();
-
-            Console.WriteLine("Got {0} results in {1} ms", routes.Length, (int)stopwatch.ElapsedMilliseconds);
-            Console.WriteLine();
-
-            foreach (RouteLink[] route in routes)
-            {
-                RouteLink[] changes = route.Distinct(l => l.Line).ToArray();
-                RouteLink last = route.Last();
-
-                Console.WriteLine("{0} > {1}", changes.Select(l => $"{l.From} ({l.Line?.Id.ToString() ?? "W"})").Join(" > "), last.To.Stop.Name);
-            }
-
-            Console.ReadLine();
+            TestSearch();
         }
 
         private static void LoadStations()
@@ -520,157 +486,66 @@ namespace TramUrWay.Baker
             }
         }
 
-        static Dictionary<string, List<RouteLink>> routeLinks = new Dictionary<string, List<RouteLink>>();
-
-        public static void PrepareRoutes()
+        private static void TestSearch()
         {
-            const int walkLinksCount = 3;
+            Stopwatch stopwatch = Stopwatch.StartNew();
 
-            const float tramWeight = 1.0f;
-            const float busWeight = 1.5f;
-            const float walkWeight = 2.0f;
+            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Saint-Lazare"));
+            Stop to = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Odysseum")); // "Pierre de Coubertin", "Lattes Centre", "Odysseum"
 
-            // Build steps cache
-            foreach (Line line in Lines)
-                foreach (Route route in line.Routes)
-                    for (int i = 0; i < route.Steps.Length - 1; i++)
-                    {
-                        Step fromStep = route.Steps[i];
-                        Step toStep = route.Steps[i + 1];
+            Console.WriteLine("Setup ...");
 
-                        List<RouteLink> stepLinks;
-                        if (!routeLinks.TryGetValue(fromStep.Stop.Name, out stepLinks))
-                            routeLinks.Add(fromStep.Stop.Name, stepLinks = new List<RouteLink>());
+            RouteSearch routeSearch = new RouteSearch();
+            //routeSearch.Settings.AllowBusLinks = false;
+            routeSearch.Settings.AllowWalkLinks = false;
+            routeSearch.Prepare(Lines);
 
-                        if (stepLinks.Any(l => l.Line == fromStep.Route.Line && l.To.Stop.Name == toStep.Stop.Name))
-                            continue;
+            Console.WriteLine("Setup finished in {0} ms", stopwatch.ElapsedMilliseconds);
+            //Console.WriteLine();
 
-                        TimeSpan duration = fromStep.Duration ?? TimeSpan.FromMinutes(0);
-                        if (duration.TotalMinutes == 0)
-                            duration = TimeSpan.FromMinutes(2);
+            DateTime end = DateTime.Now + TimeSpan.FromSeconds(1000);
+            List<RouteLink[]> routeLinks = new List<RouteLink[]>();
+            List<RouteSegment[]> routeSegments = new List<RouteSegment[]>();
 
-                        stepLinks.Add(new RouteLink() { From = fromStep.Stop.Name, To = toStep, Line = line, Weight = (float)duration.TotalSeconds * (line.Type == LineType.Tram ? tramWeight : busWeight) });
-                    }
+            stopwatch.Reset();
 
-            // Find nearest steps
-            Dictionary<string, List<RouteLink>> walkLinks = new Dictionary<string, List<RouteLink>>();
-            Step[] allSteps = Lines.SelectMany(l => l.Routes).SelectMany(r => r.Steps).ToArray();
+            IEnumerable<RouteLink[]> routesEnumerable = routeSearch.FindRoutes(from, to);
+            IEnumerator<RouteLink[]> routesEnumerator = routesEnumerable.GetEnumerator();
 
-            foreach (Step step in allSteps)
+            while (true)
             {
-                IEnumerable<Step> sortedSteps = allSteps.Where(s => s.Stop.Name != step.Stop.Name)
-                                                        .OrderBy(s => s.Stop.Position - step.Stop.Position);
+                Task<bool> moveNextTask = Task.Run(() => routesEnumerator.MoveNext());
 
-                List<RouteLink> stepLinks;
-                if (!walkLinks.TryGetValue(step.Stop.Name, out stepLinks))
-                    walkLinks.Add(step.Stop.Name, stepLinks = new List<RouteLink>());
+                // Exit if timed out
+                TimeSpan timeout = end - DateTime.Now;
+                if (!moveNextTask.Wait(timeout))
+                    break;
 
-                foreach (Step toStep in sortedSteps.Take(walkLinksCount))
-                    stepLinks.Add(new RouteLink() { From = step.Stop.Name, To = toStep, Line = null, Weight = (toStep.Stop.Position - step.Stop.Position) * walkWeight });
+                // Exit of enumeration finished
+                if (moveNextTask.Result == false)
+                    break;
 
-                stepLinks = stepLinks.GroupBy(l => l.To.Stop.Name).Select(g => g.OrderBy(l => l.Weight).First()).ToList();
-                stepLinks.Sort((l1, l2) => (int)(l1.Weight - l2.Weight));
+                RouteLink[] route = routesEnumerator.Current;
 
-                walkLinks[step.Stop.Name] = stepLinks;
+                routeLinks.Add(route);
+                routeLinks.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
+
+                // Simulate time steps and sort best routes
+                routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now));
+                routeSegments.Sort((r1, r2) => (int)((r1.Last().DateTo - r1.First().DateFrom) - (r2.Last().DateTo - r2.First().DateFrom)).TotalSeconds);
             }
 
-            // Merge links
-            foreach (var pair in walkLinks)
-            {
-                List<RouteLink> stepLinks;
-                if (!routeLinks.TryGetValue(pair.Key, out stepLinks))
-                    routeLinks.Add(pair.Key, stepLinks = new List<RouteLink>());
-
-                stepLinks.AddRange(pair.Value);
-            }
-        }
-        public static IEnumerable<RouteLink[]> FindRoutes(Stop from, Stop to)
-        {
-            return FindRoutes(from, to, TimeSpan.MaxValue);
-        }
-        public static IEnumerable<RouteLink[]> FindRoutes(Stop from, Stop to, TimeSpan timeout)
-        {
-            DateTime end = DateTime.Now + timeout;
-
-            const int bestRoutesCount = 3;
-
-            List<float> bestWeights = new List<float>(bestRoutesCount);
-            List<RouteLink[]> bestRoutes = new List<RouteLink[]>();
-
-            float maxWeight = to.Position - from.Position;
-            bestWeights.Add(maxWeight);
-
-            Action<RouteLink[], string, float> browseRoutes = null;
-            browseRoutes = (route, last, weight) =>
-            {
-                List<RouteLink> links;
-                if (!routeLinks.TryGetValue(last, out links))
-                    return;
-
-                RouteLink lastLink = route.LastOrDefault();
-
-                foreach (RouteLink link in links)
-                {
-                    if (DateTime.Now >= end)
-                        return;
-
-                    string linkTo = link.To.Stop.Name;
-
-                    // Skip loops
-                    if (route.Any(l => l.From == linkTo))
-                        continue;
-
-                    // Skip reusage of same line
-                    if (lastLink != null && lastLink.Line != link.Line && route.Any(l => l.Line == link.Line))
-                        continue;
-
-                    // Avoid leaving the line we search
-                    if (lastLink != null && lastLink.Line != link.Line && lastLink.Line == to.Line)
-                        continue;
-
-                    float linkWeight = weight + link.Weight;
-
-                    // Skip too long routes
-                    if (linkWeight > maxWeight)
-                        continue;
-
-                    lock (bestWeights)
-                    {
-                        // Skip too long routes
-                        if (linkWeight > bestWeights.First() * 2)
-                            continue;
-
-                        // Keep only shortest routes
-                        if (bestWeights.Count == 3 && linkWeight > bestWeights.Last())
-                            continue;
-                    }
-
-                    // Build the route
-                    RouteLink[] linkRoute = route.Concat(link).ToArray();
-
-                    // If the destination is found, register the answer
-                    if (linkTo == to.Name)
-                    {
-                        lock (bestWeights)
-                        {
-                            if (bestWeights.Count == bestRoutesCount)
-                                bestWeights.RemoveAt(bestRoutesCount - 1);
-
-                            bestWeights.Add(linkWeight);
-                            bestWeights.Sort();
-
-                            bestRoutes.Add(linkRoute);
-                            bestRoutes.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
-                        }
-                    }
-                    else
-                        browseRoutes(linkRoute, linkTo, linkWeight);
-                }
-            };
-
-            browseRoutes(new RouteLink[0], from.Name, 0);
+            stopwatch.Stop();
             
-            return bestRoutes;
+            foreach (RouteSegment[] route in routeSegments.Take(5))
+            {
+                Console.WriteLine();
+
+                foreach (RouteSegment segment in route)
+                    Console.WriteLine(segment);
+            }
+            
+            Console.ReadKey(true);
         }
 
         // Helpers

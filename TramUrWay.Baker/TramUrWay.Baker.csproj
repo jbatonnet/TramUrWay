@@ -60,6 +60,9 @@
     <Compile Include="..\TramUrWay.Android\Model\Route.cs">
       <Link>Model\Route.cs</Link>
     </Compile>
+    <Compile Include="..\TramUrWay.Android\Model\Routes.cs">
+      <Link>Model\Routes.cs</Link>
+    </Compile>
     <Compile Include="..\TramUrWay.Android\Model\Step.cs">
       <Link>Model\Step.cs</Link>
     </Compile>
