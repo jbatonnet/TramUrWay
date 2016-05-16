@@ -490,13 +490,13 @@ namespace TramUrWay.Baker
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Apollo")); // "Saint-Lazare", "Apollo"
+            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Saint-Lazare")); // "Saint-Lazare", "Apollo"
             Stop to = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Odysseum")); // "Pierre de Coubertin", "Lattes Centre", "Odysseum"
 
             Console.WriteLine("Setup ...");
 
             RouteSearch routeSearch = new RouteSearch();
-            //routeSearch.Settings.AllowBusLinks = false;
+            routeSearch.Settings.AllowBusLinks = true;
             routeSearch.Settings.AllowWalkLinks = false;
             routeSearch.Prepare(Lines);
 
@@ -509,31 +509,13 @@ namespace TramUrWay.Baker
 
             stopwatch.Reset();
 
-            IEnumerable<RouteLink[]> routesEnumerable = routeSearch.FindRoutes(from, to);
-            IEnumerator<RouteLink[]> routesEnumerator = routesEnumerable.GetEnumerator();
+            routeLinks = routeSearch.FindRoutes(from, to).ToList();
+            routeLinks.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
 
-            while (true)
-            {
-                Task<bool> moveNextTask = Task.Run(() => routesEnumerator.MoveNext());
-
-                // Exit if timed out
-                TimeSpan timeout = end - DateTime.Now;
-                if (!moveNextTask.Wait(timeout))
-                    break;
-
-                // Exit of enumeration finished
-                if (moveNextTask.Result == false)
-                    break;
-
-                RouteLink[] route = routesEnumerator.Current;
-
-                routeLinks.Add(route);
-                routeLinks.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
-
-                // Simulate time steps and sort best routes
+            foreach (RouteLink[] route in routeLinks)
                 routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now, TimeSpan.Zero, TimeSpan.FromMinutes(15)));
-                routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
-            }
+
+            routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
 
             stopwatch.Stop();
             Console.WriteLine("Results found in {0} ms", stopwatch.ElapsedMilliseconds);
