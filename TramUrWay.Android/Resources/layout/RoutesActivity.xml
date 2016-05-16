@@ -31,19 +31,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="8dp">
 
                     <LinearLayout
+                        android:id="@+id/RoutesActivity_DefaultFocus"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
                         android:layout_width="0px"
                         android:layout_height="0px" />
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/RoutesActivity_FromLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:id="@+id/RoutesActivity_FromLayout"
                         android:layout_toLeftOf="@+id/RoutesActivity_FromButton">
 
                         <AutoCompleteTextView
@@ -59,21 +60,23 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
+                        android:id="@+id/RoutesActivity_FromButton"
                         android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/RoutesActivity_FromButton"
                         android:layout_alignParentRight="true"
                         android:layout_alignTop="@+id/RoutesActivity_FromLayout"
                         android:layout_alignBottom="@+id/RoutesActivity_FromLayout"
                         android:src="@drawable/ic_place"
-                        android:background="@android:color/transparent"
-                        android:tint="@color/primary_text_default_material_dark" />
+                        android:tint="@color/primary_text_default_material_dark"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground" />
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/RoutesActivity_ToLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/RoutesActivity_FromLayout"
-                        android:id="@+id/RoutesActivity_ToLayout"
                         android:layout_toLeftOf="@+id/RoutesActivity_ToButton"
                         android:layout_marginBottom="8dp">
 
@@ -90,36 +93,48 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
+                        android:id="@+id/RoutesActivity_ToButton"
                         android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/RoutesActivity_ToButton"
                         android:layout_alignParentRight="true"
                         android:layout_alignTop="@+id/RoutesActivity_ToLayout"
                         android:layout_alignBottom="@+id/RoutesActivity_ToLayout"
                         android:src="@drawable/ic_place"
-                        android:background="@android:color/transparent"
-                        android:tint="@color/primary_text_default_material_dark" />
+                        android:tint="@color/primary_text_default_material_dark"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground" />
 
-                    <TextView
+                    <RelativeLayout
+                        android:id="@+id/RoutesActivity_DateLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Départ maintenant"
-                        android:id="@+id/RoutesActivity_Date"
-                        android:layout_below="@+id/RoutesActivity_ToLayout"
-                        android:gravity="center_vertical"
-                        android:layout_toLeftOf="@+id/RoutesActivity_DateButton" />
-
-                    <ImageButton
-                        android:layout_width="48dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/RoutesActivity_DateButton"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignTop="@+id/RoutesActivity_Date"
-                        android:layout_alignBottom="@+id/RoutesActivity_Date"
-                        android:src="@drawable/ic_schedule"
-                        android:background="@android:color/transparent"
-                        android:tint="@color/primary_text_default_material_dark" />
+                        android:layout_below="@+id/RoutesActivity_ToLayout"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="?android:attr/selectableItemBackground">
+
+                        <TextView
+                            android:id="@+id/RoutesActivity_Date"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Départ maintenant"
+                            android:gravity="center_vertical"
+                            android:layout_toLeftOf="@+id/RoutesActivity_DateButton" />
+
+                        <ImageButton
+                            android:id="@+id/RoutesActivity_DateButton"
+                            android:layout_width="48dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignTop="@+id/RoutesActivity_Date"
+                            android:layout_alignBottom="@+id/RoutesActivity_Date"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/ic_schedule"
+                            android:tint="@color/primary_text_default_material_dark" />
+                        
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

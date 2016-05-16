@@ -490,7 +490,7 @@ namespace TramUrWay.Baker
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Saint-Lazare"));
+            Stop from = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Apollo")); // "Saint-Lazare", "Apollo"
             Stop to = Lines.SelectMany(l => l.Stops).First(s => Likes(s.Name, "Odysseum")); // "Pierre de Coubertin", "Lattes Centre", "Odysseum"
 
             Console.WriteLine("Setup ...");
@@ -531,12 +531,13 @@ namespace TramUrWay.Baker
                 routeLinks.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
 
                 // Simulate time steps and sort best routes
-                routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now));
-                routeSegments.Sort((r1, r2) => (int)((r1.Last().DateTo - r1.First().DateFrom) - (r2.Last().DateTo - r2.First().DateFrom)).TotalSeconds);
+                routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now, TimeSpan.Zero, TimeSpan.FromMinutes(15)));
+                routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
             }
 
             stopwatch.Stop();
-            
+            Console.WriteLine("Results found in {0} ms", stopwatch.ElapsedMilliseconds);
+
             foreach (RouteSegment[] route in routeSegments.Take(5))
             {
                 Console.WriteLine();

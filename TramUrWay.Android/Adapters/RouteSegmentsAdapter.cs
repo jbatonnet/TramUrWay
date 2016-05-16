@@ -20,13 +20,11 @@ namespace TramUrWay.Android
     {
         public ImageView Icon { get; }
         public TextView Name { get; }
-        public TextView Description { get; }
 
         public RouteSegmentsViewHolder(View itemView) : base(itemView)
         {
-            Icon = itemView.FindViewById<ImageView>(Resource.Id.TimeStepItem_Icon);
-            Name = itemView.FindViewById<TextView>(Resource.Id.TimeStepItem_Name);
-            Description = itemView.FindViewById<TextView>(Resource.Id.TimeStepItem_Description);
+            Icon = itemView.FindViewById<ImageView>(Resource.Id.RouteSegmentsItem_Icon);
+            Name = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_Name);
         }
     }
 
@@ -57,7 +55,7 @@ namespace TramUrWay.Android
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.TimeStepItem, parent, false);
+            View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.RouteSegmentsItem, parent, false);
             itemView.SetOnClickListener(this);
 
             return new RouteSegmentsViewHolder(itemView);

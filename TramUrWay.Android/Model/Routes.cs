@@ -279,19 +279,20 @@ namespace TramUrWay.Android
                 yield break;
 
             RouteLink firstLink = route.First();
-            Step firstStep = firstLink.Line?.Routes?.SelectMany(r => r.Steps)?.First(s => s.Stop.Name == firstLink.From && s.Next?.Stop?.Name == firstLink.To.Stop.Name);
+            //Step firstStep = firstLink.Line?.Routes?.SelectMany(r => r.Steps)?.First(s => s.Stop.Name == firstLink.From && s.Next?.Stop?.Name == firstLink.To.Stop.Name);
+            Step firstStep = firstLink.To.Route.Steps.First(s => s.Stop.Name == firstLink.From && s.Next?.Stop?.Name == firstLink.To.Stop.Name);
 
             // Setup simulation
             DateTime simulationDate = date;
             DateTime lowerBound = simulationDate - lowerTolerance;
             DateTime upperBound = simulationDate + upperTolerance;
 
-            List<RouteSegment> segments = new List<RouteSegment>();
             TimeStep[] timeSteps = firstStep.Route.TimeTable.GetStepsFromStep(firstStep, lowerBound).TakeWhile(s => s.Date <= upperBound).ToArray();
 
             TimeStep lastTimeStep;
             foreach (TimeStep timeStep in timeSteps)
             {
+                List<RouteSegment> segments = new List<RouteSegment>();
                 RouteSegment segment;
 
                 lastTimeStep = timeStep;
@@ -313,7 +314,8 @@ namespace TramUrWay.Android
                         lastStep = lastStep.Next;
                     }
 
-                    lastStep = change.Line?.Routes?.SelectMany(r => r.Steps)?.First(s => s.Stop.Name == change.From && s.Next?.Stop?.Name == change.To.Stop.Name);
+                    //lastStep = change.Line?.Routes?.SelectMany(r => r.Steps)?.First(s => s.Stop.Name == change.From && s.Next?.Stop?.Name == change.To.Stop.Name);
+                    lastStep = change.To.Route.Steps.First(s => s.Stop.Name == change.From && s.Next?.Stop?.Name == change.To.Stop.Name);
                     lastTimeStep = lastStep.Route.TimeTable.GetStepsFromStep(lastStep, simulationDate).FirstOrDefault();
 
                     if (lastTimeStep == null)
