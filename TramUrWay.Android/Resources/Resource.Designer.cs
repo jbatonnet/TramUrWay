@@ -2216,8 +2216,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b008f
 			public const int LineItem_Name = 2131427471;
 			
-			// aapt resource value: 0x7f0b00d3
-			public const int LineMenu_Refresh = 2131427539;
+			// aapt resource value: 0x7f0b00d4
+			public const int LineMenu_Refresh = 2131427540;
 			
 			// aapt resource value: 0x7f0b0092
 			public const int LinesFragment_LineList = 2131427474;
@@ -2228,8 +2228,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b008a
 			public const int MainActivity_ViewPager = 2131427466;
 			
-			// aapt resource value: 0x7f0b00d4
-			public const int MainMenu_Search = 2131427540;
+			// aapt resource value: 0x7f0b00d5
+			public const int MainMenu_Search = 2131427541;
 			
 			// aapt resource value: 0x7f0b0091
 			public const int MapFragment_Map = 2131427473;
@@ -2300,14 +2300,14 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00ac
 			public const int RoutesActivity_ToLayout = 2131427500;
 			
-			// aapt resource value: 0x7f0b00d5
-			public const int RoutesMenu_Search = 2131427541;
+			// aapt resource value: 0x7f0b00d6
+			public const int RoutesMenu_Search = 2131427542;
 			
 			// aapt resource value: 0x7f0b00b6
 			public const int SettingsActivity_Fragment = 2131427510;
 			
-			// aapt resource value: 0x7f0b00dc
-			public const int SideMenu_About = 2131427548;
+			// aapt resource value: 0x7f0b00dd
+			public const int SideMenu_About = 2131427549;
 			
 			// aapt resource value: 0x7f0b00b9
 			public const int SideMenu_App = 2131427513;
@@ -2315,26 +2315,26 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00b8
 			public const int SideMenu_City = 2131427512;
 			
-			// aapt resource value: 0x7f0b00da
-			public const int SideMenu_FooterGroup = 2131427546;
+			// aapt resource value: 0x7f0b00db
+			public const int SideMenu_FooterGroup = 2131427547;
 			
-			// aapt resource value: 0x7f0b00d7
-			public const int SideMenu_Home = 2131427543;
+			// aapt resource value: 0x7f0b00d8
+			public const int SideMenu_Home = 2131427544;
 			
 			// aapt resource value: 0x7f0b00b7
 			public const int SideMenu_Icon = 2131427511;
 			
-			// aapt resource value: 0x7f0b00d6
-			public const int SideMenu_MainGroup = 2131427542;
+			// aapt resource value: 0x7f0b00d7
+			public const int SideMenu_MainGroup = 2131427543;
+			
+			// aapt resource value: 0x7f0b00da
+			public const int SideMenu_Map = 2131427546;
 			
 			// aapt resource value: 0x7f0b00d9
-			public const int SideMenu_Map = 2131427545;
+			public const int SideMenu_Routes = 2131427545;
 			
-			// aapt resource value: 0x7f0b00d8
-			public const int SideMenu_Routes = 2131427544;
-			
-			// aapt resource value: 0x7f0b00db
-			public const int SideMenu_Settings = 2131427547;
+			// aapt resource value: 0x7f0b00dc
+			public const int SideMenu_Settings = 2131427548;
 			
 			// aapt resource value: 0x7f0b00c1
 			public const int StepItem_Description = 2131427521;
@@ -2366,8 +2366,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00c7
 			public const int StepWidgetActivity_StopList = 2131427527;
 			
-			// aapt resource value: 0x7f0b00dd
-			public const int StepWidgetMenu_Search = 2131427549;
+			// aapt resource value: 0x7f0b00de
+			public const int StepWidgetMenu_Search = 2131427550;
 			
 			// aapt resource value: 0x7f0b00c3
 			public const int StepWidget_Button = 2131427523;
@@ -2396,26 +2396,29 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00c8
 			public const int StopActivity_SwipeRefresh = 2131427528;
 			
+			// aapt resource value: 0x7f0b00cf
+			public const int StopItem_Favorite = 2131427535;
+			
 			// aapt resource value: 0x7f0b00cd
 			public const int StopItem_Icon = 2131427533;
 			
 			// aapt resource value: 0x7f0b00ce
 			public const int StopItem_Name = 2131427534;
 			
-			// aapt resource value: 0x7f0b00de
-			public const int StopMenu_Favorite = 2131427550;
-			
-			// aapt resource value: 0x7f0b00cf
-			public const int StopsFragment_StopList = 2131427535;
-			
-			// aapt resource value: 0x7f0b00d2
-			public const int TimeStepItem_Description = 2131427538;
+			// aapt resource value: 0x7f0b00df
+			public const int StopMenu_Favorite = 2131427551;
 			
 			// aapt resource value: 0x7f0b00d0
-			public const int TimeStepItem_Icon = 2131427536;
+			public const int StopsFragment_StopList = 2131427536;
+			
+			// aapt resource value: 0x7f0b00d3
+			public const int TimeStepItem_Description = 2131427539;
 			
 			// aapt resource value: 0x7f0b00d1
-			public const int TimeStepItem_Name = 2131427537;
+			public const int TimeStepItem_Icon = 2131427537;
+			
+			// aapt resource value: 0x7f0b00d2
+			public const int TimeStepItem_Name = 2131427538;
 			
 			// aapt resource value: 0x7f0b0093
 			public const int action0 = 2131427475;

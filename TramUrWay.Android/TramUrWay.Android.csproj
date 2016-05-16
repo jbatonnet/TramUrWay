@@ -142,7 +142,6 @@
     <Compile Include="Model\TimeTable.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Database.cs" />
     <Compile Include="App.cs" />
     <Compile Include="Assets.cs" />
     <Compile Include="Model\Step.cs" />

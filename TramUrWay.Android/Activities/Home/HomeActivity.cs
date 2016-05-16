@@ -24,6 +24,7 @@ using SearchView = Android.Support.V7.Widget.SearchView;
 using System.Threading.Tasks;
 
 using static Android.Support.V7.Widget.SearchView;
+using Android.Views.InputMethods;
 
 namespace TramUrWay.Android
 {
@@ -55,7 +56,7 @@ namespace TramUrWay.Android
             TabLayout tabLayout = FindViewById<TabLayout>(Resource.Id.MainActivity_Tabs);
             tabLayout.SetupWithViewPager(viewPager);
 
-            if (App.Config.ShowFavorites && App.Database.GetFavoriteStops().Any())
+            if (App.Config.ShowFavorites && App.Config.FavoriteStops.Any())
                 viewPager.SetCurrentItem(0, true);
             else
                 viewPager.SetCurrentItem(1, true);
@@ -124,7 +125,15 @@ namespace TramUrWay.Android
                 {
                     searchView.ClearFocus();
                     searchView.Iconified = true;
+
+                    stopsFragment.OnQueryTextChanged(sender, e);
                 });
+
+                searchView.PostDelayed(() =>
+                {
+                    InputMethodManager inputMethodManager = GetSystemService(Context.InputMethodService) as InputMethodManager;
+                    inputMethodManager.HideSoftInputFromWindow(searchView.WindowToken, HideSoftInputFlags.None);
+                }, 250);
             }
 
             lastSearch = e.NewText;

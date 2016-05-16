@@ -131,7 +131,7 @@ namespace TramUrWay.Android
         private void RegisterWidget(Step step)
         {
             // Register the widget
-            App.Database.RegisterStepWidget(appWidgetId, step);
+            App.Config.StepWidgets.Add(appWidgetId, step);
 
             // Update the widget
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);

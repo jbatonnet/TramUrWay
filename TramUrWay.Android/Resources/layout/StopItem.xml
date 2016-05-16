@@ -27,4 +27,20 @@
         android:textColor="@android:color/primary_text_light"
         android:layout_centerVertical="true" />
 
+    <ImageView
+        android:id="@+id/StopItem_Favorite"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:tint="@color/primary_dark_material_light"
+        android:src="@drawable/ic_star_border"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="12dp" />
+
 </RelativeLayout>

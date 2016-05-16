@@ -82,8 +82,8 @@ namespace TramUrWay.Android
         {
             foreach (int appWidgetId in appWidgetIds)
             {
-                Step step = App.Database.FindStepByWidgetId(appWidgetId);
-                if (step == null)
+                Step step;
+                if (!App.Config.StepWidgets.TryGetValue(appWidgetId, out step))
                     return;
 
                 RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.StepWidget);

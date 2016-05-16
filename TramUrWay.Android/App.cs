@@ -34,7 +34,6 @@ namespace TramUrWay.Android
 
         public static Config Config { get; private set; }
         public static Assets Assets { get; private set; }
-        public static Database Database { get; private set; }
         public static WebService Service { get; private set; }
 
         public static Line[] Lines { get; private set; }
@@ -58,12 +57,6 @@ namespace TramUrWay.Android
             Config = new Config(context);
             Assets = new Assets(context);
             Service = new WebService();
-
-            // Connect to local database
-            AndroidDatabaseConnection connection = new AndroidDatabaseConnection(context, Name + ".db");
-            connection.VersionUpgraded += (c, o, n) => Database.CheckDatabase(c);
-            connection.Open();
-            Database = new Database(connection);
 
             // Trigger widgets update
             if (Config.EnableWidgetRefresh)

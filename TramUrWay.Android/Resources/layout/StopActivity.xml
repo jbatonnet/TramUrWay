@@ -58,7 +58,8 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/StopActivity_LineStopList"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never" />
 
                     <TextView
                         android:id="@+id/StopActivity_OtherLabel"
@@ -76,7 +77,8 @@
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/StopActivity_OtherStopList"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never" />
 
                 </LinearLayout>
 

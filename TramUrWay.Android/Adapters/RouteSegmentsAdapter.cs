@@ -45,7 +45,7 @@ namespace TramUrWay.Android
             }
             set
             {
-                routeSegments = value.ToArray();
+                routeSegments = value.ToList().ToArray(); // To avoid too short array from being allocated too soon
                 NotifyDataSetChanged();
             }
         }

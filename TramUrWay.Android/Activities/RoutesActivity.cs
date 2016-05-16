@@ -137,6 +137,12 @@ namespace TramUrWay.Android
                     }
 
                     defaultFocus.RequestFocus();
+                    fromTextView.PostDelayed(() =>
+                    {
+                        InputMethodManager inputMethodManager = GetSystemService(Context.InputMethodService) as InputMethodManager;
+                        inputMethodManager.HideSoftInputFromWindow(fromTextView.WindowToken, HideSoftInputFlags.None);
+                    }, 250);
+
                     Search(from, to, DateConstraint.Now, DateTime.Now);
 
                     break;
@@ -174,7 +180,7 @@ namespace TramUrWay.Android
             menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
 
             // Favorite stops
-            foreach (Stop stop in App.Database.GetFavoriteStops())
+            foreach (Stop stop in App.Config.FavoriteStops)
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -206,7 +212,7 @@ namespace TramUrWay.Android
             };
 
             // Favorite stops
-            foreach (Stop stop in App.Database.GetFavoriteStops())
+            foreach (Stop stop in App.Config.FavoriteStops)
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -266,6 +272,8 @@ namespace TramUrWay.Android
                         throw new NotImplementedException();
                     else if (constraint == DateConstraint.Last)
                         throw new NotImplementedException();
+
+                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
 
                     RunOnUiThread(() => routeSegmentAdapter.RouteSegments = routeSegments);
                 }

@@ -20,11 +20,17 @@ namespace TramUrWay.Android
     {
         public ImageView Icon { get; }
         public TextView Name { get; }
+        public ImageView Favorite { get; }
+
+        public EventHandler FavoriteClick;
 
         public StopViewHolder(View itemView) : base(itemView)
         {
             Icon = itemView.FindViewById<ImageView>(Resource.Id.StopItem_Icon);
             Name = itemView.FindViewById<TextView>(Resource.Id.StopItem_Name);
+            Favorite = itemView.FindViewById<ImageView>(Resource.Id.StopItem_Favorite);
+
+            Favorite.Click += (s, e) => FavoriteClick?.Invoke(s, e);
         }
     }
 
@@ -72,7 +78,7 @@ namespace TramUrWay.Android
             View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.StopItem, parent, false);
             itemView.SetOnClickListener(this);
 
-            return new StopViewHolder(itemView);
+            return new StopViewHolder(itemView) { FavoriteClick = Favorite_Click };
         }
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
@@ -82,8 +88,11 @@ namespace TramUrWay.Android
             viewHolder.Icon.SetImageDrawable(stop.Value.First().Line.GetIconDrawable(viewHolder.ItemView.Context));
             viewHolder.Name.Text = stop.Key;
 
+            viewHolder.Favorite.SetImageResource(stop.Value.Any(s => s.GetIsFavorite()) ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
+            viewHolder.Favorite.Visibility = StopClick != null ? ViewStates.Gone : ViewStates.Visible;
+
             if (!viewHolders.Contains(viewHolder))
-                viewHolders.Add(viewHolder);
+            viewHolders.Add(viewHolder);
         }
 
         public void OnClick(View view)
@@ -100,6 +109,48 @@ namespace TramUrWay.Android
 
                 view.Context.StartActivity(intent);
             }
+        }
+
+        private void Favorite_Click(object sender, EventArgs e)
+        {
+            View view = sender as View;
+            StopViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view.Parent);
+            KeyValuePair<string, Stop[]> stop = filteredStops.ElementAt(viewHolder.AdapterPosition);
+
+            if (stop.Value.Any(s => s.GetIsFavorite()))
+            {
+                foreach (Stop s in stop.Value)
+                    s.SetIsFavorite(false);
+            }
+            else
+            {
+                Stop[] stops = App.Lines.SelectMany(l => l.Stops)
+                                        .Where(s => s.Name == stop.Key)
+                                        .GroupBy(s => s.Line)
+                                        .Select(g => g.First())
+                                        .OrderBy(s => s.Line.Id)
+                                        .ToArray();
+
+                if (stops.Length == 1)
+                    stops[0].SetIsFavorite(true);
+                else
+                {
+                    string[] choices = stops.Select(s => s.Line.ToString()).ToArray();
+
+                    new global::Android.Support.V7.App.AlertDialog.Builder(view.Context)
+                        .SetTitle("Choisissez une ligne")
+                        .SetSingleChoiceItems(choices, 0, (s, a) =>
+                        {
+                            stops[a.Which].SetIsFavorite(true);
+                            (s as Dialog).Dismiss();
+
+                            NotifyItemChanged(viewHolder.AdapterPosition);
+                        })
+                        .Show();
+                }
+            }
+
+            NotifyItemChanged(viewHolder.AdapterPosition);
         }
 
         private void UpdateFilter()
