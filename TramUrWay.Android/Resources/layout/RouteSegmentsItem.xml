@@ -7,25 +7,129 @@
     android:background="?android:attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/RouteSegmentsItem_Icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_centerVertical="true"
-        android:background="@android:color/transparent" />
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/RouteSegmentsItem_Background"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/circle"
+        android:layout_margin="12dp" />
 
     <TextView
-        android:id="@+id/RouteSegmentsItem_Name"
+        android:id="@+id/RouteSegmentsItem_Left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/LineItem_Icon"
-        android:layout_toRightOf="@+id/LineItem_Icon"
-        android:text="Name"
+        android:text="2\nmin"
+        android:textSize="@dimen/abc_text_size_caption_material"
+        android:textColor="@android:color/primary_text_light"
+        android:layout_alignTop="@+id/RouteSegmentsItem_Background"
+        android:layout_alignBottom="@+id/RouteSegmentsItem_Background"
+        android:layout_alignLeft="@+id/RouteSegmentsItem_Background"
+        android:layout_alignRight="@+id/RouteSegmentsItem_Background"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_margin="6dp" />
+
+    <TextView
+        android:id="@+id/RouteSegmentsItem_From"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15h45"
         android:textSize="@dimen/abc_text_size_subhead_material"
         android:textColor="@android:color/primary_text_light"
-        android:layout_centerVertical="true" />
+        android:layout_toEndOf="@id/RouteSegmentsItem_Background"
+        android:layout_alignTop="@+id/RouteSegmentsItem_Background"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/RouteSegmentsItem_Duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="23 min"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:textColor="@android:color/tertiary_text_dark"
+        android:layout_alignTop="@+id/RouteSegmentsItem_From"
+        android:layout_toRightOf="@+id/RouteSegmentsItem_From"
+        android:layout_toLeftOf="@+id/RouteSegmentsItem_To"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_alignBottom="@+id/RouteSegmentsItem_From" />
+
+    <TextView
+        android:id="@+id/RouteSegmentsItem_To"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="16h08"
+        android:textSize="@dimen/abc_text_size_subhead_material"
+        android:textColor="@android:color/primary_text_light"
+        android:layout_alignTop="@+id/RouteSegmentsItem_From"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="12dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_toEndOf="@id/RouteSegmentsItem_Background"
+        android:layout_alignBottom="@+id/RouteSegmentsItem_Background"
+        android:layout_marginRight="12dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_toRightOf="@+id/imageView2"
+            android:layout_centerVertical="true"
+            android:background="#dc9e18"
+            android:layout_toLeftOf="@+id/imageView4"
+            android:layout_marginLeft="-2dp"
+            android:layout_marginRight="-2dp"></LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#1b4196"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/imageView4"
+            android:layout_alignRight="@+id/imageView5" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:id="@+id/imageView2"
+            android:src="@drawable/circle2"
+            android:layout_centerVertical="true"
+            android:tint="#dc9d16" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:id="@+id/imageView3"
+            android:src="@drawable/circle2"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:tint="#569e42" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:id="@+id/imageView4"
+            android:src="@drawable/circle2"
+            android:layout_centerVertical="true"
+            android:tint="#194095"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="160dp" />
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:id="@+id/imageView5"
+            android:src="@drawable/circle2"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="220dp"
+            android:tint="#929292" />
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/RouteSegmentsItem_Menu"

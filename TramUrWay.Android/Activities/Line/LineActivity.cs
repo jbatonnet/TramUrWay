@@ -74,14 +74,16 @@ namespace TramUrWay.Android
 
             // Change toolbar color
             Color color = Utils.GetColorForLine(this, line);
+            Color darkColor = new Color(color.R * 2 / 3, color.G * 2 / 3, color.B * 2 / 3);
 
             SupportActionBar.SetBackgroundDrawable(new ColorDrawable(color));
 
-            Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
-            Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
-
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                Window.SetStatusBarColor(new Color(color.R * 2 / 3, color.G * 2 / 3, color.B * 2 / 3));
+            {
+                Window.AddFlags(WindowManagerFlags.DrawsSystemBarBackgrounds);
+                Window.ClearFlags(WindowManagerFlags.TranslucentStatus);
+                Window.SetStatusBarColor(darkColor);
+            }
 
             // Tabs
             fragments = new List<TabFragment>() { new LineMapFragment(line, color) };

@@ -27,7 +27,7 @@ namespace TramUrWay.UITest
         [Test]
         public void AppLaunches()
         {
-            app.Screenshot("First screen.");
+            app.Screenshot("First screen");
         }
 
         [Test]

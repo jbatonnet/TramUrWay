@@ -14,17 +14,23 @@ using Android.Utilities;
 using Android.Views;
 using Android.Widget;
 
+using Environment = System.Environment;
+
 namespace TramUrWay.Android
 {
     public class RouteSegmentsViewHolder : RecyclerView.ViewHolder
     {
-        public ImageView Icon { get; }
-        public TextView Name { get; }
+        public TextView From { get; }
+        public TextView To { get; }
+        public TextView Duration { get; }
+        public TextView Left { get; }
 
         public RouteSegmentsViewHolder(View itemView) : base(itemView)
         {
-            Icon = itemView.FindViewById<ImageView>(Resource.Id.RouteSegmentsItem_Icon);
-            Name = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_Name);
+            From = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_From);
+            To = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_To);
+            Duration = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_Duration);
+            Left = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentsItem_Left);
         }
     }
 
@@ -65,9 +71,10 @@ namespace TramUrWay.Android
             RouteSegmentsViewHolder viewHolder = holder as RouteSegmentsViewHolder;
             RouteSegment[] timeStep = routeSegments[position];
 
-            //viewHolder.Icon.SetImageDrawable(timeStep.Step.Route.Line.GetIconDrawable(viewHolder.ItemView.Context));
-            viewHolder.Name.Text = timeStep.Join(", ");
-            //viewHolder.Description.Text = Utils.GetReadableTime(timeStep, DateTime.Now);
+            viewHolder.From.Text = timeStep.First().DateFrom.ToString("HH:mm");
+            viewHolder.To.Text = timeStep.Last().DateTo.ToString("HH:mm");
+            viewHolder.Duration.Text = Math.Ceiling((timeStep.Last().DateTo - timeStep.First().DateFrom).TotalMinutes) + " min";
+            viewHolder.Left.Text = Math.Ceiling((timeStep.First().DateFrom - DateTime.Now).TotalMinutes) + Environment.NewLine + "min";
 
             if (!viewHolders.Contains(viewHolder))
                 viewHolders.Add(viewHolder);

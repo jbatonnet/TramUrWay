@@ -43,7 +43,7 @@ namespace TramUrWay.Android
         {
             if (initialized) return;
             initialized = true;
-            
+
             // Initialize logging
 #if DEBUG
             Log.TraceStream = new LogcatWriter(App.Name, LogPriority.Verbose);
