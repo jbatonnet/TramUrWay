@@ -3473,9 +3473,6 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0d0159
 			public const int AppTheme_SplashScreen = 2131558745;
 			
-			// aapt resource value: 0x7f0d015c
-			public const int AppTheme_ToolBar = 2131558748;
-			
 			// aapt resource value: 0x7f0d008a
 			public const int Base_AlertDialog_AppCompat = 2131558538;
 			
