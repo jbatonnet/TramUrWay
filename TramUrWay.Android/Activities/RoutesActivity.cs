@@ -48,10 +48,12 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
+
             SetContentView(Resource.Layout.RoutesActivity);
             NavigationItemId = Resource.Id.SideMenu_Routes;
 
-            base.OnCreate(savedInstanceState);
+            OnPostCreate();
 
             Stop[] stops = App.Lines.SelectMany(l => l.Stops).ToArray();
             string[] stopNames = stops.Select(s => s.Name).Distinct().ToArray();

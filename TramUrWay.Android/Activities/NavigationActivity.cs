@@ -22,6 +22,7 @@ using Android.Widget;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using System.Threading.Tasks;
 using System.Threading;
+using Android.Util;
 
 namespace TramUrWay.Android
 {
@@ -37,7 +38,9 @@ namespace TramUrWay.Android
             App.Initialize(this);
 
             base.OnCreate(savedInstanceState);
-
+        }
+        protected void OnPostCreate()
+        {
             Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 

@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 
 using static Android.Support.V7.Widget.SearchView;
 using Android.Views.InputMethods;
+using Android.Graphics.Drawables;
 
 namespace TramUrWay.Android
 {
@@ -43,10 +44,12 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
+
             SetContentView(Resource.Layout.HomeActivity);
             NavigationItemId = Resource.Id.SideMenu_Home;
 
-            base.OnCreate(savedInstanceState);
+            OnPostCreate();
 
             // Tabs
             viewPager = FindViewById<ViewPager>(Resource.Id.MainActivity_ViewPager);

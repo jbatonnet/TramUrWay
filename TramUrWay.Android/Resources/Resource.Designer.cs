@@ -2170,20 +2170,23 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f02008b
 			public const int montpellier = 2130837643;
 			
-			// aapt resource value: 0x7f020090
-			public const int notification_template_icon_bg = 2130837648;
+			// aapt resource value: 0x7f020091
+			public const int notification_template_icon_bg = 2130837649;
 			
 			// aapt resource value: 0x7f02008c
-			public const int sidemenugradient = 2130837644;
+			public const int shadow = 2130837644;
 			
 			// aapt resource value: 0x7f02008d
-			public const int splashscreen = 2130837645;
+			public const int sidemenugradient = 2130837645;
 			
 			// aapt resource value: 0x7f02008e
-			public const int train = 2130837646;
+			public const int splashscreen = 2130837646;
 			
 			// aapt resource value: 0x7f02008f
-			public const int train_glow = 2130837647;
+			public const int train = 2130837647;
+			
+			// aapt resource value: 0x7f020090
+			public const int train_glow = 2130837648;
 			
 			static Drawable()
 			{
@@ -3462,13 +3465,10 @@ namespace TramUrWay.Android
 			public const int AppTheme = 2131558743;
 			
 			// aapt resource value: 0x7f0d015a
-			public const int AppTheme_AppBarOverlay = 2131558746;
+			public const int AppTheme_AppBar = 2131558746;
 			
 			// aapt resource value: 0x7f0d0158
 			public const int AppTheme_NoActionBar = 2131558744;
-			
-			// aapt resource value: 0x7f0d015b
-			public const int AppTheme_PopupOverlay = 2131558747;
 			
 			// aapt resource value: 0x7f0d0159
 			public const int AppTheme_SplashScreen = 2131558745;

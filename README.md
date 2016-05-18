@@ -1,13 +1,16 @@
 # TramUrWay
+<meta charset="utf-8" />
 
 TramUrWay est une application Android permettant de suivre les transports en commun sur le réseau TaM à Montpellier.
 
 Voici les fonctionnalités disponibles dans l'application :
+
 - Affichage des horaires réels en direct
 - Affichage des horaires théoriques hors-ligne
 - Affichage de la position estimée des tramways et bus en temps réel
 
 Voici les fonctionnalités prévues et en cours de développement :
+
 - Un widget affichant les horaires de vos stations favorites
 - Affichage des incidents sur les lignes
 - Calcul d'itinéraires en mode déconnecté
@@ -23,8 +26,8 @@ Développé par un utilisateur du service TaM, pour les utilisateurs afin qu'ils
 Actuellement en beta ouverte, l'application TramUrWay est disponible en téléchargement sur le Google Play Store en suivant ce lien : [TramUrWay](https://play.google.com/apps/testing/net.thedju.TramUrWay)
 
 Certains bugs et incompatibilités empêchent l'application de fonctionner correctement :
+
 - Crash au démarrage sur certains modèles de **Wiko** ([Issue 1](https://github.com/jbatonnet/tramurway/issues/1))
-- Ecran noir sur **Samsung Galaxy S3/S4 avec Android 4.3** ou inférieur ([Issue 2](https://github.com/jbatonnet/tramurway/issues/2))
 
 ## Structure
 
