@@ -26,23 +26,16 @@ using Android.Util;
 
 namespace TramUrWay.Android
 {
-    public abstract class NavigationActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
+    public abstract class NavigationActivity : BaseActivity, NavigationView.IOnNavigationItemSelectedListener
     {
         protected int NavigationItemId { get; set; }
 
         protected DrawerLayout drawer;
         protected NavigationView navigationView;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override void OnPostCreate()
         {
-            App.Initialize(this);
-
-            base.OnCreate(savedInstanceState);
-        }
-        protected void OnPostCreate()
-        {
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
+            base.OnPostCreate();
 
             // Initialize UI
             drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

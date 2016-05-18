@@ -21,7 +21,7 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class LineActivity : AppCompatActivity
+    public class LineActivity : BaseActivity
     {
         private Line line;
         private List<Transport> transports = new List<Transport>();
@@ -34,13 +34,8 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
+            OnCreate(savedInstanceState, Resource.Layout.LineActivity);
 
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.LineActivity);
-
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
 
             // Handle bundle parameter

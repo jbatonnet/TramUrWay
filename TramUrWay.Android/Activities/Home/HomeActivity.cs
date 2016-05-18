@@ -44,12 +44,8 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-
-            SetContentView(Resource.Layout.HomeActivity);
             NavigationItemId = Resource.Id.SideMenu_Home;
-
-            OnPostCreate();
+            OnCreate(savedInstanceState, Resource.Layout.HomeActivity);
 
             // Tabs
             viewPager = FindViewById<ViewPager>(Resource.Id.MainActivity_ViewPager);

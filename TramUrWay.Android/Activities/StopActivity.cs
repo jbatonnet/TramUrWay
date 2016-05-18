@@ -25,7 +25,7 @@ using Android.Graphics.Drawables;
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class StopActivity : AppCompatActivity
+    public class StopActivity : BaseActivity
     {
         private Line line;
         private Stop stop;
@@ -42,13 +42,8 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
+            OnCreate(savedInstanceState, Resource.Layout.StopActivity);
 
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.StopActivity);
-
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
 
             // Handle bundle parameter
