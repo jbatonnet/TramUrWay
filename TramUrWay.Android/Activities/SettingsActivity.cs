@@ -26,7 +26,7 @@ using System.ComponentModel;
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class SettingsActivity : AppCompatActivity
+    public class SettingsActivity : BaseActivity
     {
         public class SettingsFragment : PreferenceFragment
         {
@@ -83,14 +83,8 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
-
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.SettingsActivity);
+            OnCreate(savedInstanceState, Resource.Layout.SettingsActivity);
             Title = "Paramètres";
-
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
 
             FragmentManager.BeginTransaction()

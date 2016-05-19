@@ -23,18 +23,12 @@ using Toolbar = Android.Support.V7.Widget.Toolbar;
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class AboutActivity : AppCompatActivity
+    public class AboutActivity : BaseActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
-
-            base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.AboutActivity);
+            OnCreate(savedInstanceState, Resource.Layout.AboutActivity);
             Title = "A propos";
-
-            Toolbar toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            SetSupportActionBar(toolbar);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
         }
 

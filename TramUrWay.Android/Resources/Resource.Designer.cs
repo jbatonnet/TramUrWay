@@ -2201,17 +2201,17 @@ namespace TramUrWay.Android
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0b0087
-			public const int FavoritesFragment_FavoriteLineList = 2131427463;
-			
 			// aapt resource value: 0x7f0b0088
-			public const int FavoritesFragment_FavoriteStopList = 2131427464;
+			public const int FavoritesFragment_FavoriteLineList = 2131427464;
+			
+			// aapt resource value: 0x7f0b0089
+			public const int FavoritesFragment_FavoriteStopList = 2131427465;
+			
+			// aapt resource value: 0x7f0b0087
+			public const int FavoritesFragment_Favorites = 2131427463;
 			
 			// aapt resource value: 0x7f0b0086
-			public const int FavoritesFragment_Favorites = 2131427462;
-			
-			// aapt resource value: 0x7f0b0085
-			public const int FavoritesFragment_NoFavorites = 2131427461;
+			public const int FavoritesFragment_NoFavorites = 2131427462;
 			
 			// aapt resource value: 0x7f0b008d
 			public const int LineActivity_Tabs = 2131427469;
@@ -2234,11 +2234,11 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b0093
 			public const int LinesFragment_LineList = 2131427475;
 			
-			// aapt resource value: 0x7f0b0089
-			public const int MainActivity_Tabs = 2131427465;
-			
 			// aapt resource value: 0x7f0b008a
-			public const int MainActivity_ViewPager = 2131427466;
+			public const int MainActivity_Tabs = 2131427466;
+			
+			// aapt resource value: 0x7f0b008b
+			public const int MainActivity_ViewPager = 2131427467;
 			
 			// aapt resource value: 0x7f0b00dc
 			public const int MainMenu_Search = 2131427548;
@@ -2561,20 +2561,20 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b004b
 			public const int default_activity_button = 2131427403;
 			
-			// aapt resource value: 0x7f0b007d
-			public const int design_bottom_sheet = 2131427453;
+			// aapt resource value: 0x7f0b007e
+			public const int design_bottom_sheet = 2131427454;
+			
+			// aapt resource value: 0x7f0b0085
+			public const int design_menu_item_action_area = 2131427461;
 			
 			// aapt resource value: 0x7f0b0084
-			public const int design_menu_item_action_area = 2131427460;
+			public const int design_menu_item_action_area_stub = 2131427460;
 			
 			// aapt resource value: 0x7f0b0083
-			public const int design_menu_item_action_area_stub = 2131427459;
+			public const int design_menu_item_text = 2131427459;
 			
 			// aapt resource value: 0x7f0b0082
-			public const int design_menu_item_text = 2131427458;
-			
-			// aapt resource value: 0x7f0b0081
-			public const int design_navigation_view = 2131427457;
+			public const int design_navigation_view = 2131427458;
 			
 			// aapt resource value: 0x7f0b001a
 			public const int disableHome = 2131427354;
@@ -2690,8 +2690,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b008c
 			public const int nav_view = 2131427468;
 			
-			// aapt resource value: 0x7f0b0080
-			public const int navigation_header_container = 2131427456;
+			// aapt resource value: 0x7f0b0081
+			public const int navigation_header_container = 2131427457;
 			
 			// aapt resource value: 0x7f0b002c
 			public const int never = 2131427372;
@@ -2777,8 +2777,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b0073
 			public const int select_dialog_listview = 2131427443;
 			
-			// aapt resource value: 0x7f0b008b
-			public const int shadow = 2131427467;
+			// aapt resource value: 0x7f0b007c
+			public const int shadow = 2131427452;
 			
 			// aapt resource value: 0x7f0b005e
 			public const int shortcut = 2131427422;
@@ -2792,11 +2792,11 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b001e
 			public const int showTitle = 2131427358;
 			
-			// aapt resource value: 0x7f0b007f
-			public const int snackbar_action = 2131427455;
+			// aapt resource value: 0x7f0b0080
+			public const int snackbar_action = 2131427456;
 			
-			// aapt resource value: 0x7f0b007e
-			public const int snackbar_text = 2131427454;
+			// aapt resource value: 0x7f0b007f
+			public const int snackbar_text = 2131427455;
 			
 			// aapt resource value: 0x7f0b0032
 			public const int snap = 2131427378;
@@ -2873,8 +2873,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b0052
 			public const int topPanel = 2131427410;
 			
-			// aapt resource value: 0x7f0b007c
-			public const int touch_outside = 2131427452;
+			// aapt resource value: 0x7f0b007d
+			public const int touch_outside = 2131427453;
 			
 			// aapt resource value: 0x7f0b0009
 			public const int up = 2131427337;
