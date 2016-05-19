@@ -190,9 +190,16 @@ namespace TramUrWay.Android
 
     public static class AssetsExtensions
     {
+        private static Dictionary<Line, BitmapDrawable> lineDrawables = new Dictionary<Line, BitmapDrawable>();
+
         public static Drawable GetIconDrawable(this Line me, Context context)
         {
-            return new BitmapDrawable(context.Resources, BitmapFactory.DecodeByteArray(me.Image, 0, me.Image.Length));
+            BitmapDrawable drawable;
+
+            if (!lineDrawables.TryGetValue(me, out drawable))
+                lineDrawables.Add(me, drawable = new BitmapDrawable(context.Resources, BitmapFactory.DecodeByteArray(me.Image, 0, me.Image.Length)));
+
+            return drawable;
         }
     }
 }

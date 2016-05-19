@@ -144,7 +144,7 @@ namespace TramUrWay.Android
                             stops[a.Which].SetIsFavorite(true);
                             (s as Dialog).Dismiss();
 
-                            NotifyItemChanged(viewHolder.AdapterPosition);
+                            NotifyDataSetChanged();
                         })
                         .Show();
                 }

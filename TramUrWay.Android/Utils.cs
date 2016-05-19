@@ -29,6 +29,22 @@ namespace TramUrWay.Android
 {
     public static class Utils
     {
+        private static Hashtable Cache { get; } = new Hashtable();
+
+        public static int Hash(params object[] args)
+        {
+            int hash = 0;
+
+            foreach (object arg in args)
+            {
+                hash = hash << 8 | ~hash >> 24;
+
+                if (arg != null)
+                    hash ^= arg.GetHashCode();
+            }
+
+            return hash;
+        }
         public static bool Likes(string left, string right)
         {
             // ASCII normalize strings
@@ -110,6 +126,11 @@ namespace TramUrWay.Android
 
         public static Bitmap GetStopIconForLine(Context context, Line line, int stopIconSize = 16)
         {
+            int hash = Hash(nameof(GetStopIconForLine), line.Id, stopIconSize);
+
+            if (Cache.ContainsKey(hash))
+                return Cache[hash] as Bitmap;
+
             Color color = GetColorForLine(context, line);
             float density = context.Resources.DisplayMetrics.Density;
 
@@ -126,10 +147,16 @@ namespace TramUrWay.Android
             paint.SetARGB(0xFF, 0xFF, 0xFF, 0xFF);
             stopCanvas.DrawCircle(stopIconSize / 2, stopIconSize / 2, stopIconSize / 2 - (int)(density * (1 + stopIconSize / 16)), paint);
 
+            Cache.Add(hash, stopBitmap);
             return stopBitmap;
         }
         public static Bitmap GetTransportIconForLine(Context context, Line line, int transportIconSize = 24)
         {
+            int hash = Hash(nameof(GetTransportIconForLine), line.Id, transportIconSize);
+
+            if (Cache.ContainsKey(hash))
+                return Cache[hash] as Bitmap;
+
             Color color = GetColorForLine(context, line);
             float density = context.Resources.DisplayMetrics.Density;
             Paint paint = new Paint();
@@ -148,6 +175,7 @@ namespace TramUrWay.Android
             transportDrawable.SetBounds(0, 0, transportIconSize, transportIconSize);
             transportDrawable.Draw(transportCanvas);
 
+            Cache.Add(hash, transportBitmap);
             return transportBitmap;
         }
     }
