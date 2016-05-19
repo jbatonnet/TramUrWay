@@ -49,6 +49,7 @@ namespace TramUrWay.Android
 
             // Tabs
             viewPager = FindViewById<ViewPager>(Resource.Id.MainActivity_ViewPager);
+            viewPager.OffscreenPageLimit = 3;
             viewPager.Adapter = fragmentsAdapter = new TabFragmentsAdapter(SupportFragmentManager, favoritesFragment, linesFragment, stopsFragment);
             viewPager.PageSelected += ViewPager_PageSelected;
 
