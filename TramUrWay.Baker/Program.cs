@@ -40,7 +40,7 @@ namespace TramUrWay.Baker
             LoadSpeedCurves();
 
             // Dump everything
-            //DumpData();
+            DumpData();
 
 
 
@@ -55,7 +55,7 @@ namespace TramUrWay.Baker
             transports.Update(firstTimeSteps, firstDate);
             transports.Update(secondTimeSteps, secondDate);*/
 
-            TestSearch();
+            //TestSearch();
         }
 
         private static void LoadStations()

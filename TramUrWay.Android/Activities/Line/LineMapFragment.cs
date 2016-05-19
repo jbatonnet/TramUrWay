@@ -26,17 +26,22 @@ namespace TramUrWay.Android
             private Marker marker;
             private Transport transport;
             private Action<LatLng> positionUpdater;
+            private CancellationTokenSource cancellationTokenSource;
 
-            public MarkerAnimator(Activity activity, Marker marker, Transport transport, Action<LatLng> positionUpdater)
+            public MarkerAnimator(Activity activity, Marker marker, Transport transport, Action<LatLng> positionUpdater, CancellationTokenSource cancellationTokenSource)
             {
                 this.activity = activity;
                 this.marker = marker;
                 this.transport = transport;
                 this.positionUpdater = positionUpdater;
+                this.cancellationTokenSource = cancellationTokenSource;
             }
 
             public void OnAnimationUpdate(ValueAnimator animation)
             {
+                if (cancellationTokenSource.IsCancellationRequested)
+                    return;
+
                 float progress = transport.Progress + (transport.NextProgress - transport.Progress) * animation.AnimatedFraction;
                 int index = transport.Step.Trajectory.TakeWhile(s => s.Index <= progress).Count();
 
@@ -282,7 +287,7 @@ namespace TramUrWay.Android
 
                 // Update marker
                 ValueAnimator valueAnimator = new ValueAnimator();
-                valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p)));
+                valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p), refreshCancellationTokenSource));
                 valueAnimator.SetFloatValues(0, 1);
                 valueAnimator.SetInterpolator(new LinearInterpolator());
                 valueAnimator.SetDuration(1000);
