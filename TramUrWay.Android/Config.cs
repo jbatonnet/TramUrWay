@@ -96,6 +96,22 @@ namespace TramUrWay.Android
             }
         }
 
+        [DisplayName("Afficher les transports")]
+        [Description("Affiche les transports en direct sur la carte")]
+        public bool EnableLiveTransports
+        {
+            get
+            {
+                return Preferences.GetBoolean("Config." + nameof(EnableLiveTransports), false);
+            }
+            set
+            {
+                ISharedPreferencesEditor editor = Preferences.Edit();
+                editor.PutBoolean("Config." + nameof(EnableLiveTransports), value);
+                editor.Apply();
+            }
+        }
+
         public IList<Line> FavoriteLines
         {
             get
