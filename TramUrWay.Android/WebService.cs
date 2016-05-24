@@ -18,7 +18,11 @@ namespace TramUrWay.Android
 {
     public class WebService
     {
-        private const string webServiceUrl = "http://www.tam-direct.com/webservice";
+        // http://www.tam-direct.com (Down)
+        // http://e-tam.fr
+        // http://tam.mobitrans.fr
+
+        private const string webServiceUrl = "http://e-tam.fr/webservice";
 
         public IEnumerable<TimeStep> GetLiveTimeSteps()
         {

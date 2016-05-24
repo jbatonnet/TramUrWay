@@ -7,6 +7,7 @@ namespace TramUrWay.Android
 {
     public enum LineType
     {
+        Unknown,
         Tram,
         Bus
     }
