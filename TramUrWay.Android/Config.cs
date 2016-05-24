@@ -96,18 +96,18 @@ namespace TramUrWay.Android
             }
         }
 
-        [DisplayName("Afficher les transports")]
-        [Description("Affiche les transports en direct sur la carte")]
-        public bool EnableLiveTransports
+        [DisplayName("Fonctionnalités expérimentales")]
+        [Description("Active les fonctionnalités expérimentales de l'application")]
+        public bool ExperimentalFeatures
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(EnableLiveTransports), false);
+                return Preferences.GetBoolean("Config." + nameof(ExperimentalFeatures), false);
             }
             set
             {
                 ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(EnableLiveTransports), value);
+                editor.PutBoolean("Config." + nameof(ExperimentalFeatures), value);
                 editor.Apply();
             }
         }

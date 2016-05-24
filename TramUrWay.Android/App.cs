@@ -63,10 +63,15 @@ namespace TramUrWay.Android
                 WidgetUpdateService.Start(context);
 
             // Preload lines
-#if DEBUG
-            Lines = Assets.LoadLines()/*.Take(4)*/.ToArray();
-#else
             Lines = Assets.LoadLines();
+
+#if DEBUG
+            // Enable experimental features on debug builds
+            Config.ExperimentalFeatures = true;
+
+            // Add some favorites
+            Config.FavoriteStops.Add(GetLine(2).Routes[1].Steps.First(s => s.Stop.Name == "Saint-Lazare").Stop);
+            Config.FavoriteStops.Add(GetLine(1).Routes[1].Steps.First(s => s.Stop.Name == "Odysseum").Stop);
 #endif
         }
 
