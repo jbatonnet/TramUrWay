@@ -130,6 +130,13 @@ namespace TramUrWay.Android
         }
         private void RegisterWidget(Step step)
         {
+            if (!App.Config.ExperimentalFeatures)
+            {
+                SetResult(Result.Canceled);
+                Finish();
+                return;
+            }
+
             // Register the widget
             App.Config.StepWidgets.Add(appWidgetId, step);
 

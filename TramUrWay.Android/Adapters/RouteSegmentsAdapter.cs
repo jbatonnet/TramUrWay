@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Database;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
@@ -90,18 +91,35 @@ namespace TramUrWay.Android
 
             viewHolder.Preview.RemoveAllViews();
 
+            PercentRelativeLayout.LayoutParams layoutParams;
+
             foreach (RouteSegment segment in timeStep)
             {
+                Color color = Utils.GetColorForLine(context, segment.Line);
+
                 ImageView image = new ImageView(context);
                 image.SetImageResource(Resource.Drawable.circle2);
-                image.SetColorFilter(Utils.GetColorForLine(context, segment.Line));
+                image.SetColorFilter(color);
 
-                PercentRelativeLayout.LayoutParams layoutParams = new PercentRelativeLayout.LayoutParams((int)(14 * density), (int)(14 * density));
+                layoutParams = new PercentRelativeLayout.LayoutParams((int)(14 * density), (int)(14 * density));
                 layoutParams.AddRule(LayoutRules.CenterVertical);
                 layoutParams.SetMargins((int)(-7 * density), 0, 0, 0);
                 layoutParams.PercentLayoutInfo.LeftMarginPercent = (float)(segment.DateFrom - begin).Ticks / total.Ticks;
 
                 viewHolder.Preview.AddView(image, layoutParams);
+
+                LinearLayout view = new LinearLayout(context);
+                view.SetBackgroundColor(color);
+
+                layoutParams = new PercentRelativeLayout.LayoutParams((int)(28 * density), (int)(4 * density));
+                //layoutParams = new PercentRelativeLayout.LayoutParams(context, null);
+                layoutParams.AddRule(LayoutRules.CenterVertical);
+                layoutParams.SetMargins((int)(10 * density), 0, (int)(10 * density), 0);
+                layoutParams.PercentLayoutInfo.WidthPercent = (float)(segment.DateTo - segment.DateFrom).Ticks / total.Ticks;
+                //layoutParams.PercentLayoutInfo.HeightPercent = 0.50f;
+                layoutParams.PercentLayoutInfo.LeftMarginPercent = (float)(segment.DateFrom - begin).Ticks / total.Ticks;
+
+                viewHolder.Preview.AddView(view, layoutParams);
             }
 
             if (!viewHolders.Contains(viewHolder))

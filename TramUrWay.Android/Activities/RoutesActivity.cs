@@ -84,6 +84,11 @@ namespace TramUrWay.Android
             recyclerView.SetLayoutManager(new LinearLayoutManager(recyclerView.Context));
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(routeSegmentAdapter = new RouteSegmentsAdapter());
+
+#if DEBUG
+            fromTextView.Text = "Saint-Lazare";
+            toTextView.Text = "Odysseum";
+#endif
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -229,7 +234,9 @@ namespace TramUrWay.Android
         }
         private void DateLayout_Click(object sender, EventArgs e)
         {
-            
+            new global::Android.Support.V7.App.AlertDialog.Builder(this)
+                .SetView()
+                .Show();
         }
 
         private async Task Search(Stop from, Stop to, DateConstraint constraint, DateTime date)
@@ -275,7 +282,10 @@ namespace TramUrWay.Android
                     else if (constraint == DateConstraint.Last)
                         throw new NotImplementedException();
 
-                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
+                    // Filter out too long times
+                    TimeSpan minTime = routeSegments.Count == 0 ? TimeSpan.FromDays(1) : routeSegments.Min(s => s.Last().DateTo - s.First().DateFrom);
+                    routeSegments.RemoveAll(r => (r.Last().DateTo - r.First().DateFrom).Ticks > minTime.Ticks * 3);
+                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).Ticks);
 
                     RunOnUiThread(() => routeSegmentAdapter.RouteSegments = routeSegments);
                 }

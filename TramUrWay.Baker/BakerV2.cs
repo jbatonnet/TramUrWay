@@ -102,7 +102,7 @@ namespace TramUrWay.Baker
                 }
             }
 
-            foreach (Line line in lines)
+            foreach (Line line in lines.Where(l => l.Id < 6))
             {
                 List<Stop> lineStops = new List<Stop>();
                 List<Route> lineRoutes = new List<Route>();
@@ -121,6 +121,7 @@ namespace TramUrWay.Baker
 
                         stop.Id = stopTamId;
                         stop.Name = (string)reader["stop_name"];
+                        stop.Line = line;
 
                         float stopLatitude = (float)(double)reader["latitude"];
                         float stopLongitude = (float)(double)reader["longitude"];
@@ -154,6 +155,8 @@ namespace TramUrWay.Baker
                         {
                             int stopId = (int)(long)reader["stop"];
                             Stop stop = GetStopFromTamId(stopId);
+                            if (stop == null)
+                                throw new Exception();
 
                             bool stepPartial = (bool)reader["main_section"];
 
@@ -177,101 +180,12 @@ namespace TramUrWay.Baker
                 }
 
                 line.Routes = lineRoutes.ToArray();
-                lines.Add(line);
             }
 
             Lines = lines.ToArray();
         }
 
         // Helpers
-        private static TimeSpan?[,] LoadTimeTable(Route route, Stream stream)
-        {
-            Step[] partialSteps;
-            List<TimeSpan?[]> partialTimes = new List<TimeSpan?[]>();
-
-            // Read raw data
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string header = reader.ReadLine();
-                if (string.IsNullOrWhiteSpace(header))
-                    return new TimeSpan?[0, route.Steps.Length];
-
-                string[] headerParts = header.Split(';');
-
-                partialSteps = headerParts.Select(p => route.Steps.FirstOrDefault(s => Likes(s.Stop.Name, p))).ToArray();
-
-                TimeSpan[] lastTimes = new TimeSpan[partialSteps.Length];
-                while (true)
-                {
-                    string data = reader.ReadLine();
-                    if (string.IsNullOrWhiteSpace(data))
-                        break;
-
-                    string[] dataParts = data.Split(';');
-                    TimeSpan?[] times = new TimeSpan?[partialSteps.Length];
-
-                    for (int i = 0; i < partialSteps.Length; i++)
-                    {
-                        TimeSpan time;
-                        if (TimeSpan.TryParse(dataParts[i], out time))
-                        {
-                            if (time < lastTimes[i])
-                                times[i] = time.Add(TimeSpan.FromDays(1));
-                            else
-                            {
-                                times[i] = time;
-                                lastTimes[i] = time;
-                            }
-                        }
-                    }
-
-                    partialTimes.Add(times);
-                }
-            }
-
-            // Fill the missing stops
-            Tuple<int, int, float>[] missingSteps = route.Steps.Select((s, i) =>
-            {
-                if (partialSteps.Contains(s))
-                    return null;
-
-                Step previousStep = route.Steps.Take(i).Reverse().First(l => partialSteps.Contains(l));
-                Step nextStep = route.Steps.Skip(i).First(l => partialSteps.Contains(l));
-
-                int previousPartialIndex = partialSteps.IndexOf(previousStep);
-                int nextPartialIndex = partialSteps.IndexOf(nextStep);
-
-                int previousFullIndex = route.Steps.IndexOf(previousStep);
-                int nextFullIndex = route.Steps.IndexOf(nextStep);
-
-                return new Tuple<int, int, float>(previousPartialIndex, nextPartialIndex, (float)(i - previousFullIndex) / (nextFullIndex - previousFullIndex));
-            }).ToArray();
-
-            TimeSpan?[,] fullTimes = new TimeSpan?[partialTimes.Count, route.Steps.Length];
-            for (int i = 0; i < partialTimes.Count; i++)
-            {
-                for (int j = 0; j < route.Steps.Length; j++)
-                {
-                    int k = partialSteps.IndexOf(route.Steps[j]);
-
-                    if (k >= 0)
-                        fullTimes[i, j] = partialTimes[i][k];
-                    else
-                    {
-                        int previousIndex = missingSteps[j].Item1;
-                        int nextIndex = missingSteps[j].Item2;
-                        float weight = missingSteps[j].Item3;
-
-                        TimeSpan? previousTime = partialTimes[i][previousIndex];
-                        TimeSpan? nextTime = partialTimes[i][nextIndex];
-
-                        fullTimes[i, j] = (previousTime == null || nextTime == null) ? null : previousTime.Value.Add(TimeSpan.FromTicks((long)((nextTime.Value.Ticks - previousTime.Value.Ticks) * weight))) as TimeSpan?;
-                    }
-                }
-            }
-
-            return fullTimes;
-        }
         private static bool Likes(string left, string right)
         {
             Dictionary<string, char> replacements = new Dictionary<string, char>()

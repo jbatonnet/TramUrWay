@@ -61,10 +61,11 @@ namespace TramUrWay.Android
                 IMenuItem menuItem = navigationView.Menu.GetItem(i);
                 menuItem.SetChecked(menuItem.ItemId == NavigationItemId);
 
-#if DEBUG
-                if (menuItem.ItemId == Resource.Id.SideMenu_Routes)
-                    menuItem.SetEnabled(true);
-#endif
+                if (App.Config.ExperimentalFeatures)
+                {
+                    if (menuItem.ItemId == Resource.Id.SideMenu_Routes)
+                        menuItem.SetEnabled(true);
+                }
             }
 
             base.OnResume();

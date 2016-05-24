@@ -264,26 +264,26 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100b8
 			public const int barLength = 2130772152;
 			
-			// aapt resource value: 0x7f0100f0
-			public const int behavior_hideable = 2130772208;
+			// aapt resource value: 0x7f0100fa
+			public const int behavior_hideable = 2130772218;
+			
+			// aapt resource value: 0x7f010120
+			public const int behavior_overlapTop = 2130772256;
+			
+			// aapt resource value: 0x7f0100f9
+			public const int behavior_peekHeight = 2130772217;
 			
 			// aapt resource value: 0x7f010116
-			public const int behavior_overlapTop = 2130772246;
-			
-			// aapt resource value: 0x7f0100ef
-			public const int behavior_peekHeight = 2130772207;
-			
-			// aapt resource value: 0x7f01010c
-			public const int borderWidth = 2130772236;
+			public const int borderWidth = 2130772246;
 			
 			// aapt resource value: 0x7f010075
 			public const int borderlessButtonStyle = 2130772085;
 			
-			// aapt resource value: 0x7f010106
-			public const int bottomSheetDialogTheme = 2130772230;
+			// aapt resource value: 0x7f010110
+			public const int bottomSheetDialogTheme = 2130772240;
 			
-			// aapt resource value: 0x7f010107
-			public const int bottomSheetStyle = 2130772231;
+			// aapt resource value: 0x7f010111
+			public const int bottomSheetStyle = 2130772241;
 			
 			// aapt resource value: 0x7f010072
 			public const int buttonBarButtonStyle = 2130772082;
@@ -354,11 +354,11 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100e0
 			public const int collapseIcon = 2130772192;
 			
-			// aapt resource value: 0x7f0100fd
-			public const int collapsedTitleGravity = 2130772221;
+			// aapt resource value: 0x7f010107
+			public const int collapsedTitleGravity = 2130772231;
 			
-			// aapt resource value: 0x7f0100f9
-			public const int collapsedTitleTextAppearance = 2130772217;
+			// aapt resource value: 0x7f010103
+			public const int collapsedTitleTextAppearance = 2130772227;
 			
 			// aapt resource value: 0x7f0100b2
 			public const int color = 2130772146;
@@ -405,23 +405,23 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010031
 			public const int contentInsetStart = 2130772017;
 			
-			// aapt resource value: 0x7f0100fa
-			public const int contentScrim = 2130772218;
+			// aapt resource value: 0x7f010104
+			public const int contentScrim = 2130772228;
 			
 			// aapt resource value: 0x7f010099
 			public const int controlBackground = 2130772121;
 			
-			// aapt resource value: 0x7f01012c
-			public const int counterEnabled = 2130772268;
+			// aapt resource value: 0x7f010136
+			public const int counterEnabled = 2130772278;
 			
-			// aapt resource value: 0x7f01012d
-			public const int counterMaxLength = 2130772269;
+			// aapt resource value: 0x7f010137
+			public const int counterMaxLength = 2130772279;
 			
-			// aapt resource value: 0x7f01012f
-			public const int counterOverflowTextAppearance = 2130772271;
+			// aapt resource value: 0x7f010139
+			public const int counterOverflowTextAppearance = 2130772281;
 			
-			// aapt resource value: 0x7f01012e
-			public const int counterTextAppearance = 2130772270;
+			// aapt resource value: 0x7f010138
+			public const int counterTextAppearance = 2130772280;
 			
 			// aapt resource value: 0x7f01002a
 			public const int customNavigationLayout = 2130772010;
@@ -474,44 +474,44 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010035
 			public const int elevation = 2130772021;
 			
-			// aapt resource value: 0x7f01012a
-			public const int errorEnabled = 2130772266;
+			// aapt resource value: 0x7f010134
+			public const int errorEnabled = 2130772276;
 			
-			// aapt resource value: 0x7f01012b
-			public const int errorTextAppearance = 2130772267;
+			// aapt resource value: 0x7f010135
+			public const int errorTextAppearance = 2130772277;
 			
 			// aapt resource value: 0x7f010039
 			public const int expandActivityOverflowButtonDrawable = 2130772025;
 			
-			// aapt resource value: 0x7f0100ec
-			public const int expanded = 2130772204;
+			// aapt resource value: 0x7f0100f6
+			public const int expanded = 2130772214;
+			
+			// aapt resource value: 0x7f010108
+			public const int expandedTitleGravity = 2130772232;
+			
+			// aapt resource value: 0x7f0100fd
+			public const int expandedTitleMargin = 2130772221;
+			
+			// aapt resource value: 0x7f010101
+			public const int expandedTitleMarginBottom = 2130772225;
+			
+			// aapt resource value: 0x7f010100
+			public const int expandedTitleMarginEnd = 2130772224;
 			
 			// aapt resource value: 0x7f0100fe
-			public const int expandedTitleGravity = 2130772222;
+			public const int expandedTitleMarginStart = 2130772222;
 			
-			// aapt resource value: 0x7f0100f3
-			public const int expandedTitleMargin = 2130772211;
+			// aapt resource value: 0x7f0100ff
+			public const int expandedTitleMarginTop = 2130772223;
 			
-			// aapt resource value: 0x7f0100f7
-			public const int expandedTitleMarginBottom = 2130772215;
+			// aapt resource value: 0x7f010102
+			public const int expandedTitleTextAppearance = 2130772226;
 			
-			// aapt resource value: 0x7f0100f6
-			public const int expandedTitleMarginEnd = 2130772214;
+			// aapt resource value: 0x7f010114
+			public const int fabSize = 2130772244;
 			
-			// aapt resource value: 0x7f0100f4
-			public const int expandedTitleMarginStart = 2130772212;
-			
-			// aapt resource value: 0x7f0100f5
-			public const int expandedTitleMarginTop = 2130772213;
-			
-			// aapt resource value: 0x7f0100f8
-			public const int expandedTitleTextAppearance = 2130772216;
-			
-			// aapt resource value: 0x7f01010a
-			public const int fabSize = 2130772234;
-			
-			// aapt resource value: 0x7f01010e
-			public const int foregroundInsidePadding = 2130772238;
+			// aapt resource value: 0x7f010118
+			public const int foregroundInsidePadding = 2130772248;
 			
 			// aapt resource value: 0x7f0100b5
 			public const int gapBetweenBars = 2130772149;
@@ -519,8 +519,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100c9
 			public const int goIcon = 2130772169;
 			
-			// aapt resource value: 0x7f010114
-			public const int headerLayout = 2130772244;
+			// aapt resource value: 0x7f01011e
+			public const int headerLayout = 2130772254;
 			
 			// aapt resource value: 0x7f01001c
 			public const int height = 2130771996;
@@ -528,14 +528,14 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010030
 			public const int hideOnContentScroll = 2130772016;
 			
-			// aapt resource value: 0x7f010130
-			public const int hintAnimationEnabled = 2130772272;
+			// aapt resource value: 0x7f01013a
+			public const int hintAnimationEnabled = 2130772282;
 			
-			// aapt resource value: 0x7f010129
-			public const int hintEnabled = 2130772265;
+			// aapt resource value: 0x7f010133
+			public const int hintEnabled = 2130772275;
 			
-			// aapt resource value: 0x7f010128
-			public const int hintTextAppearance = 2130772264;
+			// aapt resource value: 0x7f010132
+			public const int hintTextAppearance = 2130772274;
 			
 			// aapt resource value: 0x7f01006f
 			public const int homeAsUpIndicator = 2130772079;
@@ -564,29 +564,29 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010038
 			public const int initialActivityCount = 2130772024;
 			
-			// aapt resource value: 0x7f010115
-			public const int insetForeground = 2130772245;
+			// aapt resource value: 0x7f01011f
+			public const int insetForeground = 2130772255;
 			
 			// aapt resource value: 0x7f01001d
 			public const int isLightTheme = 2130771997;
 			
-			// aapt resource value: 0x7f010112
-			public const int itemBackground = 2130772242;
+			// aapt resource value: 0x7f01011c
+			public const int itemBackground = 2130772252;
 			
-			// aapt resource value: 0x7f010110
-			public const int itemIconTint = 2130772240;
+			// aapt resource value: 0x7f01011a
+			public const int itemIconTint = 2130772250;
 			
 			// aapt resource value: 0x7f01002f
 			public const int itemPadding = 2130772015;
 			
-			// aapt resource value: 0x7f010113
-			public const int itemTextAppearance = 2130772243;
+			// aapt resource value: 0x7f01011d
+			public const int itemTextAppearance = 2130772253;
 			
-			// aapt resource value: 0x7f010111
-			public const int itemTextColor = 2130772241;
+			// aapt resource value: 0x7f01011b
+			public const int itemTextColor = 2130772251;
 			
-			// aapt resource value: 0x7f010100
-			public const int keylines = 2130772224;
+			// aapt resource value: 0x7f01010a
+			public const int keylines = 2130772234;
 			
 			// aapt resource value: 0x7f0100c4
 			public const int layout = 2130772164;
@@ -594,29 +594,59 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010017
 			public const int layoutManager = 2130771991;
 			
-			// aapt resource value: 0x7f010103
-			public const int layout_anchor = 2130772227;
+			// aapt resource value: 0x7f01010d
+			public const int layout_anchor = 2130772237;
 			
-			// aapt resource value: 0x7f010105
-			public const int layout_anchorGravity = 2130772229;
+			// aapt resource value: 0x7f01010f
+			public const int layout_anchorGravity = 2130772239;
 			
-			// aapt resource value: 0x7f010102
-			public const int layout_behavior = 2130772226;
+			// aapt resource value: 0x7f0100f5
+			public const int layout_aspectRatio = 2130772213;
 			
-			// aapt resource value: 0x7f0100f1
-			public const int layout_collapseMode = 2130772209;
+			// aapt resource value: 0x7f01010c
+			public const int layout_behavior = 2130772236;
 			
-			// aapt resource value: 0x7f0100f2
-			public const int layout_collapseParallaxMultiplier = 2130772210;
+			// aapt resource value: 0x7f0100fb
+			public const int layout_collapseMode = 2130772219;
 			
-			// aapt resource value: 0x7f010104
-			public const int layout_keyline = 2130772228;
+			// aapt resource value: 0x7f0100fc
+			public const int layout_collapseParallaxMultiplier = 2130772220;
 			
 			// aapt resource value: 0x7f0100ed
-			public const int layout_scrollFlags = 2130772205;
+			public const int layout_heightPercent = 2130772205;
+			
+			// aapt resource value: 0x7f01010e
+			public const int layout_keyline = 2130772238;
+			
+			// aapt resource value: 0x7f0100f2
+			public const int layout_marginBottomPercent = 2130772210;
+			
+			// aapt resource value: 0x7f0100f4
+			public const int layout_marginEndPercent = 2130772212;
+			
+			// aapt resource value: 0x7f0100ef
+			public const int layout_marginLeftPercent = 2130772207;
 			
 			// aapt resource value: 0x7f0100ee
-			public const int layout_scrollInterpolator = 2130772206;
+			public const int layout_marginPercent = 2130772206;
+			
+			// aapt resource value: 0x7f0100f1
+			public const int layout_marginRightPercent = 2130772209;
+			
+			// aapt resource value: 0x7f0100f3
+			public const int layout_marginStartPercent = 2130772211;
+			
+			// aapt resource value: 0x7f0100f0
+			public const int layout_marginTopPercent = 2130772208;
+			
+			// aapt resource value: 0x7f0100f7
+			public const int layout_scrollFlags = 2130772215;
+			
+			// aapt resource value: 0x7f0100f8
+			public const int layout_scrollInterpolator = 2130772216;
+			
+			// aapt resource value: 0x7f0100ec
+			public const int layout_widthPercent = 2130772204;
 			
 			// aapt resource value: 0x7f010090
 			public const int listChoiceBackgroundIndicator = 2130772112;
@@ -660,8 +690,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010000
 			public const int mapType = 2130771968;
 			
-			// aapt resource value: 0x7f010117
-			public const int maxActionInlineWidth = 2130772247;
+			// aapt resource value: 0x7f010121
+			public const int maxActionInlineWidth = 2130772257;
 			
 			// aapt resource value: 0x7f0100df
 			public const int maxButtonHeight = 2130772191;
@@ -669,8 +699,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100ba
 			public const int measureWithLargestChild = 2130772154;
 			
-			// aapt resource value: 0x7f01010f
-			public const int menu = 2130772239;
+			// aapt resource value: 0x7f010119
+			public const int menu = 2130772249;
 			
 			// aapt resource value: 0x7f01003c
 			public const int multiChoiceItemLayout = 2130772028;
@@ -714,8 +744,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100c1
 			public const int preserveIconSpacing = 2130772161;
 			
-			// aapt resource value: 0x7f01010b
-			public const int pressedTranslationZ = 2130772235;
+			// aapt resource value: 0x7f010115
+			public const int pressedTranslationZ = 2130772245;
 			
 			// aapt resource value: 0x7f01002e
 			public const int progressBarPadding = 2130772014;
@@ -744,8 +774,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010019
 			public const int reverseLayout = 2130771993;
 			
-			// aapt resource value: 0x7f010109
-			public const int rippleColor = 2130772233;
+			// aapt resource value: 0x7f010113
+			public const int rippleColor = 2130772243;
 			
 			// aapt resource value: 0x7f010016
 			public const int scopeUris = 2130771990;
@@ -804,11 +834,11 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100c3
 			public const int state_above_anchor = 2130772163;
 			
-			// aapt resource value: 0x7f010101
-			public const int statusBarBackground = 2130772225;
+			// aapt resource value: 0x7f01010b
+			public const int statusBarBackground = 2130772235;
 			
-			// aapt resource value: 0x7f0100fb
-			public const int statusBarScrim = 2130772219;
+			// aapt resource value: 0x7f010105
+			public const int statusBarScrim = 2130772229;
 			
 			// aapt resource value: 0x7f0100d0
 			public const int submitBackground = 2130772176;
@@ -840,53 +870,53 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0100d3
 			public const int switchTextAppearance = 2130772179;
 			
-			// aapt resource value: 0x7f01011b
-			public const int tabBackground = 2130772251;
-			
-			// aapt resource value: 0x7f01011a
-			public const int tabContentStart = 2130772250;
-			
-			// aapt resource value: 0x7f01011d
-			public const int tabGravity = 2130772253;
-			
-			// aapt resource value: 0x7f010118
-			public const int tabIndicatorColor = 2130772248;
-			
-			// aapt resource value: 0x7f010119
-			public const int tabIndicatorHeight = 2130772249;
-			
-			// aapt resource value: 0x7f01011f
-			public const int tabMaxWidth = 2130772255;
-			
-			// aapt resource value: 0x7f01011e
-			public const int tabMinWidth = 2130772254;
-			
-			// aapt resource value: 0x7f01011c
-			public const int tabMode = 2130772252;
-			
-			// aapt resource value: 0x7f010127
-			public const int tabPadding = 2130772263;
-			
-			// aapt resource value: 0x7f010126
-			public const int tabPaddingBottom = 2130772262;
-			
 			// aapt resource value: 0x7f010125
-			public const int tabPaddingEnd = 2130772261;
-			
-			// aapt resource value: 0x7f010123
-			public const int tabPaddingStart = 2130772259;
+			public const int tabBackground = 2130772261;
 			
 			// aapt resource value: 0x7f010124
-			public const int tabPaddingTop = 2130772260;
+			public const int tabContentStart = 2130772260;
+			
+			// aapt resource value: 0x7f010127
+			public const int tabGravity = 2130772263;
 			
 			// aapt resource value: 0x7f010122
-			public const int tabSelectedTextColor = 2130772258;
+			public const int tabIndicatorColor = 2130772258;
 			
-			// aapt resource value: 0x7f010120
-			public const int tabTextAppearance = 2130772256;
+			// aapt resource value: 0x7f010123
+			public const int tabIndicatorHeight = 2130772259;
 			
-			// aapt resource value: 0x7f010121
-			public const int tabTextColor = 2130772257;
+			// aapt resource value: 0x7f010129
+			public const int tabMaxWidth = 2130772265;
+			
+			// aapt resource value: 0x7f010128
+			public const int tabMinWidth = 2130772264;
+			
+			// aapt resource value: 0x7f010126
+			public const int tabMode = 2130772262;
+			
+			// aapt resource value: 0x7f010131
+			public const int tabPadding = 2130772273;
+			
+			// aapt resource value: 0x7f010130
+			public const int tabPaddingBottom = 2130772272;
+			
+			// aapt resource value: 0x7f01012f
+			public const int tabPaddingEnd = 2130772271;
+			
+			// aapt resource value: 0x7f01012d
+			public const int tabPaddingStart = 2130772269;
+			
+			// aapt resource value: 0x7f01012e
+			public const int tabPaddingTop = 2130772270;
+			
+			// aapt resource value: 0x7f01012c
+			public const int tabSelectedTextColor = 2130772268;
+			
+			// aapt resource value: 0x7f01012a
+			public const int tabTextAppearance = 2130772266;
+			
+			// aapt resource value: 0x7f01012b
+			public const int tabTextColor = 2130772267;
 			
 			// aapt resource value: 0x7f010040
 			public const int textAllCaps = 2130772032;
@@ -912,8 +942,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f01009e
 			public const int textColorAlertDialogListItem = 2130772126;
 			
-			// aapt resource value: 0x7f010108
-			public const int textColorError = 2130772232;
+			// aapt resource value: 0x7f010112
+			public const int textColorError = 2130772242;
 			
 			// aapt resource value: 0x7f010082
 			public const int textColorSearchUrl = 2130772098;
@@ -930,8 +960,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f01001e
 			public const int title = 2130771998;
 			
-			// aapt resource value: 0x7f0100ff
-			public const int titleEnabled = 2130772223;
+			// aapt resource value: 0x7f010109
+			public const int titleEnabled = 2130772233;
 			
 			// aapt resource value: 0x7f0100de
 			public const int titleMarginBottom = 2130772190;
@@ -957,8 +987,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f010022
 			public const int titleTextStyle = 2130772002;
 			
-			// aapt resource value: 0x7f0100fc
-			public const int toolbarId = 2130772220;
+			// aapt resource value: 0x7f010106
+			public const int toolbarId = 2130772230;
 			
 			// aapt resource value: 0x7f01007a
 			public const int toolbarNavigationButtonStyle = 2130772090;
@@ -990,8 +1020,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f01000c
 			public const int uiZoomGestures = 2130771980;
 			
-			// aapt resource value: 0x7f01010d
-			public const int useCompatPadding = 2130772237;
+			// aapt resource value: 0x7f010117
+			public const int useCompatPadding = 2130772247;
 			
 			// aapt resource value: 0x7f01000d
 			public const int useViewLifecycle = 2130771981;
@@ -3107,46 +3137,49 @@ namespace TramUrWay.Android
 			public const int RoutesActivity = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int RouteSegmentsItem = 2130968632;
+			public const int RoutesDateDialog = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int select_dialog_item_material = 2130968633;
+			public const int RouteSegmentsItem = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int select_dialog_multichoice_material = 2130968634;
+			public const int select_dialog_item_material = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int select_dialog_singlechoice_material = 2130968635;
+			public const int select_dialog_multichoice_material = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int SettingsActivity = 2130968636;
+			public const int select_dialog_singlechoice_material = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int SideMenu = 2130968637;
+			public const int SettingsActivity = 2130968637;
 			
 			// aapt resource value: 0x7f04003e
-			public const int StepItem = 2130968638;
+			public const int SideMenu = 2130968638;
 			
 			// aapt resource value: 0x7f04003f
-			public const int StepWidget = 2130968639;
+			public const int StepItem = 2130968639;
 			
 			// aapt resource value: 0x7f040040
-			public const int StepWidgetActivity = 2130968640;
+			public const int StepWidget = 2130968640;
 			
 			// aapt resource value: 0x7f040041
-			public const int StopActivity = 2130968641;
+			public const int StepWidgetActivity = 2130968641;
 			
 			// aapt resource value: 0x7f040042
-			public const int StopItem = 2130968642;
+			public const int StopActivity = 2130968642;
 			
 			// aapt resource value: 0x7f040043
-			public const int StopsFragment = 2130968643;
+			public const int StopItem = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int support_simple_spinner_dropdown_item = 2130968644;
+			public const int StopsFragment = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int TimeStepItem = 2130968645;
+			public const int support_simple_spinner_dropdown_item = 2130968645;
+			
+			// aapt resource value: 0x7f040046
+			public const int TimeStepItem = 2130968646;
 			
 			static Layout()
 			{
@@ -4702,7 +4735,7 @@ namespace TramUrWay.Android
 			public static int[] AppBarLayout = new int[] {
 					16842964,
 					2130772021,
-					2130772204};
+					2130772214};
 			
 			// aapt resource value: 0
 			public const int AppBarLayout_android_background = 0;
@@ -4714,8 +4747,8 @@ namespace TramUrWay.Android
 			public const int AppBarLayout_expanded = 2;
 			
 			public static int[] AppBarLayout_LayoutParams = new int[] {
-					2130772205,
-					2130772206};
+					2130772215,
+					2130772216};
 			
 			// aapt resource value: 0
 			public const int AppBarLayout_LayoutParams_layout_scrollFlags = 0;
@@ -5194,8 +5227,8 @@ namespace TramUrWay.Android
 			public const int AppCompatTheme_windowNoTitle = 3;
 			
 			public static int[] BottomSheetBehavior_Params = new int[] {
-					2130772207,
-					2130772208};
+					2130772217,
+					2130772218};
 			
 			// aapt resource value: 1
 			public const int BottomSheetBehavior_Params_behavior_hideable = 1;
@@ -5210,8 +5243,8 @@ namespace TramUrWay.Android
 			public const int ButtonBarLayout_allowStacking = 0;
 			
 			public static int[] CollapsingAppBarLayout_LayoutParams = new int[] {
-					2130772209,
-					2130772210};
+					2130772219,
+					2130772220};
 			
 			// aapt resource value: 0
 			public const int CollapsingAppBarLayout_LayoutParams_layout_collapseMode = 0;
@@ -5221,19 +5254,19 @@ namespace TramUrWay.Android
 			
 			public static int[] CollapsingToolbarLayout = new int[] {
 					2130771998,
-					2130772211,
-					2130772212,
-					2130772213,
-					2130772214,
-					2130772215,
-					2130772216,
-					2130772217,
-					2130772218,
-					2130772219,
-					2130772220,
 					2130772221,
 					2130772222,
-					2130772223};
+					2130772223,
+					2130772224,
+					2130772225,
+					2130772226,
+					2130772227,
+					2130772228,
+					2130772229,
+					2130772230,
+					2130772231,
+					2130772232,
+					2130772233};
 			
 			// aapt resource value: 11
 			public const int CollapsingToolbarLayout_collapsedTitleGravity = 11;
@@ -5292,8 +5325,8 @@ namespace TramUrWay.Android
 			public const int CompoundButton_buttonTintMode = 2;
 			
 			public static int[] CoordinatorLayout = new int[] {
-					2130772224,
-					2130772225};
+					2130772234,
+					2130772235};
 			
 			// aapt resource value: 0
 			public const int CoordinatorLayout_keylines = 0;
@@ -5303,10 +5336,10 @@ namespace TramUrWay.Android
 			
 			public static int[] CoordinatorLayout_LayoutParams = new int[] {
 					16842931,
-					2130772226,
-					2130772227,
-					2130772228,
-					2130772229};
+					2130772236,
+					2130772237,
+					2130772238,
+					2130772239};
 			
 			// aapt resource value: 0
 			public const int CoordinatorLayout_LayoutParams_android_layout_gravity = 0;
@@ -5324,9 +5357,9 @@ namespace TramUrWay.Android
 			public const int CoordinatorLayout_LayoutParams_layout_keyline = 3;
 			
 			public static int[] DesignTheme = new int[] {
-					2130772230,
-					2130772231,
-					2130772232};
+					2130772240,
+					2130772241,
+					2130772242};
 			
 			// aapt resource value: 0
 			public const int DesignTheme_bottomSheetDialogTheme = 0;
@@ -5375,11 +5408,11 @@ namespace TramUrWay.Android
 					2130772021,
 					2130772202,
 					2130772203,
-					2130772233,
-					2130772234,
-					2130772235,
-					2130772236,
-					2130772237};
+					2130772243,
+					2130772244,
+					2130772245,
+					2130772246,
+					2130772247};
 			
 			// aapt resource value: 1
 			public const int FloatingActionButton_backgroundTint = 1;
@@ -5408,7 +5441,7 @@ namespace TramUrWay.Android
 			public static int[] ForegroundLinearLayout = new int[] {
 					16843017,
 					16843264,
-					2130772238};
+					2130772248};
 			
 			// aapt resource value: 0
 			public const int ForegroundLinearLayout_android_foreground = 0;
@@ -5704,12 +5737,12 @@ namespace TramUrWay.Android
 					16842973,
 					16843039,
 					2130772021,
-					2130772239,
-					2130772240,
-					2130772241,
-					2130772242,
-					2130772243,
-					2130772244};
+					2130772249,
+					2130772250,
+					2130772251,
+					2130772252,
+					2130772253,
+					2130772254};
 			
 			// aapt resource value: 0
 			public const int NavigationView_android_background = 0;
@@ -5740,6 +5773,48 @@ namespace TramUrWay.Android
 			
 			// aapt resource value: 4
 			public const int NavigationView_menu = 4;
+			
+			public static int[] PercentLayout_Layout = new int[] {
+					2130772204,
+					2130772205,
+					2130772206,
+					2130772207,
+					2130772208,
+					2130772209,
+					2130772210,
+					2130772211,
+					2130772212,
+					2130772213};
+			
+			// aapt resource value: 9
+			public const int PercentLayout_Layout_layout_aspectRatio = 9;
+			
+			// aapt resource value: 1
+			public const int PercentLayout_Layout_layout_heightPercent = 1;
+			
+			// aapt resource value: 6
+			public const int PercentLayout_Layout_layout_marginBottomPercent = 6;
+			
+			// aapt resource value: 8
+			public const int PercentLayout_Layout_layout_marginEndPercent = 8;
+			
+			// aapt resource value: 3
+			public const int PercentLayout_Layout_layout_marginLeftPercent = 3;
+			
+			// aapt resource value: 2
+			public const int PercentLayout_Layout_layout_marginPercent = 2;
+			
+			// aapt resource value: 5
+			public const int PercentLayout_Layout_layout_marginRightPercent = 5;
+			
+			// aapt resource value: 7
+			public const int PercentLayout_Layout_layout_marginStartPercent = 7;
+			
+			// aapt resource value: 4
+			public const int PercentLayout_Layout_layout_marginTopPercent = 4;
+			
+			// aapt resource value: 0
+			public const int PercentLayout_Layout_layout_widthPercent = 0;
 			
 			public static int[] PopupWindow = new int[] {
 					16843126,
@@ -5780,13 +5855,13 @@ namespace TramUrWay.Android
 			public const int RecyclerView_stackFromEnd = 4;
 			
 			public static int[] ScrimInsetsFrameLayout = new int[] {
-					2130772245};
+					2130772255};
 			
 			// aapt resource value: 0
 			public const int ScrimInsetsFrameLayout_insetForeground = 0;
 			
 			public static int[] ScrollingViewBehavior_Params = new int[] {
-					2130772246};
+					2130772256};
 			
 			// aapt resource value: 0
 			public const int ScrollingViewBehavior_Params_behavior_overlapTop = 0;
@@ -5878,7 +5953,7 @@ namespace TramUrWay.Android
 			public static int[] SnackbarLayout = new int[] {
 					16843039,
 					2130772021,
-					2130772247};
+					2130772257};
 			
 			// aapt resource value: 0
 			public const int SnackbarLayout_android_maxWidth = 0;
@@ -5968,22 +6043,22 @@ namespace TramUrWay.Android
 			public const int TabItem_android_text = 2;
 			
 			public static int[] TabLayout = new int[] {
-					2130772248,
-					2130772249,
-					2130772250,
-					2130772251,
-					2130772252,
-					2130772253,
-					2130772254,
-					2130772255,
-					2130772256,
-					2130772257,
 					2130772258,
 					2130772259,
 					2130772260,
 					2130772261,
 					2130772262,
-					2130772263};
+					2130772263,
+					2130772264,
+					2130772265,
+					2130772266,
+					2130772267,
+					2130772268,
+					2130772269,
+					2130772270,
+					2130772271,
+					2130772272,
+					2130772273};
 			
 			// aapt resource value: 3
 			public const int TabLayout_tabBackground = 3;
@@ -6074,15 +6149,15 @@ namespace TramUrWay.Android
 			public static int[] TextInputLayout = new int[] {
 					16842906,
 					16843088,
-					2130772264,
-					2130772265,
-					2130772266,
-					2130772267,
-					2130772268,
-					2130772269,
-					2130772270,
-					2130772271,
-					2130772272};
+					2130772274,
+					2130772275,
+					2130772276,
+					2130772277,
+					2130772278,
+					2130772279,
+					2130772280,
+					2130772281,
+					2130772282};
 			
 			// aapt resource value: 1
 			public const int TextInputLayout_android_hint = 1;

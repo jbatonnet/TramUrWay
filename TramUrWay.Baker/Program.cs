@@ -27,24 +27,13 @@ namespace TramUrWay.Baker
         public static void Main(string[] args)
         {
             // Load data
-            Lines = BakerV2.Bake();
+            Lines = BakerV1.Bake();
 
             // Dump everything
-            DumpData();
+            //DumpData();
 
             
-            // Temp
-            /*DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
-            DateTime secondDate = firstDate.AddSeconds(30);
-
-            TimeStep[] firstTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, firstDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
-            TimeStep[] secondTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, secondDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
-
-            List<Transport> transports = new List<Transport>();
-            transports.Update(firstTimeSteps, firstDate);
-            transports.Update(secondTimeSteps, secondDate);*/
-
-            //TestSearch();
+            TestSearch();
         }
 
         private static void DumpData()
