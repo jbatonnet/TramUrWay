@@ -175,8 +175,8 @@ namespace TramUrWay.Android
                     if (nextProgress < 0) nextProgress = 0;
                     if (nextProgress > 1) nextProgress = 1;
 
-                    transport.Progress = transport.Step.Speed.Evaluate(progress);
-                    transport.NextProgress = transport.Step.Speed.Evaluate(nextProgress);
+                    transport.Progress = transport.Step.Speed?.Evaluate(progress) ?? progress;
+                    transport.NextProgress = transport.Step.Speed?.Evaluate(nextProgress) ?? nextProgress;
 
                     break;
                 }

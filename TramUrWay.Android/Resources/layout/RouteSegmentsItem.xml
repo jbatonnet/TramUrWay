@@ -64,14 +64,15 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="12dp" />
 
-    <RelativeLayout
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/RouteSegmentsItem_PreviewLayout"
         android:layout_width="match_parent"
         android:layout_height="24dp"
         android:layout_toEndOf="@id/RouteSegmentsItem_Background"
         android:layout_alignBottom="@+id/RouteSegmentsItem_Background"
         android:layout_marginRight="12dp" >
 
-        <LinearLayout
+        <!--<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:layout_toRightOf="@+id/imageView2"
@@ -127,9 +128,9 @@
             android:src="@drawable/circle2"
             android:layout_centerVertical="true"
             android:layout_marginLeft="220dp"
-            android:tint="#929292" />
+            android:tint="#929292" />-->
 
-    </RelativeLayout>
+    </android.support.percent.PercentRelativeLayout>
 
     <ImageView
         android:id="@+id/RouteSegmentsItem_Menu"

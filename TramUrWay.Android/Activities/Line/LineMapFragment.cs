@@ -39,7 +39,7 @@ namespace TramUrWay.Android
 
             public void OnAnimationUpdate(ValueAnimator animation)
             {
-                if (!App.Config.EnableLiveTransports)
+                if (!App.Config.ExperimentalFeatures)
                     return;
                 if (cancellationTokenSource.IsCancellationRequested)
                     return;
@@ -223,7 +223,7 @@ namespace TramUrWay.Android
             timeStepsCache = timeSteps.ToArray();
             transportsCache = transports.ToArray();
 
-            if (!App.Config.EnableLiveTransports)
+            if (!App.Config.ExperimentalFeatures)
                 return;
             if (googleMap == null)
                 return;
@@ -271,7 +271,7 @@ namespace TramUrWay.Android
 
         private void RefreshTimes()
         {
-            if (!App.Config.EnableLiveTransports)
+            if (!App.Config.ExperimentalFeatures)
                 return;
 
             DateTime now = DateTime.Now;
@@ -281,7 +281,7 @@ namespace TramUrWay.Android
         }
         private void RefreshMarkers()
         {
-            if (!App.Config.EnableLiveTransports)
+            if (!App.Config.ExperimentalFeatures)
                 return;
 
             // Update each marker position
@@ -307,7 +307,7 @@ namespace TramUrWay.Android
 
         private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
         {
-            if (!App.Config.EnableLiveTransports)
+            if (!App.Config.ExperimentalFeatures)
                 return;
 
             Activity.RunOnUiThread(() =>
