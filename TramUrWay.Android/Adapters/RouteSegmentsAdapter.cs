@@ -91,35 +91,45 @@ namespace TramUrWay.Android
 
             viewHolder.Preview.RemoveAllViews();
 
-            PercentRelativeLayout.LayoutParams layoutParams;
+            PercentRelativeLayout.LayoutParams percentLayoutParams;
+
+            LinearLayout.LayoutParams barBackLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MatchParent, LinearLayout.LayoutParams.MatchParent);
+            barBackLayoutParams.SetMargins((int)(4 * density), 0, (int)(4 * density), 0);
+
+            int i = 1;
 
             foreach (RouteSegment segment in timeStep)
             {
                 Color color = Utils.GetColorForLine(context, segment.Line);
 
                 ImageView image = new ImageView(context);
+                image.Id = i;
                 image.SetImageResource(Resource.Drawable.circle2);
                 image.SetColorFilter(color);
 
-                layoutParams = new PercentRelativeLayout.LayoutParams((int)(14 * density), (int)(14 * density));
-                layoutParams.AddRule(LayoutRules.CenterVertical);
-                layoutParams.SetMargins((int)(-7 * density), 0, 0, 0);
-                layoutParams.PercentLayoutInfo.LeftMarginPercent = (float)(segment.DateFrom - begin).Ticks / total.Ticks;
+                percentLayoutParams = new PercentRelativeLayout.LayoutParams((int)(14 * density), (int)(14 * density));
+                percentLayoutParams.AddRule(LayoutRules.CenterVertical);
+                percentLayoutParams.SetMargins((int)(-7 * density), 0, 0, 0);
+                percentLayoutParams.PercentLayoutInfo.LeftMarginPercent = (float)(segment.DateFrom - begin).Ticks / total.Ticks;
 
-                viewHolder.Preview.AddView(image, layoutParams);
+                viewHolder.Preview.AddView(image, percentLayoutParams);
 
-                LinearLayout view = new LinearLayout(context);
-                view.SetBackgroundColor(color);
+                LinearLayout bar = new LinearLayout(context);
 
-                layoutParams = new PercentRelativeLayout.LayoutParams((int)(28 * density), (int)(4 * density));
-                //layoutParams = new PercentRelativeLayout.LayoutParams(context, null);
-                layoutParams.AddRule(LayoutRules.CenterVertical);
-                layoutParams.SetMargins((int)(10 * density), 0, (int)(10 * density), 0);
-                layoutParams.PercentLayoutInfo.WidthPercent = (float)(segment.DateTo - segment.DateFrom).Ticks / total.Ticks;
-                //layoutParams.PercentLayoutInfo.HeightPercent = 0.50f;
-                layoutParams.PercentLayoutInfo.LeftMarginPercent = (float)(segment.DateFrom - begin).Ticks / total.Ticks;
+                View barBack = new View(context);
+                barBack.SetBackgroundColor(color);
 
-                viewHolder.Preview.AddView(view, layoutParams);
+                bar.AddView(barBack, barBackLayoutParams);
+
+                percentLayoutParams = new PercentRelativeLayout.LayoutParams((int)(28 * density), (int)(4 * density));
+                percentLayoutParams.AddRule(LayoutRules.CenterVertical);
+                percentLayoutParams.AddRule(LayoutRules.RightOf, i);
+                percentLayoutParams.SetMargins((int)(-7 * density), 0, (int)(-7 * density), 0);
+                percentLayoutParams.PercentLayoutInfo.WidthPercent = (float)(segment.DateTo - segment.DateFrom).Ticks / total.Ticks;
+
+                viewHolder.Preview.AddView(bar, percentLayoutParams);
+
+                i++;
             }
 
             if (!viewHolders.Contains(viewHolder))

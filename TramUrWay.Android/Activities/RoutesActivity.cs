@@ -44,6 +44,7 @@ namespace TramUrWay.Android
         private View defaultFocus;
         private TextInputLayout fromLayout, toLayout;
         private AutoCompleteTextView fromTextView, toTextView;
+        private SwipeRefreshLayout swipeRefresh;
         private IMenuItem searchMenuItem;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -85,6 +86,11 @@ namespace TramUrWay.Android
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(routeSegmentAdapter = new RouteSegmentsAdapter());
 
+            // Refresh widget
+            swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RoutesActivity_SwipeRefresh);
+            swipeRefresh.Refresh += SwipeRefresh_Refresh;
+            //swipeRefresh.SetColorSchemeColors(color.ToArgb());
+
 #if DEBUG
             fromTextView.Text = "Saint-Lazare";
             toTextView.Text = "Odysseum";
@@ -110,48 +116,7 @@ namespace TramUrWay.Android
             switch (item.ItemId)
             {
                 case Resource.Id.RoutesMenu_Search:
-
-                    if (string.IsNullOrWhiteSpace(fromTextView.Text))
-                    {
-                        fromLayout.Error = "Spécifiez une station de départ";
-                        break;
-                    }
-
-                    Stop from = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == fromTextView.Text);
-                    if (from == null)
-                    {
-                        fromLayout.Error = "La station spécifiée n'existe pas";
-                        break;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(toTextView.Text))
-                    {
-                        toLayout.Error = "Spécifiez une station de destination";
-                        break;
-                    }
-
-                    Stop to = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == toTextView.Text);
-                    if (to == null)
-                    {
-                        toLayout.Error = "La station spécifiée n'existe pas";
-                        break;
-                    }
-
-                    if (from == to)
-                    {
-                        toLayout.Error = "Spécifiez une station différente de celle de départ";
-                        break;
-                    }
-
-                    defaultFocus.RequestFocus();
-                    fromTextView.PostDelayed(() =>
-                    {
-                        InputMethodManager inputMethodManager = GetSystemService(Context.InputMethodService) as InputMethodManager;
-                        inputMethodManager.HideSoftInputFromWindow(fromTextView.WindowToken, HideSoftInputFlags.None);
-                    }, 250);
-
-                    Search(from, to, DateConstraint.Now, DateTime.Now);
-
+                    TriggerSearch();
                     break;
             }
 
@@ -234,13 +199,65 @@ namespace TramUrWay.Android
         }
         private void DateLayout_Click(object sender, EventArgs e)
         {
-            new global::Android.Support.V7.App.AlertDialog.Builder(this)
+            /*new global::Android.Support.V7.App.AlertDialog.Builder(this)
                 .SetView()
-                .Show();
+                .Show();*/
+        }
+        private void SwipeRefresh_Refresh(object sender, EventArgs e)
+        {
+            TriggerSearch();
         }
 
+        private void TriggerSearch()
+        {
+            if (string.IsNullOrWhiteSpace(fromTextView.Text))
+            {
+                fromLayout.Error = "Spécifiez une station de départ";
+                return;
+            }
+
+            Stop from = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == fromTextView.Text);
+            if (from == null)
+            {
+                fromLayout.Error = "La station spécifiée n'existe pas";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(toTextView.Text))
+            {
+                toLayout.Error = "Spécifiez une station de destination";
+                return;
+            }
+
+            Stop to = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == toTextView.Text);
+            if (to == null)
+            {
+                toLayout.Error = "La station spécifiée n'existe pas";
+                return;
+            }
+
+            if (from == to)
+            {
+                toLayout.Error = "Spécifiez une station différente de celle de départ";
+                return;
+            }
+
+            defaultFocus.RequestFocus();
+            fromTextView.PostDelayed(() =>
+            {
+                InputMethodManager inputMethodManager = GetSystemService(Context.InputMethodService) as InputMethodManager;
+                inputMethodManager.HideSoftInputFromWindow(fromTextView.WindowToken, HideSoftInputFlags.None);
+            }, 250);
+
+            routeSegments.Clear();
+            routeSegmentAdapter.RouteSegments = routeSegments;
+
+            Search(from, to, DateConstraint.Now, DateTime.Now);
+        }
         private async Task Search(Stop from, Stop to, DateConstraint constraint, DateTime date)
         {
+            swipeRefresh?.Post(() => swipeRefresh.Refreshing = true);
+
             await Task.Run(() =>
             {
                 routeSegments.Clear();
@@ -283,12 +300,15 @@ namespace TramUrWay.Android
                         throw new NotImplementedException();
 
                     // Filter out too long times
-                    TimeSpan minTime = routeSegments.Count == 0 ? TimeSpan.FromDays(1) : routeSegments.Min(s => s.Last().DateTo - s.First().DateFrom);
-                    routeSegments.RemoveAll(r => (r.Last().DateTo - r.First().DateFrom).Ticks > minTime.Ticks * 3);
-                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).Ticks);
+                    TimeSpan maxTime = TimeSpan.FromMinutes(0.05 * (to.Position - from.Position));
+
+                    routeSegments.RemoveAll(r => r.Last().DateTo - r.First().DateFrom > maxTime);
+                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
 
                     RunOnUiThread(() => routeSegmentAdapter.RouteSegments = routeSegments);
                 }
+
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
             });
         }
     }

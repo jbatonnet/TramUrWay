@@ -22,7 +22,8 @@ namespace TramUrWay.Android
         // http://e-tam.fr
         // http://tam.mobitrans.fr
 
-        private const string webServiceUrl = "http://e-tam.fr/webservice";
+        private const string webServiceOldUrl = "http://e-tam.fr/webservice";
+        private const string webServiceNewUrl = "https://apimobile.tam-voyages.com";
 
         public IEnumerable<TimeStep> GetLiveTimeSteps()
         {
@@ -30,7 +31,7 @@ namespace TramUrWay.Android
             //using (StreamReader reader = new StreamReader(context.Assets.Open("getDetails.json")))
             //    content = reader.ReadToEnd();
 
-            const string url = webServiceUrl + "/data.php?pattern=getDetails";
+            const string url = webServiceOldUrl + "/data.php?pattern=getDetails";
             string content = new WebClient().DownloadString(url);
 
             DateTime now = DateTime.Now;
@@ -119,6 +120,30 @@ namespace TramUrWay.Android
 
                 yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online, Destination = destination };
             }
+        }
+
+        public IEnumerable<TimeSpan> GetLiveTimeSteps(Line line)
+        {
+            string url = webServiceNewUrl + "/api/v1/hours/next/line";
+
+            // Build request
+            JObject query = new JObject()
+            {
+                ["directions"] = new JArray() { },
+                ["citywayLineId"] = line.Id,
+                ["lineNumber"] = line.Id,
+                ["sens"] = 1,
+                ["stops"] = new JArray() { },
+                ["urbanLine"] = 1
+            };
+
+            // Send the query
+            string data = new WebClient().UploadString(url, query.ToString());
+
+            // Parse results
+            JObject result = JsonConvert.DeserializeObject(data) as JObject;
+
+            yield break;
         }
     }
 }
