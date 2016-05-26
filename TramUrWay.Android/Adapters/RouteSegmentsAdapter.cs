@@ -15,7 +15,7 @@ using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
-
+using Newtonsoft.Json.Linq;
 using Environment = System.Environment;
 
 namespace TramUrWay.Android
@@ -73,20 +73,20 @@ namespace TramUrWay.Android
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             RouteSegmentsViewHolder viewHolder = holder as RouteSegmentsViewHolder;
-            RouteSegment[] timeStep = routeSegments[position];
+            RouteSegment[] segments = routeSegments[position];
 
-            viewHolder.From.Text = timeStep.First().DateFrom.ToString("HH:mm");
-            viewHolder.To.Text = timeStep.Last().DateTo.ToString("HH:mm");
-            viewHolder.Duration.Text = Math.Ceiling((timeStep.Last().DateTo - timeStep.First().DateFrom).TotalMinutes) + " min";
+            viewHolder.From.Text = segments.First().DateFrom.ToString("HH:mm");
+            viewHolder.To.Text = segments.Last().DateTo.ToString("HH:mm");
+            viewHolder.Duration.Text = Math.Ceiling((segments.Last().DateTo - segments.First().DateFrom).TotalMinutes) + " min";
 
-            double left = Math.Ceiling((timeStep.First().DateFrom - DateTime.Now).TotalMinutes);
+            double left = Math.Ceiling((segments.First().DateFrom - DateTime.Now).TotalMinutes);
             viewHolder.Left.Text = left < 0 ? "Parti" : (left + Environment.NewLine + "min");
 
             Context context = viewHolder.ItemView.Context;
             float density = context.Resources.DisplayMetrics.Density;
 
-            DateTime begin = timeStep.First().DateFrom;
-            DateTime end = timeStep.Last().DateTo;
+            DateTime begin = segments.First().DateFrom;
+            DateTime end = segments.Last().DateTo;
             TimeSpan total = end - begin;
 
             viewHolder.Preview.RemoveAllViews();
@@ -98,7 +98,7 @@ namespace TramUrWay.Android
 
             int i = 1;
 
-            foreach (RouteSegment segment in timeStep)
+            foreach (RouteSegment segment in segments)
             {
                 Color color = Utils.GetColorForLine(context, segment.Line);
 
@@ -139,13 +139,30 @@ namespace TramUrWay.Android
         public void OnClick(View view)
         {
             RouteSegmentsViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view);
-            RouteSegment[] timeStep = routeSegments[viewHolder.AdapterPosition];
+            RouteSegment[] segments = routeSegments[viewHolder.AdapterPosition];
 
-            /*Intent intent = new Intent(view.Context, typeof(LineActivity));
-            intent.PutExtra("Line", timeStep.Step.Route.Line.Id);
-            intent.PutExtra("Route", timeStep.Step.Route.Id);
+            Intent intent = new Intent(view.Context, typeof(RouteActivity));
 
-            view.Context.StartActivity(intent);*/
+            List<string> routeSegmentsData = new List<string>();
+            foreach (RouteSegment segment in segments)
+            {
+                JObject segmentObject = new JObject()
+                {
+                    ["Line"] = segment.Line.Id,
+                    ["From.Route"] = segment.From.Route.Id,
+                    ["From.Stop"] = segment.From.Stop.Id,
+                    ["From.Date"] = segment.DateFrom,
+                    ["To.Route"] = segment.To.Route.Id,
+                    ["To.Stop"] = segment.To.Stop.Id,
+                    ["To.Date"] = segment.DateTo
+                };
+
+                routeSegmentsData.Add(segmentObject.ToString());
+            }
+
+            intent.PutExtra("RouteSegments", routeSegmentsData.ToArray());
+
+            view.Context.StartActivity(intent);
         }
     }
 }

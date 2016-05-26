@@ -68,10 +68,6 @@ namespace TramUrWay.Android
 #if DEBUG
             // Enable experimental features on debug builds
             Config.ExperimentalFeatures = true;
-
-            // Add some favorites
-            Config.FavoriteStops.Add(GetLine(2).Routes[1].Steps.First(s => s.Stop.Name == "Saint-Lazare").Stop);
-            Config.FavoriteStops.Add(GetLine(1).Routes[1].Steps.First(s => s.Stop.Name == "Odysseum").Stop);
 #endif
         }
 

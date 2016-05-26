@@ -123,10 +123,11 @@
     <Compile Include="Activities\AboutActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\NavigationActivity.cs" />
+    <Compile Include="Activities\Routes\RouteActivity.cs" />
     <Compile Include="Activities\SplashScreenActivity.cs" />
     <Compile Include="Activities\MapFragment.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
-    <Compile Include="Activities\RoutesActivity.cs" />
+    <Compile Include="Activities\Routes\RoutesActivity.cs" />
     <Compile Include="Activities\Widgets\StepWidgetActivity.cs" />
     <Compile Include="Activities\Home\StopsFragment.cs" />
     <Compile Include="Activities\Home\LinesFragment.cs" />
@@ -430,6 +431,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\RoutesDateDialog.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RouteActivity.xml" />
   </ItemGroup>
   <Import Project="..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

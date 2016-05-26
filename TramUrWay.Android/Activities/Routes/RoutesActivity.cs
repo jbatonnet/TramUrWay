@@ -67,7 +67,7 @@ namespace TramUrWay.Android
             fromTextView.Adapter = new ArrayAdapter<string>(this, global::Android.Resource.Layout.SimpleDropDownItem1Line, stopNames);
             fromTextView.TextChanged += TextView_TextChanged;
 
-            ImageButton fromButton = FindViewById<ImageButton>(Resource.Id.RoutesActivity_FromButton);
+            View fromButton = FindViewById(Resource.Id.RoutesActivity_FromButton);
             fromButton.Click += FromButton_Click;
 
             toLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_ToLayout);
@@ -75,7 +75,7 @@ namespace TramUrWay.Android
             toTextView.Adapter = new ArrayAdapter<string>(this, global::Android.Resource.Layout.SimpleDropDownItem1Line, stopNames);
             toTextView.TextChanged += TextView_TextChanged;
 
-            ImageButton toButton = FindViewById<ImageButton>(Resource.Id.RoutesActivity_ToButton);
+            View toButton = FindViewById(Resource.Id.RoutesActivity_ToButton);
             toButton.Click += ToButton_Click;
 
             View dateLayout = FindViewById(Resource.Id.RoutesActivity_DateLayout);
