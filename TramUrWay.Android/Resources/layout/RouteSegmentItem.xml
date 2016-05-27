@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp">
+
+    <ImageView
+        android:id="@+id/RouteSegmentItem_StopIcon"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginLeft="29dp"
+        android:layout_marginTop="18dp" />
+
+    <ImageView
+        android:id="@+id/RouteSegmentItem_LineIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/RouteSegmentItem_StopIcon"
+        android:layout_alignBottom="@+id/RouteSegmentItem_StopIcon"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="-4dp"
+        android:layout_toRightOf="@+id/RouteSegmentItem_StopIcon"
+        android:layout_marginLeft="29dp" />
+
+    <View
+        android:id="@+id/RouteSegmentItem_LineBar"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:layout_alignLeft="@+id/RouteSegmentItem_StopIcon"
+        android:layout_below="@+id/RouteSegmentItem_StopIcon"
+        android:layout_marginTop="-4dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="5dp"
+        android:background="#ee8003" />
+
+    <TextView
+        android:id="@+id/RouteSegmentItem_StopName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Saint-Lazare"
+        android:layout_toRightOf="@+id/RouteSegmentItem_LineIcon"
+        android:layout_alignTop="@+id/RouteSegmentItem_LineIcon"
+        android:layout_alignBottom="@+id/RouteSegmentItem_LineIcon"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="8dp"
+        android:textColor="@color/primary_text_default_material_light" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/RouteSegmentItem_StopList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/RouteSegmentItem_StopIcon"
+        android:layout_marginTop="12dp"
+        android:minHeight="24dp" />
+
+</RelativeLayout>

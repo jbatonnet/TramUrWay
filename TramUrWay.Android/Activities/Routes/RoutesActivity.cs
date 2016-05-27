@@ -252,7 +252,11 @@ namespace TramUrWay.Android
             routeSegments.Clear();
             routeSegmentAdapter.RouteSegments = routeSegments;
 
+#if DEBUG
+            Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));
+#else
             Search(from, to, DateConstraint.Now, DateTime.Now);
+#endif
         }
         private async Task Search(Stop from, Stop to, DateConstraint constraint, DateTime date)
         {

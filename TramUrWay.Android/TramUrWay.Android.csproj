@@ -135,6 +135,8 @@
     <Compile Include="Activities\StopActivity.cs" />
     <Compile Include="Activities\Line\LineActivity.cs" />
     <Compile Include="Adapters\LineFragmentsAdapter.cs" />
+    <Compile Include="Adapters\RouteSegmentStopAdapter.cs" />
+    <Compile Include="Adapters\RouteSegmentAdapter.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
@@ -434,6 +436,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\RouteActivity.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RouteSegmentItem.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\RouteSegmentStopItem.xml" />
   </ItemGroup>
   <Import Project="..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

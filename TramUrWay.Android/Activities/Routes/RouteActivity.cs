@@ -90,7 +90,7 @@ namespace TramUrWay.Android
             fromNameView.Text = from.Name;
 
             TextView fromDateView = FindViewById<TextView>(Resource.Id.RouteActivity_FromDate);
-            fromDateView.Text = routeSegments.First().DateFrom.ToShortTimeString();
+            fromDateView.Text = routeSegments.First().DateFrom.ToString("HH:mm");
 
             ImageView toIconView = FindViewById<ImageView>(Resource.Id.RouteActivity_ToIcon);
             toIconView.SetImageDrawable(to.Line.GetIconDrawable(this));
@@ -99,18 +99,30 @@ namespace TramUrWay.Android
             toNameView.Text = to.Name;
 
             TextView toDateView = FindViewById<TextView>(Resource.Id.RouteActivity_ToDate);
-            toDateView.Text = routeSegments.Last().DateTo.ToShortTimeString();
+            toDateView.Text = routeSegments.Last().DateTo.ToString("HH:mm");
 
             // Details view
             RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.RouteActivity_SegmentsList);
-            /*recyclerView.SetLayoutManager(new LinearLayoutManager(recyclerView.Context));
-            recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(routeSegmentAdapter = new RouteSegmentsAdapter());*/
+            recyclerView.SetLayoutManager(new WrapLayoutManager(recyclerView.Context));
+            recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical, true));
+            recyclerView.SetAdapter(new RouteSegmentAdapter(routeSegments.ToArray()));
 
             // Refresh widget
             swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RouteActivity_SwipeRefresh);
             swipeRefresh.Refresh += SwipeRefresh_Refresh;
             //swipeRefresh.SetColorSchemeColors(color.ToArgb());
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case global::Android.Resource.Id.Home:
+                    OnBackPressed();
+                    break;
+            }
+
+            return base.OnOptionsItemSelected(item);
         }
 
         private void SwipeRefresh_Refresh(object sender, EventArgs e)

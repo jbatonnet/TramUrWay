@@ -147,7 +147,9 @@ namespace TramUrWay.Baker
             Console.WriteLine("Setup finished in {0} ms", stopwatch.ElapsedMilliseconds);
             //Console.WriteLine();
 
+            DateTime now = new DateTime(2016, 05, 27, 16, 24, 00);
             DateTime end = DateTime.Now + TimeSpan.FromSeconds(1000);
+
             List<RouteLink[]> routeLinks = new List<RouteLink[]>();
             List<RouteSegment[]> routeSegments = new List<RouteSegment[]>();
 
@@ -157,7 +159,7 @@ namespace TramUrWay.Baker
             routeLinks.Sort((r1, r2) => (int)(r1.Sum(l => l.Weight) - r2.Sum(l => l.Weight)));
 
             foreach (RouteLink[] route in routeLinks)
-                routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now, TimeSpan.Zero, TimeSpan.FromMinutes(15)));
+                routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, now, TimeSpan.Zero, TimeSpan.FromMinutes(15)));
 
             routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
 

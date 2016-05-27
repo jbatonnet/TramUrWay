@@ -46,7 +46,8 @@
 
                         <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -106,20 +107,19 @@
                                 android:textSize="12sp" />
 
                             <ImageView
+                                android:id="@+id/RouteActivity_ToIcon"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:id="@+id/RouteActivity_ToIcon"
                                 android:layout_below="@+id/RouteActivity_ToLabel"
                                 android:layout_alignLeft="@+id/RouteActivity_FromIcon"
-                                android:layout_marginTop="4dp"
-                                android:layout_marginBottom="16dp" />
+                                android:layout_marginTop="4dp" />
 
                             <TextView
+                                android:id="@+id/RouteActivity_ToName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:text="Odysseum"
-                                android:id="@+id/RouteActivity_ToName"
                                 android:textColor="@color/foreground_material_light"
                                 android:layout_marginLeft="12dp"
                                 android:layout_alignTop="@+id/RouteActivity_ToIcon"
@@ -128,11 +128,11 @@
                                 android:gravity="center_vertical" />
 
                             <TextView
+                                android:id="@+id/RouteActivity_ToDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:text="10:38"
-                                android:id="@+id/RouteActivity_ToDate"
                                 android:textColor="@color/foreground_material_light"
                                 android:layout_alignTop="@+id/RouteActivity_ToName"
                                 android:layout_alignParentEnd="false"

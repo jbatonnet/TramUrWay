@@ -30,6 +30,7 @@ namespace TramUrWay.Android
         public DateTime DateTo { get; set; }
 
         public Line Line { get; set; }
+        public TimeStep[] TimeSteps { get; set; }
 
         public override string ToString()
         {
@@ -290,6 +291,8 @@ namespace TramUrWay.Android
             TimeStep[] timeSteps = firstStep.Route.TimeTable.GetStepsFromStep(firstStep, lowerBound).TakeWhile(s => s.Date <= upperBound).ToArray();
 
             TimeStep lastTimeStep;
+            List<TimeStep> segmentTimeSteps;
+
             foreach (TimeStep timeStep in timeSteps)
             {
                 List<RouteSegment> segments = new List<RouteSegment>();
@@ -304,15 +307,21 @@ namespace TramUrWay.Android
                     segment = new RouteSegment() { From = lastStep, DateFrom = lastTimeStep.Date, Line = lastStep.Route.Line };
                     segments.Add(segment);
 
+                    segmentTimeSteps = new List<TimeStep>();
+
                     while (lastStep.Stop.Name != change.From)
                     {
-                        TimeSpan duration = lastTimeStep.Step.Duration ?? TimeSpan.FromMinutes(0);
-                        if (duration == TimeSpan.FromMinutes(0))
-                            duration = TimeSpan.FromMinutes(2);
+                        segmentTimeSteps.Add(lastTimeStep);
 
-                        simulationDate = simulationDate + duration;
                         lastStep = lastStep.Next;
+                        lastTimeStep = lastStep.Route.TimeTable.GetStepsFromStep(lastStep, simulationDate).FirstOrDefault();
+
+                        simulationDate = lastTimeStep.Date;
                     }
+
+                    segment.TimeSteps = segmentTimeSteps.ToArray();
+                    segment.To = lastStep;
+                    segment.DateTo = simulationDate;
 
                     //lastStep = change.Line?.Routes?.SelectMany(r => r.Steps)?.First(s => s.Stop.Name == change.From && s.Next?.Stop?.Name == change.To.Stop.Name);
                     lastStep = change.To.Route.Steps.First(s => s.Stop.Name == change.From && s.Next?.Stop?.Name == change.To.Stop.Name);
@@ -321,25 +330,25 @@ namespace TramUrWay.Android
                     if (lastTimeStep == null)
                         yield break;
 
-                    segment.To = lastStep;
-                    segment.DateTo = simulationDate;
-
                     simulationDate = lastTimeStep.Date;
                 }
 
                 segment = new RouteSegment() { From = lastStep, DateFrom = lastTimeStep.Date, Line = lastStep.Route.Line };
                 segments.Add(segment);
 
+                segmentTimeSteps = new List<TimeStep>();
+
                 while (lastStep.Stop.Name != last.To.Stop.Name)
                 {
-                    TimeSpan duration = lastTimeStep.Step.Duration ?? TimeSpan.FromMinutes(0);
-                    if (duration == TimeSpan.FromMinutes(0))
-                        duration = TimeSpan.FromMinutes(2);
+                    segmentTimeSteps.Add(lastTimeStep);
 
-                    simulationDate = simulationDate + duration;
                     lastStep = lastStep.Next;
+                    lastTimeStep = lastStep.Route.TimeTable.GetStepsFromStep(lastStep, simulationDate).FirstOrDefault();
+
+                    simulationDate = lastTimeStep.Date;
                 }
 
+                segment.TimeSteps = segmentTimeSteps.ToArray();
                 segment.To = lastStep;
                 segment.DateTo = simulationDate;
 
