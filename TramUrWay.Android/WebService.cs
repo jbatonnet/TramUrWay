@@ -19,10 +19,11 @@ namespace TramUrWay.Android
     public class WebService
     {
         // http://www.tam-direct.com (Down)
-        // http://e-tam.fr
+        // http://e-tam.fr (Down)
         // http://tam.mobitrans.fr
+        // http://37.59.49.161
 
-        private const string webServiceOldUrl = "http://e-tam.fr/webservice";
+        private const string webServiceOldUrl = "http://tam.mobitrans.fr/webservice";
         private const string webServiceNewUrl = "https://apimobile.tam-voyages.com";
 
         public IEnumerable<TimeStep> GetLiveTimeSteps()
