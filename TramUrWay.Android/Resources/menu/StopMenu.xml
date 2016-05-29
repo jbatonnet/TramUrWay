@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/StopMenu_Route"
+        android:title="Itinéraire"
+        android:icon="@drawable/ic_directions"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/StopMenu_Favorite"
         android:title="Favoris"
         android:icon="@drawable/ic_star"

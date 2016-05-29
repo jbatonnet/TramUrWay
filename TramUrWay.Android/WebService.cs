@@ -123,18 +123,18 @@ namespace TramUrWay.Android
             }
         }
 
-        public IEnumerable<TimeSpan> GetLiveTimeSteps(Line line)
+        public IEnumerable<TimeStep> GetLiveTimeSteps(Line line)
         {
             string url = webServiceNewUrl + "/api/v1/hours/next/line";
 
             // Build request
             JObject query = new JObject()
             {
-                ["directions"] = new JArray() { },
+                ["directions"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
                 ["citywayLineId"] = line.Id,
                 ["lineNumber"] = line.Id,
                 ["sens"] = 1,
-                ["stops"] = new JArray() { },
+                ["stops"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
                 ["urbanLine"] = 1
             };
 

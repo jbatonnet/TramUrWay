@@ -28,11 +28,10 @@
         android:layout_width="4dp"
         android:layout_height="match_parent"
         android:layout_alignLeft="@+id/RouteSegmentItem_StopIcon"
-        android:layout_below="@+id/RouteSegmentItem_StopIcon"
-        android:layout_marginTop="-4dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="5dp"
-        android:background="#ee8003" />
+        android:background="#0080ff" />
 
     <TextView
         android:id="@+id/RouteSegmentItem_StopName"
@@ -46,6 +45,20 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:textColor="@color/primary_text_default_material_light" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="9:54"
+        android:id="@+id/RouteSegmentItem_Date"
+        android:textColor="@color/foreground_material_light"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp"
+        android:layout_alignTop="@+id/RouteSegmentItem_StopName"
+        android:layout_alignBottom="@+id/RouteSegmentItem_StopName"
+        android:gravity="center_vertical" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/RouteSegmentItem_StopList"

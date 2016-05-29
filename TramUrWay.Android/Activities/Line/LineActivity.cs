@@ -197,8 +197,12 @@ namespace TramUrWay.Android
                     if (App.Config.OfflineMode)
                         throw new Exception();
 
-                    timeSteps = App.Service.GetLiveTimeSteps()
+                    /*timeSteps = App.Service.GetLiveTimeSteps()
                         .Where(t => t.Step.Route.Line == line)
+                        .OrderBy(t => t.Date)
+                        .ToArray();*/
+
+                    timeSteps = App.Service.GetLiveTimeSteps(line)
                         .OrderBy(t => t.Date)
                         .ToArray();
 

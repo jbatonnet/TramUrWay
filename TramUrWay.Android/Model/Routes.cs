@@ -51,6 +51,8 @@ namespace TramUrWay.Android
             public float TramWeight { get; set; } = 1.0f;
             public float BusWeight { get; set; } = 1.5f;
             public float WalkWeight { get; set; } = 2.0f;
+
+            public float ChangeWeight { get; set; } = 60.0f;
         }
 
         public RouteSearchSettings Settings { get; } = new RouteSearchSettings();
@@ -166,6 +168,10 @@ namespace TramUrWay.Android
                         continue;
 
                     float linkWeight = weight + link.Weight;
+
+                    // Add an arbitraty weight when changing line
+                    if (lastLink?.Line != link?.Line)
+                        linkWeight += Settings.ChangeWeight;
 
                     // Skip too long routes
                     if (linkWeight > maxWeight)

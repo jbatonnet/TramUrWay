@@ -41,11 +41,12 @@ namespace TramUrWay.Android
         private RouteSegmentsAdapter routeSegmentAdapter;
         private List<RouteSegment[]> routeSegments = new List<RouteSegment[]>();
 
-        private View defaultFocus;
         private TextInputLayout fromLayout, toLayout;
         private AutoCompleteTextView fromTextView, toTextView;
         private SwipeRefreshLayout swipeRefresh;
         private IMenuItem searchMenuItem;
+        private View noResultsView;
+        private RecyclerView recyclerView;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -60,8 +61,6 @@ namespace TramUrWay.Android
             string[] stopNames = stops.Select(s => s.Name).Distinct().ToArray();
 
             // Initialize UI
-            defaultFocus = FindViewById(Resource.Id.RoutesActivity_DefaultFocus);
-
             fromLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_FromLayout);
             fromTextView = FindViewById<AutoCompleteTextView>(Resource.Id.RoutesActivity_From);
             fromTextView.Adapter = new ArrayAdapter<string>(this, global::Android.Resource.Layout.SimpleDropDownItem1Line, stopNames);
@@ -81,7 +80,33 @@ namespace TramUrWay.Android
             View dateLayout = FindViewById(Resource.Id.RoutesActivity_DateLayout);
             dateLayout.Click += DateLayout_Click;
 
-            RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.RoutesActivity_RoutesList);
+            // Handle bundle parameter
+            Bundle extras = Intent.Extras;
+            if (extras != null && extras.ContainsKey("From"))
+            {
+                int stopId = extras.GetInt("From");
+                Stop stop = App.GetStop(stopId);
+                if (stop != null)
+                    fromTextView.Text = stop.Name;
+            }
+#if DEBUG
+            else
+                fromTextView.Text = "Saint-Lazare";
+#endif
+
+            if (extras != null && extras.ContainsKey("To"))
+            {
+                int stopId = extras.GetInt("To");
+                Stop stop = App.GetStop(stopId);
+                if (stop != null)
+                    toTextView.Text = stop.Name;
+            }
+#if DEBUG
+            else
+                toTextView.Text = "Odysseum";
+#endif
+
+            recyclerView = FindViewById<RecyclerView>(Resource.Id.RoutesActivity_RoutesList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(recyclerView.Context));
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(routeSegmentAdapter = new RouteSegmentsAdapter());
@@ -91,10 +116,8 @@ namespace TramUrWay.Android
             swipeRefresh.Refresh += SwipeRefresh_Refresh;
             //swipeRefresh.SetColorSchemeColors(color.ToArgb());
 
-#if DEBUG
-            fromTextView.Text = "Saint-Lazare";
-            toTextView.Text = "Odysseum";
-#endif
+            noResultsView = FindViewById(Resource.Id.RoutesActivity_NoResults);
+            noResultsView.Visibility = ViewStates.Gone;
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -250,10 +273,11 @@ namespace TramUrWay.Android
             }, 250);
 
             routeSegments.Clear();
-            routeSegmentAdapter.RouteSegments = routeSegments;
+            routeSegmentAdapter.RouteSegments = Enumerable.Empty<RouteSegment[]>();
 
 #if DEBUG
-            Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));
+            //Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));
+            Search(from, to, DateConstraint.Now, DateTime.Now);
 #else
             Search(from, to, DateConstraint.Now, DateTime.Now);
 #endif
@@ -295,7 +319,7 @@ namespace TramUrWay.Android
 
                     // We found a route, try to find times
                     if (constraint == DateConstraint.Now)
-                        routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, DateTime.Now, TimeSpan.Zero, tolerance));
+                        routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, date, TimeSpan.Zero, tolerance));
                     else if (constraint == DateConstraint.From)
                         routeSegments.AddRange(routeSearch.SimulateTimeStepsFrom(route, date, tolerance, tolerance));
                     else if (constraint == DateConstraint.To)
@@ -307,13 +331,55 @@ namespace TramUrWay.Android
                     TimeSpan maxTime = TimeSpan.FromMinutes(0.05 * (to.Position - from.Position));
 
                     routeSegments.RemoveAll(r => r.Last().DateTo - r.First().DateFrom > maxTime);
-                    routeSegments.Sort((r1, r2) => (int)(r1.Last().DateTo - r2.Last().DateTo).TotalSeconds);
+                    routeSegments.Sort((r1, r2) => (int)(ComputeRouteWeight(constraint, date, r1) - ComputeRouteWeight(constraint, date, r2)));
 
-                    RunOnUiThread(() => routeSegmentAdapter.RouteSegments = routeSegments);
+                    // Group routes by from and to time steps
+                    RouteSegment[][] routeSegmentsCopy = routeSegments.GroupBy(r => GetRouteHash(r)).Select(g => g.First()).ToArray();
+                    RunOnUiThread(() => routeSegmentAdapter.RouteSegments = routeSegmentsCopy);
                 }
+
+                RunOnUiThread(() =>
+                {
+                    noResultsView.Visibility = routeSegments.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
+                    recyclerView.Visibility = routeSegments.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
+                });
 
                 swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
             });
+        }
+
+        private float ComputeRouteWeight(DateConstraint constraint, DateTime date, RouteSegment[] route)
+        {
+            const float maxPenality = 1.2f;
+
+            float duration = (float)(route.Last().DateTo - route.First().DateFrom).TotalSeconds;
+
+            // Changes count
+            float changes = MathUtil.Clamp(MathUtil.Map(route.Length, 0, 4, 1, maxPenality), 1, maxPenality);
+
+            // Priority to use trams
+            float buses = MathUtil.Clamp(MathUtil.Map(route.Count(s => s.Line.Type != LineType.Tram), 0, 4, 1, maxPenality), 1, maxPenality);
+
+            // Changes duration
+            float changeDuration = Enumerable.Range(1, route.Length - 1).Select(i => route[i].DateFrom - route[i - 1].DateTo).Sum(d => (float)d.TotalSeconds);
+
+            // Diff from asked
+            float diff = 1;
+            switch (constraint)
+            {
+                case DateConstraint.Now: diff = (float)MathUtil.Clamp(MathUtil.Map((route.First().DateFrom - date).TotalMinutes, 0, 15, 1, maxPenality), 1, maxPenality); break;
+                case DateConstraint.From: diff = (float)MathUtil.Clamp(MathUtil.Map(Math.Abs((route.First().DateFrom - date).TotalMinutes), 0, 15, 1, maxPenality), 1, maxPenality); break;
+                case DateConstraint.To: diff = (float)MathUtil.Clamp(MathUtil.Map(Math.Abs((route.Last().DateTo - date).TotalMinutes), 0, 15, 1, maxPenality), 1, maxPenality); break;
+            }
+
+            return (duration + changeDuration) * changes * buses * diff;
+        }
+        private int GetRouteHash(RouteSegment[] route)
+        {
+            RouteSegment firstSegment = route.First();
+            RouteSegment lastSegment = route.Last();
+
+            return firstSegment.Line.Id.GetHashCode() ^ firstSegment.DateFrom.Ticks.GetHashCode() ^ lastSegment.Line.Id.GetHashCode() ^ lastSegment.DateTo.Ticks.GetHashCode();
         }
     }
 }

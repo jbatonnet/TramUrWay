@@ -44,7 +44,7 @@ namespace TramUrWay.Android
         {
             get
             {
-                return routeSegments?.Count ?? 0;
+                return routeSegments?.Length ?? 0;
             }
         }
         public IEnumerable<RouteSegment[]> RouteSegments
@@ -55,17 +55,12 @@ namespace TramUrWay.Android
             }
             set
             {
-                routeSegments.Clear();
-
-                if (value != null)
-                    foreach (RouteSegment[] segments in value)
-                        routeSegments.Add(segments);
-
+                routeSegments = value?.ToArray();
                 NotifyDataSetChanged();
             }
         }
 
-        private List<RouteSegment[]> routeSegments = new List<RouteSegment[]>();
+        private RouteSegment[][] routeSegments;
         private List<RouteSegmentsViewHolder> viewHolders = new List<RouteSegmentsViewHolder>();
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -159,7 +154,8 @@ namespace TramUrWay.Android
                     ["From.Date"] = segment.DateFrom,
                     ["To.Route"] = segment.To.Route.Id,
                     ["To.Stop"] = segment.To.Stop.Id,
-                    ["To.Date"] = segment.DateTo
+                    ["To.Date"] = segment.DateTo,
+                    ["TimeSteps"] = new JArray(segment.TimeSteps.Select(s => new JObject() { ["Date"] = s.Date, ["Route"] = s.Step.Route.Id, ["Stop"] = s.Step.Stop.Id }).ToArray())
                 };
 
                 routeSegmentsData.Add(segmentObject.ToString());

@@ -33,7 +33,7 @@
                     android:layout_marginBottom="8dp">
 
                     <LinearLayout
-                        android:id="@+id/RoutesActivity_DefaultFocus"
+                        android:id="@+id/defaultFocus"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
                         android:layout_width="0px"
@@ -70,8 +70,8 @@
                         android:background="?android:attr/selectableItemBackground">
 
                         <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_place"
                             android:tint="@color/primary_text_default_material_dark" />
@@ -110,8 +110,8 @@
                         android:background="?android:attr/selectableItemBackground">
                         
                         <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_place"
                             android:tint="@color/primary_text_default_material_dark" />
@@ -163,18 +163,32 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/RoutesActivity_SwipeRefresh"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/RoutesActivity_RoutesList"
+            <TextView
+                android:id="@+id/RoutesActivity_NoResults"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:text="Aucun itinéraire disponible avec les critères spécifiés"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="@color/primary_text_disabled_material_light" />
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/RoutesActivity_SwipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/RoutesActivity_RoutesList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

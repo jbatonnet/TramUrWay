@@ -160,6 +160,12 @@ namespace TramUrWay.Android
                     stop.SetIsFavorite(!stop.GetIsFavorite());
                     item.SetIcon(stop.GetIsFavorite() ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
                     break;
+
+                case Resource.Id.StopMenu_Route:
+                    Intent intent = new Intent(this, typeof(RoutesActivity));
+                    intent.PutExtra("From", stop.Id);
+                    StartActivity(intent);
+                    break;
             }
 
             return base.OnOptionsItemSelected(item);
@@ -200,7 +206,7 @@ namespace TramUrWay.Android
 
                     swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-                    timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
+                    timeSteps = App.Service.GetLiveTimeSteps(line).Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
                     snackbar?.Dismiss();
                 }
                 catch (Exception e)

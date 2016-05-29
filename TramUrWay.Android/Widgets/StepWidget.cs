@@ -114,7 +114,7 @@ namespace TramUrWay.Android
 
                     try
                     {
-                        timeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
+                        timeSteps = App.Service.GetLiveTimeSteps(step.Route.Line).Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
                     }
                     catch (Exception e)
                     {

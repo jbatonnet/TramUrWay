@@ -4,23 +4,37 @@
     android:layout_height="24dp">
 
     <ImageView
+        android:id="@+id/RouteSegmentStopItem_StopIcon"
         android:layout_width="10dp"
         android:layout_height="10dp"
-        android:id="@+id/RouteSegmentStopItem_StopIcon"
         android:layout_marginLeft="31dp"
         android:layout_marginTop="7dp" />
 
     <TextView
+        android:id="@+id/RouteSegmentStopItem_StopName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Saint-Lazare"
-        android:id="@+id/RouteSegmentStopItem_StopName"
         android:gravity="center_vertical"
         android:layout_marginLeft="72dp"
         android:textColor="@color/primary_text_default_material_light"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:textSize="15sp" />
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/RouteSegmentStopItem_Date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="9:54"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp"
+        android:layout_alignTop="@+id/RouteSegmentStopItem_StopName"
+        android:layout_alignBottom="@+id/RouteSegmentStopItem_StopName"
+        android:gravity="center_vertical"
+        android:textSize="14sp" />
 
 </RelativeLayout>

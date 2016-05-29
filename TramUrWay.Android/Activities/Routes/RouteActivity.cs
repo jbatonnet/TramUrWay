@@ -72,7 +72,21 @@ namespace TramUrWay.Android
                     Route toRoute = line.Routes.First(r => r.Id == toRouteId);
                     Step to = toRoute.Steps.First(s => s.Stop.Id == toStopId);
 
-                    routeSegments.Add(new RouteSegment() { Line = line, From = from, DateFrom = fromDate, To = to, DateTo = toDate });
+                    List<TimeStep> timeSteps = new List<TimeStep>();
+
+                    foreach (JObject timeStepObject in routeSegmentObject["TimeSteps"] as JArray)
+                    {
+                        int routeId = timeStepObject["Route"].Value<int>();
+                        int stopId = timeStepObject["Stop"].Value<int>();
+                        DateTime date = timeStepObject["Date"].Value<DateTime>();
+
+                        Route route = line.Routes.First(r => r.Id == routeId);
+                        Step step = fromRoute.Steps.First(s => s.Stop.Id == stopId);
+
+                        timeSteps.Add(new TimeStep() { Step = step, Date = date });
+                    }
+
+                    routeSegments.Add(new RouteSegment() { Line = line, From = from, DateFrom = fromDate, To = to, DateTo = toDate, TimeSteps = timeSteps.ToArray() });
                 }
 
                 from = routeSegments.First().From.Stop;

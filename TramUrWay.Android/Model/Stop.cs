@@ -8,6 +8,7 @@ namespace TramUrWay.Android
     public class Stop
     {
         public int Id { get; set; }
+
         public string Name { get; set; }
         public Position Position { get; set; }
         public Line Line { get; set; }

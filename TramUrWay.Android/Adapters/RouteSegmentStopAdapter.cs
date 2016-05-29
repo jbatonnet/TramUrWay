@@ -24,11 +24,13 @@ namespace TramUrWay.Android
     {
         public ImageView StopIcon { get; }
         public TextView StopName { get; }
+        public TextView Date { get; }
 
         public RouteSegmentStopViewHolder(View itemView) : base(itemView)
         {
             StopIcon = itemView.FindViewById<ImageView>(Resource.Id.RouteSegmentStopItem_StopIcon);
             StopName = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentStopItem_StopName);
+            Date = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentStopItem_Date);
         }
     }
 
@@ -38,28 +40,17 @@ namespace TramUrWay.Android
         {
             get
             {
-                return routeSteps.Count;
+                return routeSegment.TimeSteps.Length;
             }
         }
 
         private RouteSegment routeSegment;
-        private List<Step> routeSteps;
 
         private List<RouteSegmentStopViewHolder> viewHolders = new List<RouteSegmentStopViewHolder>();
 
         public RouteSegmentStopAdapter(RouteSegment routeSegment)
         {
             this.routeSegment = routeSegment;
-
-            routeSteps = new List<Step>();
-
-            Step next = routeSegment.From;
-            do
-            {
-                next = next.Next;
-                routeSteps.Add(next);
-            }
-            while (next != null && next.Stop.Name != routeSegment.To.Stop.Name);
         }
 
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -70,10 +61,25 @@ namespace TramUrWay.Android
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
         {
             RouteSegmentStopViewHolder viewHolder = holder as RouteSegmentStopViewHolder;
-            Step step = routeSteps[position];
+
+            Stop stop;
+            DateTime date;
+
+            if (position == routeSegment.TimeSteps.Length  - 1)
+            {
+                stop = routeSegment.To.Stop;
+                date = routeSegment.DateTo;
+            }
+            else
+            {
+                TimeStep timeStep = routeSegment.TimeSteps[position + 1];
+                stop = timeStep.Step.Stop;
+                date = timeStep.Date;
+            }
 
             viewHolder.StopIcon.SetImageBitmap(Utils.GetStopIconForLine(viewHolder.StopIcon.Context, routeSegment.Line, 8));
-            viewHolder.StopName.Text = step.Stop.Name;
+            viewHolder.StopName.Text = stop.Name;
+            viewHolder.Date.Text = date.ToString("HH:mm");
 
             if (!viewHolders.Contains(viewHolder))
                 viewHolders.Add(viewHolder);

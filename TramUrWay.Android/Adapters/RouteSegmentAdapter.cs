@@ -27,6 +27,7 @@ namespace TramUrWay.Android
         public View LineBar { get; }
         public TextView StopName { get; }
         public RecyclerView StopList { get; }
+        public TextView Date { get; }
 
         public RouteSegmentViewHolder(View itemView) : base(itemView)
         {
@@ -35,6 +36,7 @@ namespace TramUrWay.Android
             LineBar = itemView.FindViewById(Resource.Id.RouteSegmentItem_LineBar);
             StopName = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentItem_StopName);
             StopList = itemView.FindViewById<RecyclerView>(Resource.Id.RouteSegmentItem_StopList);
+            Date = itemView.FindViewById<TextView>(Resource.Id.RouteSegmentItem_Date);
         }
     }
 
@@ -70,8 +72,9 @@ namespace TramUrWay.Android
             viewHolder.LineIcon.SetImageDrawable(segment.Line.GetIconDrawable(viewHolder.StopIcon.Context));
             viewHolder.LineBar.SetBackgroundColor(Utils.GetColorForLine(viewHolder.StopIcon.Context, segment.Line));
             viewHolder.StopName.Text = segment.From.Stop.Name;
+            viewHolder.Date.Text = segment.DateFrom.ToString("HH:mm");
 
-            viewHolder.StopList.SetLayoutManager(new WrapLayoutManager(viewHolder.StopIcon.Context));
+            viewHolder.StopList.SetLayoutManager(new WrapLayoutManager(viewHolder.StopList));
             viewHolder.StopList.SetAdapter(new RouteSegmentStopAdapter(segment));
 
             if (!viewHolders.Contains(viewHolder))

@@ -240,7 +240,7 @@ namespace TramUrWay.Android
                 if (App.Config.OfflineMode)
                     throw new Exception();
 
-                newTimeSteps = App.Service.GetLiveTimeSteps().Where(t => t.Step.Route.Line.Id < 6).OrderBy(t => t.Date).ToArray();
+                newTimeSteps = new TimeStep[0];// App.Service.GetLiveTimeSteps().Where(t => t.Step.Route.Line.Id < 6).OrderBy(t => t.Date).ToArray();
             }
 
             // Offline time steps

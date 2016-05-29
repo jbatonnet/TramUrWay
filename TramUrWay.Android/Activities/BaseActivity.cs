@@ -11,10 +11,12 @@ namespace TramUrWay.Android
         protected AppBarLayout appBarLayout;
         protected Toolbar toolbar;
         protected View toolbarShadow;
+        protected View defaultFocus;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             App.Initialize(this);
+
             base.OnCreate(savedInstanceState);
         }
 
@@ -38,6 +40,10 @@ namespace TramUrWay.Android
                 else if (toolbar != null)
                     toolbar.Elevation = elevation;
             }
+
+            defaultFocus = FindViewById(Resource.Id.defaultFocus);
+            if (defaultFocus != null)
+                defaultFocus.RequestFocus();
         }
 
         protected void OnCreate(Bundle savedInstanceState, int layoutId)
