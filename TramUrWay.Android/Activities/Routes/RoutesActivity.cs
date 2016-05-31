@@ -63,7 +63,7 @@ namespace TramUrWay.Android
             // Initialize UI
             fromLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_FromLayout);
             fromTextView = FindViewById<AutoCompleteTextView>(Resource.Id.RoutesActivity_From);
-            fromTextView.Adapter = new ArrayAdapter<string>(this, global::Android.Resource.Layout.SimpleDropDownItem1Line, stopNames);
+            fromTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
             fromTextView.TextChanged += TextView_TextChanged;
 
             View fromButton = FindViewById(Resource.Id.RoutesActivity_FromButton);
@@ -71,7 +71,7 @@ namespace TramUrWay.Android
 
             toLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_ToLayout);
             toTextView = FindViewById<AutoCompleteTextView>(Resource.Id.RoutesActivity_To);
-            toTextView.Adapter = new ArrayAdapter<string>(this, global::Android.Resource.Layout.SimpleDropDownItem1Line, stopNames);
+            toTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
             toTextView.TextChanged += TextView_TextChanged;
 
             View toButton = FindViewById(Resource.Id.RoutesActivity_ToButton);
@@ -114,7 +114,7 @@ namespace TramUrWay.Android
             // Refresh widget
             swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RoutesActivity_SwipeRefresh);
             swipeRefresh.Refresh += SwipeRefresh_Refresh;
-            //swipeRefresh.SetColorSchemeColors(color.ToArgb());
+            swipeRefresh.SetColorSchemeColors(Resources.GetColor(Resource.Color.colorAccent).ToArgb());
 
             noResultsView = FindViewById(Resource.Id.RoutesActivity_NoResults);
             noResultsView.Visibility = ViewStates.Gone;
@@ -172,7 +172,7 @@ namespace TramUrWay.Android
             };
 
             // Auto: based on current location and favorites
-            menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
+            //menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
 
             // Favorite stops
             foreach (Stop stop in App.Config.FavoriteStops)
@@ -236,6 +236,7 @@ namespace TramUrWay.Android
             if (string.IsNullOrWhiteSpace(fromTextView.Text))
             {
                 fromLayout.Error = "Spécifiez une station de départ";
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
                 return;
             }
 
@@ -243,12 +244,14 @@ namespace TramUrWay.Android
             if (from == null)
             {
                 fromLayout.Error = "La station spécifiée n'existe pas";
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(toTextView.Text))
             {
                 toLayout.Error = "Spécifiez une station de destination";
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
                 return;
             }
 
@@ -256,12 +259,14 @@ namespace TramUrWay.Android
             if (to == null)
             {
                 toLayout.Error = "La station spécifiée n'existe pas";
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
                 return;
             }
 
             if (from == to)
             {
                 toLayout.Error = "Spécifiez une station différente de celle de départ";
+                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
                 return;
             }
 
@@ -274,6 +279,9 @@ namespace TramUrWay.Android
 
             routeSegments.Clear();
             routeSegmentAdapter.RouteSegments = Enumerable.Empty<RouteSegment[]>();
+
+            View initialHintView = FindViewById(Resource.Id.RoutesActivity_InitialHint);
+            initialHintView.Visibility = ViewStates.Gone;
 
 #if DEBUG
             //Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));

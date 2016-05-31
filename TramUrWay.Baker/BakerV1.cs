@@ -172,7 +172,7 @@ namespace TramUrWay.Baker
         {
             foreach (Line line in Lines)
             {
-                string path = Path.Combine(inputDirectory, $@"L{line.Id}\L{line.Id}.png");
+                string path = Path.Combine(inputDirectory, $@"L{line.Number}\L{line.Id}.png");
                 if (!File.Exists(path))
                     continue;
 
@@ -195,7 +195,7 @@ namespace TramUrWay.Baker
 
                     foreach (string file in files)
                     {
-                        string path = Path.Combine(inputDirectory, $@"L{route.Line.Id}\L{route.Line.Id}.R{route.Id}.{file}.csv");
+                        string path = Path.Combine(inputDirectory, $@"L{route.Line.Number}\L{route.Line.Number}.R{route.Id}.{file}.csv");
                         FileInfo fileInfo = new FileInfo(path);
 
                         if (!fileInfo.Exists)
@@ -274,7 +274,7 @@ namespace TramUrWay.Baker
                     Step last = route.Steps.Last();
                     last.Trajectory = new TrajectoryStep[] { new TrajectoryStep() { Index = 0, Position = last.Stop.Position } };
 
-                    string path = Path.Combine(inputDirectory, $@"L{line.Id}\L{line.Id}.R{route.Id}.Trajectory.txt");
+                    string path = Path.Combine(inputDirectory, $@"L{line.Number}\L{line.Number}.R{route.Id}.Trajectory.txt");
                     FileInfo file = new FileInfo(path);
 
                     if (!file.Exists)
@@ -360,27 +360,27 @@ namespace TramUrWay.Baker
         private static void PatchData()
         {
             // Custom line names
-            Lines.First(l => l.Id == 13).Name = "La navette";
-            Lines.First(l => l.Id == 15).Name = "La ronde";
+            Lines.First(l => l.Number == 13).Name = "La navette";
+            Lines.First(l => l.Number == 15).Name = "La ronde";
 
             // TaM data fixes
             {
                 // Last stop of line 1 is Odysseum
-                Lines.First(l => l.Id == 1).Routes.Last().Steps.Last().Stop.Name = "Odysseum";
+                Lines.First(l => l.Number == 1).Routes.Last().Steps.Last().Stop.Name = "Odysseum";
 
                 // First stop of lines 8 and 12 is Gare Saint-Roch (Pont de Sète)
-                Lines.First(l => l.Id == 8).Routes.First().Steps.First().Stop.Name = "Gare Saint-Roch (Pont de Sète)";
-                Lines.First(l => l.Id == 12).Routes.First().Steps.First().Stop.Name = "Gare Saint-Roch (Pont de Sète)";
+                Lines.First(l => l.Number == 8).Routes.First().Steps.First().Stop.Name = "Gare Saint-Roch (Pont de Sète)";
+                Lines.First(l => l.Number == 12).Routes.First().Steps.First().Stop.Name = "Gare Saint-Roch (Pont de Sète)";
 
                 // Second stop of line 12 is Frédéric Peyson
-                Lines.First(l => l.Id == 12).Routes.First().Steps.ElementAt(1).Stop.Name = "Frédéric Peyson";
+                Lines.First(l => l.Number == 12).Routes.First().Steps.ElementAt(1).Stop.Name = "Frédéric Peyson";
 
                 // Line 17 is nearly completely wrong ... thanks TaM
-                foreach (Stop stop in Lines.First(l => l.Id == 17).Stops)
+                foreach (Stop stop in Lines.First(l => l.Number == 17).Stops)
                     stop.Name = StepNames[stop.Id];
 
                 // On line 9, Domaine de la Pompignane does not exists anymore
-                foreach (Route route in Lines.First(l => l.Id == 9).Routes)
+                foreach (Route route in Lines.First(l => l.Number == 9).Routes)
                 {
                     Step step = route.Steps.First(s => s.Stop.Name == "Domaine de la Pompignane");
 

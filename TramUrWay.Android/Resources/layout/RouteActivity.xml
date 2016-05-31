@@ -30,10 +30,10 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v4.widget.SwipeRefreshLayout
+            <!--<android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/RouteActivity_SwipeRefresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent">-->
 
                 <ScrollView
                     android:layout_width="match_parent"
@@ -108,7 +108,7 @@
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:text="Destination :"
                                 android:id="@+id/RouteActivity_ToLabel"
-                                android:layout_alignStart="@+id/RouteActivity_FromLabel"
+                                android:layout_alignLeft="@+id/RouteActivity_FromLabel"
                                 android:layout_marginTop="8dp"
                                 android:layout_below="@+id/RouteActivity_FromIcon"
                                 android:textSize="12sp" />
@@ -159,7 +159,7 @@
 
                 </ScrollView>
 
-            </android.support.v4.widget.SwipeRefreshLayout>
+            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
             <View
                 android:id="@+id/shadow"

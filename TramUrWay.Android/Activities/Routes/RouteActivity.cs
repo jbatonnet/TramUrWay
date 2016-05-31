@@ -122,8 +122,8 @@ namespace TramUrWay.Android
             recyclerView.SetAdapter(new RouteSegmentAdapter(routeSegments.ToArray()));
 
             // Refresh widget
-            swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RouteActivity_SwipeRefresh);
-            swipeRefresh.Refresh += SwipeRefresh_Refresh;
+            //swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RouteActivity_SwipeRefresh);
+            //swipeRefresh.Refresh += SwipeRefresh_Refresh;
             //swipeRefresh.SetColorSchemeColors(color.ToArgb());
         }
 

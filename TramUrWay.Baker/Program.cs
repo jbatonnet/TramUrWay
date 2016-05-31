@@ -123,7 +123,7 @@ namespace TramUrWay.Baker
                 }
 
                 // Dump json file
-                using (FileStream fileStream = File.Open(Path.Combine(outputDirectory, $"L{line.Id}.json"), FileMode.Create))
+                using (FileStream fileStream = File.Open(Path.Combine(outputDirectory, $"L{line.Number}.json"), FileMode.Create))
                 using (StreamWriter streamWriter = new StreamWriter(fileStream))
                 using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
                     lineObject.WriteTo(jsonWriter);

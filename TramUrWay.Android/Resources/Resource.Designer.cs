@@ -2276,59 +2276,56 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b0092
 			public const int MapFragment_Map = 2131427474;
 			
-			// aapt resource value: 0x7f0b00a6
-			public const int RouteActivity_FromDate = 2131427494;
-			
-			// aapt resource value: 0x7f0b00a4
-			public const int RouteActivity_FromIcon = 2131427492;
+			// aapt resource value: 0x7f0b00a5
+			public const int RouteActivity_FromDate = 2131427493;
 			
 			// aapt resource value: 0x7f0b00a3
-			public const int RouteActivity_FromLabel = 2131427491;
+			public const int RouteActivity_FromIcon = 2131427491;
 			
-			// aapt resource value: 0x7f0b00a5
-			public const int RouteActivity_FromName = 2131427493;
+			// aapt resource value: 0x7f0b00a2
+			public const int RouteActivity_FromLabel = 2131427490;
 			
-			// aapt resource value: 0x7f0b00ab
-			public const int RouteActivity_SegmentsList = 2131427499;
-			
-			// aapt resource value: 0x7f0b00a1
-			public const int RouteActivity_SwipeRefresh = 2131427489;
+			// aapt resource value: 0x7f0b00a4
+			public const int RouteActivity_FromName = 2131427492;
 			
 			// aapt resource value: 0x7f0b00aa
-			public const int RouteActivity_ToDate = 2131427498;
-			
-			// aapt resource value: 0x7f0b00a8
-			public const int RouteActivity_ToIcon = 2131427496;
-			
-			// aapt resource value: 0x7f0b00a7
-			public const int RouteActivity_ToLabel = 2131427495;
+			public const int RouteActivity_SegmentsList = 2131427498;
 			
 			// aapt resource value: 0x7f0b00a9
-			public const int RouteActivity_ToName = 2131427497;
+			public const int RouteActivity_ToDate = 2131427497;
 			
-			// aapt resource value: 0x7f0b00b1
-			public const int RouteChoiceItem_RouteChoice = 2131427505;
+			// aapt resource value: 0x7f0b00a7
+			public const int RouteActivity_ToIcon = 2131427495;
+			
+			// aapt resource value: 0x7f0b00a6
+			public const int RouteActivity_ToLabel = 2131427494;
+			
+			// aapt resource value: 0x7f0b00a8
+			public const int RouteActivity_ToName = 2131427496;
 			
 			// aapt resource value: 0x7f0b00b0
-			public const int RouteChoiceItem_RouteChoiceLayout = 2131427504;
-			
-			// aapt resource value: 0x7f0b00ad
-			public const int RouteChoiceItem_RouteSwitch = 2131427501;
-			
-			// aapt resource value: 0x7f0b00ac
-			public const int RouteChoiceItem_RouteSwitchLayout = 2131427500;
-			
-			// aapt resource value: 0x7f0b00ae
-			public const int RouteChoiceItem_RouteSwitch_LeftChoice = 2131427502;
+			public const int RouteChoiceItem_RouteChoice = 2131427504;
 			
 			// aapt resource value: 0x7f0b00af
-			public const int RouteChoiceItem_RouteSwitch_RightChoice = 2131427503;
+			public const int RouteChoiceItem_RouteChoiceLayout = 2131427503;
 			
-			// aapt resource value: 0x7f0b00b3
-			public const int RouteFragment_StopList = 2131427507;
+			// aapt resource value: 0x7f0b00ac
+			public const int RouteChoiceItem_RouteSwitch = 2131427500;
+			
+			// aapt resource value: 0x7f0b00ab
+			public const int RouteChoiceItem_RouteSwitchLayout = 2131427499;
+			
+			// aapt resource value: 0x7f0b00ad
+			public const int RouteChoiceItem_RouteSwitch_LeftChoice = 2131427501;
+			
+			// aapt resource value: 0x7f0b00ae
+			public const int RouteChoiceItem_RouteSwitch_RightChoice = 2131427502;
 			
 			// aapt resource value: 0x7f0b00b2
-			public const int RouteFragment_SwipeRefresh = 2131427506;
+			public const int RouteFragment_StopList = 2131427506;
+			
+			// aapt resource value: 0x7f0b00b1
+			public const int RouteFragment_SwipeRefresh = 2131427505;
 			
 			// aapt resource value: 0x7f0b00c4
 			public const int RouteSegmentItem_Date = 2131427524;
@@ -2378,23 +2375,26 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00ca
 			public const int RouteSegmentsItem_To = 2131427530;
 			
-			// aapt resource value: 0x7f0b00bb
-			public const int RoutesActivity_Date = 2131427515;
-			
-			// aapt resource value: 0x7f0b00bc
-			public const int RoutesActivity_DateButton = 2131427516;
-			
 			// aapt resource value: 0x7f0b00ba
-			public const int RoutesActivity_DateLayout = 2131427514;
+			public const int RoutesActivity_Date = 2131427514;
 			
-			// aapt resource value: 0x7f0b00b6
-			public const int RoutesActivity_From = 2131427510;
+			// aapt resource value: 0x7f0b00bb
+			public const int RoutesActivity_DateButton = 2131427515;
+			
+			// aapt resource value: 0x7f0b00b9
+			public const int RoutesActivity_DateLayout = 2131427513;
 			
 			// aapt resource value: 0x7f0b00b5
-			public const int RoutesActivity_FromButton = 2131427509;
+			public const int RoutesActivity_From = 2131427509;
 			
 			// aapt resource value: 0x7f0b00b4
-			public const int RoutesActivity_FromLayout = 2131427508;
+			public const int RoutesActivity_FromButton = 2131427508;
+			
+			// aapt resource value: 0x7f0b00b3
+			public const int RoutesActivity_FromLayout = 2131427507;
+			
+			// aapt resource value: 0x7f0b00bc
+			public const int RoutesActivity_InitialHint = 2131427516;
 			
 			// aapt resource value: 0x7f0b00bd
 			public const int RoutesActivity_NoResults = 2131427517;
@@ -2405,14 +2405,14 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b00be
 			public const int RoutesActivity_SwipeRefresh = 2131427518;
 			
-			// aapt resource value: 0x7f0b00b9
-			public const int RoutesActivity_To = 2131427513;
-			
 			// aapt resource value: 0x7f0b00b8
-			public const int RoutesActivity_ToButton = 2131427512;
+			public const int RoutesActivity_To = 2131427512;
 			
 			// aapt resource value: 0x7f0b00b7
-			public const int RoutesActivity_ToLayout = 2131427511;
+			public const int RoutesActivity_ToButton = 2131427511;
+			
+			// aapt resource value: 0x7f0b00b6
+			public const int RoutesActivity_ToLayout = 2131427510;
 			
 			// aapt resource value: 0x7f0b00f0
 			public const int RoutesMenu_Search = 2131427568;
@@ -2654,8 +2654,8 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f0b0063
 			public const int decor_content_parent = 2131427427;
 			
-			// aapt resource value: 0x7f0b00a2
-			public const int defaultFocus = 2131427490;
+			// aapt resource value: 0x7f0b00a1
+			public const int defaultFocus = 2131427489;
 			
 			// aapt resource value: 0x7f0b004b
 			public const int default_activity_button = 2131427403;
@@ -3197,64 +3197,67 @@ namespace TramUrWay.Android
 			public const int RouteActivity = 2130968629;
 			
 			// aapt resource value: 0x7f040036
-			public const int RouteChoiceItem = 2130968630;
+			public const int RouteAutocompleteItem = 2130968630;
 			
 			// aapt resource value: 0x7f040037
-			public const int RouteFragment = 2130968631;
+			public const int RouteChoiceItem = 2130968631;
 			
 			// aapt resource value: 0x7f040038
-			public const int RoutesActivity = 2130968632;
+			public const int RouteFragment = 2130968632;
 			
 			// aapt resource value: 0x7f040039
-			public const int RoutesDateDialog = 2130968633;
+			public const int RoutesActivity = 2130968633;
 			
 			// aapt resource value: 0x7f04003a
-			public const int RouteSegmentItem = 2130968634;
+			public const int RoutesDateDialog = 2130968634;
 			
 			// aapt resource value: 0x7f04003b
-			public const int RouteSegmentsItem = 2130968635;
+			public const int RouteSegmentItem = 2130968635;
 			
 			// aapt resource value: 0x7f04003c
-			public const int RouteSegmentStopItem = 2130968636;
+			public const int RouteSegmentsItem = 2130968636;
 			
 			// aapt resource value: 0x7f04003d
-			public const int select_dialog_item_material = 2130968637;
+			public const int RouteSegmentStopItem = 2130968637;
 			
 			// aapt resource value: 0x7f04003e
-			public const int select_dialog_multichoice_material = 2130968638;
+			public const int select_dialog_item_material = 2130968638;
 			
 			// aapt resource value: 0x7f04003f
-			public const int select_dialog_singlechoice_material = 2130968639;
+			public const int select_dialog_multichoice_material = 2130968639;
 			
 			// aapt resource value: 0x7f040040
-			public const int SettingsActivity = 2130968640;
+			public const int select_dialog_singlechoice_material = 2130968640;
 			
 			// aapt resource value: 0x7f040041
-			public const int SideMenu = 2130968641;
+			public const int SettingsActivity = 2130968641;
 			
 			// aapt resource value: 0x7f040042
-			public const int StepItem = 2130968642;
+			public const int SideMenu = 2130968642;
 			
 			// aapt resource value: 0x7f040043
-			public const int StepWidget = 2130968643;
+			public const int StepItem = 2130968643;
 			
 			// aapt resource value: 0x7f040044
-			public const int StepWidgetActivity = 2130968644;
+			public const int StepWidget = 2130968644;
 			
 			// aapt resource value: 0x7f040045
-			public const int StopActivity = 2130968645;
+			public const int StepWidgetActivity = 2130968645;
 			
 			// aapt resource value: 0x7f040046
-			public const int StopItem = 2130968646;
+			public const int StopActivity = 2130968646;
 			
 			// aapt resource value: 0x7f040047
-			public const int StopsFragment = 2130968647;
+			public const int StopItem = 2130968647;
 			
 			// aapt resource value: 0x7f040048
-			public const int support_simple_spinner_dropdown_item = 2130968648;
+			public const int StopsFragment = 2130968648;
 			
 			// aapt resource value: 0x7f040049
-			public const int TimeStepItem = 2130968649;
+			public const int support_simple_spinner_dropdown_item = 2130968649;
+			
+			// aapt resource value: 0x7f04004a
+			public const int TimeStepItem = 2130968650;
 			
 			static Layout()
 			{

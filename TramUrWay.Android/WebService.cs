@@ -125,6 +125,8 @@ namespace TramUrWay.Android
 
         public IEnumerable<TimeStep> GetLiveTimeSteps(Line line)
         {
+            return GetLiveTimeSteps().Where(s => s.Step.Route.Line == line);
+            /*
             string url = webServiceNewUrl + "/api/v1/hours/next/line";
 
             // Build request
@@ -132,8 +134,7 @@ namespace TramUrWay.Android
             {
                 ["directions"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
                 ["citywayLineId"] = line.Id,
-                ["lineNumber"] = line.Id,
-                ["sens"] = 1,
+                ["lineNumber"] = line.Number,
                 ["stops"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
                 ["urbanLine"] = 1
             };
@@ -144,7 +145,7 @@ namespace TramUrWay.Android
             // Parse results
             JObject result = JsonConvert.DeserializeObject(data) as JObject;
 
-            yield break;
+            yield break;*/
         }
     }
 }

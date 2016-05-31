@@ -15,6 +15,8 @@ namespace TramUrWay.Android
     public class Line
     {
         public int Id { get; set; }
+
+        public int Number { get; set; }
         public string Name { get; set; }
         public int? Color { get; set; }
         public LineType Type { get; set; }
@@ -23,6 +25,6 @@ namespace TramUrWay.Android
         public Stop[] Stops { get; set; }
         public Route[] Routes { get; set; }
 
-        public override string ToString() => Name ?? $"{Type} ligne {Id}";
+        public override string ToString() => Name ?? $"{Type} ligne {Number}";
     }
 }

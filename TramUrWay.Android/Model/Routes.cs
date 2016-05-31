@@ -18,7 +18,7 @@ namespace TramUrWay.Android
 
         public override string ToString()
         {
-            return $"[{Line?.Id.ToString() ?? "W"}] {From} > {To.Stop.Name} ({Weight})";
+            return $"[{Line?.Number.ToString() ?? "W"}] {From} > {To.Stop.Name} ({Weight})";
         }
     }
     public class RouteSegment
@@ -34,7 +34,7 @@ namespace TramUrWay.Android
 
         public override string ToString()
         {
-            return $"On L{Line.Id}, from {From.Stop.Name} ({DateFrom}) to {To.Stop.Name} ({DateTo})";
+            return $"On L{Line.Number}, from {From.Stop.Name} ({DateFrom}) to {To.Stop.Name} ({DateTo})";
         }
     }
 

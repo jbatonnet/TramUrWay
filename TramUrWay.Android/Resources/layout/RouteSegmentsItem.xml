@@ -36,7 +36,7 @@
         android:text="15h45"
         android:textSize="@dimen/abc_text_size_subhead_material"
         android:textColor="@android:color/primary_text_light"
-        android:layout_toEndOf="@id/RouteSegmentsItem_Background"
+        android:layout_toRightOf="@id/RouteSegmentsItem_Background"
         android:layout_alignTop="@+id/RouteSegmentsItem_Background"
         android:layout_marginTop="4dp" />
 
@@ -61,16 +61,15 @@
         android:textSize="@dimen/abc_text_size_subhead_material"
         android:textColor="@android:color/primary_text_light"
         android:layout_alignTop="@+id/RouteSegmentsItem_From"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="12dp" />
+        android:layout_alignRight="@+id/RouteSegmentsItem_PreviewLayout" />
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/RouteSegmentsItem_PreviewLayout"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_toEndOf="@id/RouteSegmentsItem_Background"
+        android:layout_toRightOf="@id/RouteSegmentsItem_Background"
         android:layout_alignBottom="@+id/RouteSegmentsItem_Background"
-        android:layout_marginRight="12dp" >
+        android:layout_marginRight="12dp">
 
         <!--<LinearLayout
             android:layout_width="match_parent"

@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_marginTop="16dp"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="0dp">
 
                     <LinearLayout
                         android:id="@+id/defaultFocus"
@@ -125,7 +125,8 @@
                         android:layout_below="@+id/RoutesActivity_ToLayout"
                         android:focusable="true"
                         android:clickable="true"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/RoutesActivity_Date"
@@ -169,6 +170,14 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <TextView
+                android:id="@+id/RoutesActivity_InitialHint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Entrez une station de départ et de destination,\n puis lancez une recherche d'itinéraires"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="@color/primary_text_disabled_material_light" />
+
+            <TextView
                 android:id="@+id/RoutesActivity_NoResults"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -188,6 +197,12 @@
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
+            <View
+                android:id="@+id/shadow"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/shadow" />
+        
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>

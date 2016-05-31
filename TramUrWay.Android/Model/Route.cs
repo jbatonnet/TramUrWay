@@ -16,7 +16,7 @@ namespace TramUrWay.Android
 
         public override string ToString()
         {
-            return "Line " + Line.Id + " from " + Steps.First().Stop.Name + " to " + Steps.Last().Stop.Name;
+            return "Line " + Line.Number + " from " + Steps.First().Stop.Name + " to " + Steps.Last().Stop.Name;
         }
     }
 }
