@@ -11,15 +11,15 @@
             android:title="Accueil"
             android:checked="true" />
         <item
+            android:id="@+id/SideMenu_Nearby"
+            android:icon="@drawable/ic_near_me"
+            android:title="Autour de moi"
+            android:enabled="true" />
+        <item
             android:id="@+id/SideMenu_Routes"
             android:icon="@drawable/ic_directions"
             android:title="Itinéraires"
             android:enabled="true" />
-        <item
-            android:id="@+id/SideMenu_Map"
-            android:icon="@drawable/ic_map"
-            android:enabled="false"
-            android:title="Carte interactive" />
         
     </group>
 

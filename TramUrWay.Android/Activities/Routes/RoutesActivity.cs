@@ -284,8 +284,8 @@ namespace TramUrWay.Android
             initialHintView.Visibility = ViewStates.Gone;
 
 #if DEBUG
-            //Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));
-            Search(from, to, DateConstraint.Now, DateTime.Now);
+            Search(from, to, DateConstraint.From, new DateTime(2016, 05, 27, 16, 24, 00));
+            //Search(from, to, DateConstraint.Now, DateTime.Now);
 #else
             Search(from, to, DateConstraint.Now, DateTime.Now);
 #endif

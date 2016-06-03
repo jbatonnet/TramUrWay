@@ -49,6 +49,15 @@ namespace TramUrWay.Baker
             else
                 return null;
         }
+        private static Stop GetStopFromId(int id)
+        {
+            Stop stop;
+
+            if (stopIds.TryGetKey(id, out stop))
+                return stop;
+            else
+                return null;
+        }
         private static Stop GetStopFromTamId(int tamId)
         {
             Stop stop;
@@ -107,7 +116,7 @@ namespace TramUrWay.Baker
                 List<Stop> lineStops = new List<Stop>();
                 List<Route> lineRoutes = new List<Route>();
 
-                using (DbCommand command = sqliteConnection.CreateCommand("SELECT * FROM LINE_STOP ls INNER JOIN STOP s ON s.tam_id = ls.stop WHERE ls.line = " + lineIds[line]))
+                using (DbCommand command = sqliteConnection.CreateCommand("SELECT * FROM LINE_STOP ls INNER JOIN STOP s ON s._id = ls.stop WHERE ls.line = " + lineIds[line]))
                 using (DbDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -154,7 +163,7 @@ namespace TramUrWay.Baker
                         while (reader.Read())
                         {
                             int stopId = (int)(long)reader["stop"];
-                            Stop stop = GetStopFromTamId(stopId);
+                            Stop stop = GetStopFromId(stopId);
                             if (stop == null)
                                 throw new Exception();
 

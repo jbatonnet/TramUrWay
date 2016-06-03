@@ -294,7 +294,7 @@ namespace TramUrWay.Android
             DateTime lowerBound = simulationDate - lowerTolerance;
             DateTime upperBound = simulationDate + upperTolerance;
 
-            TimeStep[] timeSteps = firstStep.Route.TimeTable.GetStepsFromStep(firstStep, lowerBound).TakeWhile(s => s.Date <= upperBound).ToArray();
+            TimeStep[] timeSteps = firstStep.Route.TimeTable.GetStepsFromStep(firstStep, lowerBound).Take(3).ToArray();
 
             TimeStep lastTimeStep;
             List<TimeStep> segmentTimeSteps;

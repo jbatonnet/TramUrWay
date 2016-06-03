@@ -61,16 +61,7 @@ namespace TramUrWay.Android
             else
                 viewPager.SetCurrentItem(1, true);
         }
-
-        public override void OnBackPressed()
-        {
-            DrawerLayout drawer = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-
-            if (drawer.IsDrawerOpen(GravityCompat.Start))
-                drawer.CloseDrawer(GravityCompat.Start);
-            else
-                base.OnBackPressed();
-        }
+        
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.MainMenu, menu);

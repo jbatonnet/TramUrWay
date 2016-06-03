@@ -23,19 +23,24 @@ using Android.Widget;
 
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
+using FragmentTransaction = Android.Support.V4.App.FragmentTransaction;
 using Android.Views.InputMethods;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Android.Gms.Maps;
+using Android.Gms.Maps.Model;
 
 namespace TramUrWay.Android
 {
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
-    public class RouteActivity : BaseActivity
+    public class RouteActivity : BaseActivity, IOnMapReadyCallback
     {
         private Stop from, to;
         private List<RouteSegment> routeSegments;
 
         private SwipeRefreshLayout swipeRefresh;
+        private SupportMapFragment mapFragment;
+        private GoogleMap googleMap;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -121,6 +126,14 @@ namespace TramUrWay.Android
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical, true));
             recyclerView.SetAdapter(new RouteSegmentAdapter(routeSegments.ToArray()));
 
+            // Setup maps fragment
+            mapFragment = SupportMapFragment.NewInstance();
+            mapFragment.GetMapAsync(this);
+
+            FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction();
+            fragmentTransaction.Replace(Resource.Id.RouteActivity_Map, mapFragment);
+            fragmentTransaction.Commit();
+
             // Refresh widget
             //swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RouteActivity_SwipeRefresh);
             //swipeRefresh.Refresh += SwipeRefresh_Refresh;
@@ -137,6 +150,72 @@ namespace TramUrWay.Android
             }
 
             return base.OnOptionsItemSelected(item);
+        }
+        public void OnMapReady(GoogleMap map)
+        {
+            googleMap = map;
+
+            // Set initial zoom level
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
+            googleMap.MoveCamera(cameraUpdate);
+
+            // Add polylines
+            /*foreach (Line line in App.Lines)
+            {
+                foreach (Route route in line.Routes)
+                {
+                    PolylineOptions polyline = new PolylineOptions().InvokeWidth(5).Visible(line.Type == LineType.Tram);
+                    Color color = Utils.GetColorForLine(this, line);
+
+                    polyline = polyline.InvokeColor(color.ToArgb());
+
+                    foreach (Step step in route.Steps.Take(route.Steps.Length - 1))
+                    {
+                        foreach (TrajectoryStep trajectoryStep in step.Trajectory)
+                        {
+                            LatLng latLng = new LatLng(trajectoryStep.Position.Latitude, trajectoryStep.Position.Longitude);
+                            polyline = polyline.Add(latLng);
+                        }
+                    }
+
+                    routeLines.Add(route, googleMap.AddPolyline(polyline));
+                }
+            }*/
+
+            // Prepare line icons
+            /*float density = Resources.DisplayMetrics.Density;
+            Drawable drawable = Resources.GetDrawable(Resource.Drawable.train);
+            Drawable drawableOutline = Resources.GetDrawable(Resource.Drawable.train_glow);
+
+            foreach (Line line in App.Lines)
+            {
+                Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
+                Canvas canvas = new Canvas(bitmap);
+                Color color = Utils.GetColorForLine(Activity, line);
+
+                drawableOutline.SetBounds(0, 0, (int)(IconSize * density), (int)(IconSize * density));
+                drawableOutline.Draw(canvas);
+
+                drawable.SetColorFilter(color, PorterDuff.Mode.SrcIn);
+                drawable.SetBounds(0, 0, (int)(IconSize * density), (int)(IconSize * density));
+                drawable.Draw(canvas);
+
+                lineIcons[line] = BitmapDescriptorFactory.FromBitmap(bitmap);
+            }*/
+
+            // Show stops
+            float density = Resources.DisplayMetrics.Density;
+
+            foreach (Line line in App.Lines)
+                foreach (Stop stop in line.Stops)
+                {
+                    //Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
+                    //Canvas canvas = new Canvas(bitmap);
+                    //Color color = Utils.GetColorForLine(this, line);
+                    
+
+                    googleMap.AddMarker(new MarkerOptions().SetPosition(new LatLng(stop.Position.Latitude, stop.Position.Longitude)));
+                }
         }
 
         private void SwipeRefresh_Refresh(object sender, EventArgs e)

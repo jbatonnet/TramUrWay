@@ -37,7 +37,7 @@ namespace TramUrWay.Android
                 .ContinueWith(t =>
                 {
 #if DEBUG
-                    Intent intent = new Intent(this, typeof(HomeActivity));
+                    Intent intent = new Intent(this, typeof(RoutesActivity));
 
                     /*intent.PutExtra("RouteSegments", new string[]
                     {

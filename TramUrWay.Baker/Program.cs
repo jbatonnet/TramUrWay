@@ -27,7 +27,7 @@ namespace TramUrWay.Baker
         public static void Main(string[] args)
         {
             // Load data
-            Lines = BakerV1.Bake();
+            Lines = BakerV2.Bake();
 
             // Dump everything
             //DumpData();

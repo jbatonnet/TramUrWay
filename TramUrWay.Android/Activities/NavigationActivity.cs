@@ -64,6 +64,14 @@ namespace TramUrWay.Android
 
             base.OnResume();
         }
+        public override void OnBackPressed()
+        {
+            if (drawer.IsDrawerOpen(GravityCompat.Start))
+                drawer.CloseDrawer(GravityCompat.Start);
+            else
+                base.OnBackPressed();
+        }
+
         public bool OnNavigationItemSelected(IMenuItem item)
         {
             switch (item.ItemId)
@@ -72,6 +80,13 @@ namespace TramUrWay.Android
                 {
                     if (!(this is HomeActivity))
                         StartActivity(new Intent(this, typeof(HomeActivity)));
+                    break;
+                }
+
+                case Resource.Id.SideMenu_Nearby:
+                {
+                    if (!(this is NearbyActivity))
+                        StartActivity(new Intent(this, typeof(NearbyActivity)));
                     break;
                 }
 

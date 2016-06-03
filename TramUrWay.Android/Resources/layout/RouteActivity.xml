@@ -30,6 +30,11 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <FrameLayout
+                android:id="@+id/RouteActivity_Map"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
             <!--<android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/RouteActivity_SwipeRefresh"
                 android:layout_width="match_parent"
@@ -37,7 +42,8 @@
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/RouteActivity_Map">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -158,6 +164,12 @@
                     </LinearLayout>
 
                 </ScrollView>
+            
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="4dp"
+                    android:background="@drawable/shadow-inv"
+                    android:layout_alignBottom="@id/RouteActivity_Map" />
 
             <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
