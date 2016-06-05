@@ -457,7 +457,7 @@
     <AndroidResource Include="Resources\layout\NearbyActivity.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\shadow-inv.xml" />
+    <AndroidResource Include="Resources\drawable\shadow_inv.xml" />
   </ItemGroup>
   <Import Project="..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

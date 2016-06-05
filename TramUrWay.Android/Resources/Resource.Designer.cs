@@ -2203,23 +2203,26 @@ namespace TramUrWay.Android
 			// aapt resource value: 0x7f02008c
 			public const int montpellier = 2130837644;
 			
-			// aapt resource value: 0x7f020092
-			public const int notification_template_icon_bg = 2130837650;
+			// aapt resource value: 0x7f020093
+			public const int notification_template_icon_bg = 2130837651;
 			
 			// aapt resource value: 0x7f02008d
 			public const int shadow = 2130837645;
 			
 			// aapt resource value: 0x7f02008e
-			public const int sidemenugradient = 2130837646;
+			public const int shadow_inv = 2130837646;
 			
 			// aapt resource value: 0x7f02008f
-			public const int splashscreen = 2130837647;
+			public const int sidemenugradient = 2130837647;
 			
 			// aapt resource value: 0x7f020090
-			public const int train = 2130837648;
+			public const int splashscreen = 2130837648;
 			
 			// aapt resource value: 0x7f020091
-			public const int train_glow = 2130837649;
+			public const int train = 2130837649;
+			
+			// aapt resource value: 0x7f020092
+			public const int train_glow = 2130837650;
 			
 			static Drawable()
 			{
