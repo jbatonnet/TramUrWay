@@ -24,7 +24,7 @@
                 android:layout_height="?attr/actionBarSize" />
 
             <android.support.design.widget.TabLayout
-                android:id="@+id/MainActivity_Tabs"
+                android:id="@+id/NearbyActivity_Tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -35,8 +35,8 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <FrameLayout
-                android:id="@+id/MapFragment_Map"
+            <android.support.v4.view.ViewPager
+                android:id="@+id/NearbyActivity_ViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="4dp"
                 android:background="@drawable/shadow" />
-            
+
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>

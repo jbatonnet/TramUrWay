@@ -120,7 +120,7 @@ namespace TramUrWay.Android
             }
             else
             {
-                string[] choices = steps.Select(s => "Ligne " + s.Route.Line.Id + ", vers " + s.Route.Steps.Last().Stop.Name).ToArray();
+                string[] choices = steps.Select(s => "Vers " + s.Route.Steps.Last().Stop.Name).ToArray();
 
                 new global::Android.Support.V7.App.AlertDialog.Builder(this)
                     .SetTitle("Choisissez une ligne")
@@ -130,13 +130,6 @@ namespace TramUrWay.Android
         }
         private void RegisterWidget(Step step)
         {
-            if (!App.Config.ExperimentalFeatures)
-            {
-                SetResult(Result.Canceled);
-                Finish();
-                return;
-            }
-
             // Register the widget
             App.Config.StepWidgets.Add(appWidgetId, step);
 

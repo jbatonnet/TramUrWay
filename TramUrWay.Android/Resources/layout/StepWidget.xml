@@ -23,39 +23,48 @@
             android:clickable="true"
             android:background="?android:attr/selectableItemBackground">
 
-            <ImageView
-                android:id="@+id/StepWidget_Icon"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_tram"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="2dp" />
+                android:orientation="vertical"
+                android:layout_centerVertical="true">
 
-            <TextView
-                android:id="@+id/StepWidget_Name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Jeu de mail des Abbés"
-                android:textColor="@color/primary_text_default_material_light"
-                android:textAlignment="gravity"
-                android:textSize="9sp"
-                android:layout_alignParentEnd="false"
-                android:layout_below="@+id/StepWidget_Icon"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_marginTop="2dp" />
+                <ImageView
+                    android:id="@+id/StepWidget_Icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_tram"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="2dp" />
 
-            <TextView
-                android:id="@+id/StepWidget_Description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="2 min, 10 min"
-                android:textColor="@color/secondary_text_default_material_light"
-                android:textAlignment="gravity"
-                android:textSize="8sp"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_below="@+id/StepWidget_Name"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true" />
+                <TextView
+                    android:id="@+id/StepWidget_Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jeu de mail des Abbés"
+                    android:textColor="@color/primary_text_default_material_light"
+                    android:textAlignment="gravity"
+                    android:textSize="9sp"
+                    android:layout_alignParentEnd="false"
+                    android:layout_below="@+id/StepWidget_Icon"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:id="@+id/StepWidget_Description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2 min, 10 min"
+                    android:textColor="@color/secondary_text_default_material_light"
+                    android:textAlignment="gravity"
+                    android:textSize="8sp"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_below="@+id/StepWidget_Name"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

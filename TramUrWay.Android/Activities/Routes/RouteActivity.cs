@@ -134,11 +134,6 @@ namespace TramUrWay.Android
             FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction();
             fragmentTransaction.Replace(Resource.Id.RouteActivity_Map, mapFragment);
             fragmentTransaction.Commit();
-
-            // Refresh widget
-            //swipeRefresh = FindViewById<SwipeRefreshLayout>(Resource.Id.RouteActivity_SwipeRefresh);
-            //swipeRefresh.Refresh += SwipeRefresh_Refresh;
-            //swipeRefresh.SetColorSchemeColors(color.ToArgb());
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -161,7 +156,7 @@ namespace TramUrWay.Android
             foreach (RouteSegment segment in routeSegments)
             {
                 PolylineOptions polyline = new PolylineOptions()
-                    .InvokeWidth(7)
+                    .InvokeWidth(Density * 2.5f)
                     .InvokeColor(Utils.GetColorForLine(this, segment.Line).ToArgb());
 
                 foreach (TimeStep timestep in segment.TimeSteps)
@@ -172,13 +167,12 @@ namespace TramUrWay.Android
             }
 
             // Draw segment markers
-            float density = Resources.DisplayMetrics.Density;
             MarkerOptions marker;
             Position position;
 
             foreach (RouteSegment segment in routeSegments)
             {
-                Bitmap stopIcon = Utils.GetStopIconForLine(this, segment.Line, 10);
+                Bitmap stopIcon = Utils.GetStopIconForLine(this, segment.Line, App.MapStopIconSize);
 
                 position = segment.From.Trajectory?.First()?.Position ?? segment.From.Stop.Position;
 
@@ -198,65 +192,6 @@ namespace TramUrWay.Android
 
                 googleMap.AddMarker(marker);
             }
-
-
-
-            // Add polylines
-            /*foreach (Line line in App.Lines)
-            {
-                foreach (Route route in line.Routes)
-                {
-                    PolylineOptions polyline = new PolylineOptions().InvokeWidth(5).Visible(line.Type == LineType.Tram);
-                    Color color = Utils.GetColorForLine(this, line);
-
-                    polyline = polyline.InvokeColor(color.ToArgb());
-
-                    foreach (Step step in route.Steps.Take(route.Steps.Length - 1))
-                    {
-                        foreach (TrajectoryStep trajectoryStep in step.Trajectory)
-                        {
-                            LatLng latLng = new LatLng(trajectoryStep.Position.Latitude, trajectoryStep.Position.Longitude);
-                            polyline = polyline.Add(latLng);
-                        }
-                    }
-
-                    routeLines.Add(route, googleMap.AddPolyline(polyline));
-                }
-            }*/
-
-            // Prepare line icons
-            /*float density = Resources.DisplayMetrics.Density;
-            Drawable drawable = Resources.GetDrawable(Resource.Drawable.train);
-            Drawable drawableOutline = Resources.GetDrawable(Resource.Drawable.train_glow);
-
-            foreach (Line line in App.Lines)
-            {
-                Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
-                Canvas canvas = new Canvas(bitmap);
-                Color color = Utils.GetColorForLine(Activity, line);
-
-                drawableOutline.SetBounds(0, 0, (int)(IconSize * density), (int)(IconSize * density));
-                drawableOutline.Draw(canvas);
-
-                drawable.SetColorFilter(color, PorterDuff.Mode.SrcIn);
-                drawable.SetBounds(0, 0, (int)(IconSize * density), (int)(IconSize * density));
-                drawable.Draw(canvas);
-
-                lineIcons[line] = BitmapDescriptorFactory.FromBitmap(bitmap);
-            }*/
-
-            // Show stops
-
-            /*foreach (Line line in App.Lines)
-                foreach (Stop stop in line.Stops)
-                {
-                    //Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
-                    //Canvas canvas = new Canvas(bitmap);
-                    //Color color = Utils.GetColorForLine(this, line);
-                    
-
-                    googleMap.AddMarker(new MarkerOptions().SetPosition(new LatLng(stop.Position.Latitude, stop.Position.Longitude)));
-                }*/
         }
         public void OnMapLoaded()
         {
@@ -267,13 +202,8 @@ namespace TramUrWay.Android
                 boundsBuilder.Include(new LatLng(segment.To.Stop.Position.Latitude, segment.To.Stop.Position.Longitude));
             }
 
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), (int)(Density * 30));
             googleMap.MoveCamera(cameraUpdate);
-        }
-
-        private void SwipeRefresh_Refresh(object sender, EventArgs e)
-        {
-
         }
     }
 }

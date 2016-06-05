@@ -24,6 +24,9 @@ using Android.Widget;
 using Toolbar = Android.Support.V7.Widget.Toolbar;
 using PopupMenu = Android.Support.V7.Widget.PopupMenu;
 using Android.Views.InputMethods;
+using Android.Support.V4.Content;
+using Android;
+using Android.Locations;
 
 namespace TramUrWay.Android
 {
@@ -47,6 +50,7 @@ namespace TramUrWay.Android
         private IMenuItem searchMenuItem;
         private View noResultsView;
         private RecyclerView recyclerView;
+        private Snackbar snackbar;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -63,7 +67,8 @@ namespace TramUrWay.Android
             // Initialize UI
             fromLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_FromLayout);
             fromTextView = FindViewById<AutoCompleteTextView>(Resource.Id.RoutesActivity_From);
-            fromTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
+            //fromTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
+            fromTextView.Adapter = new StopNameAdapter(this);
             fromTextView.TextChanged += TextView_TextChanged;
 
             View fromButton = FindViewById(Resource.Id.RoutesActivity_FromButton);
@@ -71,7 +76,8 @@ namespace TramUrWay.Android
 
             toLayout = FindViewById<TextInputLayout>(Resource.Id.RoutesActivity_ToLayout);
             toTextView = FindViewById<AutoCompleteTextView>(Resource.Id.RoutesActivity_To);
-            toTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
+            //toTextView.Adapter = new ArrayAdapter<string>(this, Resource.Layout.RouteAutocompleteItem, stopNames);
+            toTextView.Adapter = new StopNameAdapter(this);
             toTextView.TextChanged += TextView_TextChanged;
 
             View toButton = FindViewById(Resource.Id.RoutesActivity_ToButton);
@@ -91,7 +97,7 @@ namespace TramUrWay.Android
             }
 #if DEBUG
             else
-                fromTextView.Text = "Saint-Lazare";
+                UpdateAutoFrom();
 #endif
 
             if (extras != null && extras.ContainsKey("To"))
@@ -102,8 +108,8 @@ namespace TramUrWay.Android
                     toTextView.Text = stop.Name;
             }
 #if DEBUG
-            else
-                toTextView.Text = "Odysseum";
+            //else
+            //    toTextView.Text = "Odysseum";
 #endif
 
             recyclerView = FindViewById<RecyclerView>(Resource.Id.RoutesActivity_RoutesList);
@@ -118,6 +124,12 @@ namespace TramUrWay.Android
 
             noResultsView = FindViewById(Resource.Id.RoutesActivity_NoResults);
             noResultsView.Visibility = ViewStates.Gone;
+        }
+        protected override void OnPause()
+        {
+            snackbar?.Dismiss();
+
+            base.OnPause();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -152,7 +164,7 @@ namespace TramUrWay.Android
             menu.MenuItemClick += (s, a) =>
             {
                 if (a.Item.ItemId == 0)
-                    throw new NotImplementedException();
+                    UpdateAutoFrom();
                 else if (a.Item.ItemId == 1)
                 {
                     fromTextView.RequestFocus();
@@ -172,10 +184,11 @@ namespace TramUrWay.Android
             };
 
             // Auto: based on current location and favorites
-            //menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+                menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
 
             // Favorite stops
-            foreach (Stop stop in App.Config.FavoriteStops)
+            foreach (Stop stop in App.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -207,7 +220,7 @@ namespace TramUrWay.Android
             };
 
             // Favorite stops
-            foreach (Stop stop in App.Config.FavoriteStops)
+            foreach (Stop stop in App.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -233,6 +246,8 @@ namespace TramUrWay.Android
 
         private void TriggerSearch()
         {
+            snackbar?.Dismiss();
+
             if (string.IsNullOrWhiteSpace(fromTextView.Text))
             {
                 fromLayout.Error = "Spécifiez une station de départ";
@@ -356,6 +371,47 @@ namespace TramUrWay.Android
             });
         }
 
+        private async void UpdateAutoFrom()
+        {
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != Permission.Granted)
+                return;
+
+            await Task.Run(() =>
+            {
+                LocationManager locationManager = GetSystemService(Context.LocationService) as LocationManager;
+
+                Criteria criteria = new Criteria();
+                criteria.Accuracy = Accuracy.Coarse;
+                criteria.AltitudeRequired = false;
+                criteria.BearingRequired = false;
+                criteria.CostAllowed = false;
+                criteria.PowerRequirement = Power.Low;
+
+                string provider = locationManager.GetBestProvider(criteria, true);
+                Location location = locationManager.GetLastKnownLocation(provider);
+                Position position = new Position((float)location.Latitude, (float)location.Longitude);
+
+                Stop[] nearbyStops = App.Lines.SelectMany(l => l.Stops)
+                                              .Select(s => new { Stop = s, Distance = s.Position - position })
+                                              .Where(s => s.Distance < 1000)
+                                              .OrderBy(s => s.Distance)
+                                              .Select(s => s.Stop)
+                                              .ToArray();
+
+                // Select first favorite, or first tram, else first one
+                Stop stop = nearbyStops.FirstOrDefault(s => s.GetIsFavorite()) ?? nearbyStops.FirstOrDefault(s => s.Line.Type == LineType.Tram) ?? nearbyStops.FirstOrDefault();
+
+                if (stop == null)
+                {
+                    snackbar?.Dismiss();
+
+                    snackbar = Snackbar.Make(recyclerView, "Aucune station à proximité", Snackbar.LengthIndefinite);
+                    snackbar.Show();
+                }
+                else
+                    RunOnUiThread(() => fromTextView.Text = stop.Name);
+            });
+        }
         private float ComputeRouteWeight(DateConstraint constraint, DateTime date, RouteSegment[] route)
         {
             const float maxPenality = 1.2f;

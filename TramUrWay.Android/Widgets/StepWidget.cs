@@ -92,19 +92,17 @@ namespace TramUrWay.Android
                 intent.PutExtra("Stop", step.Stop.Id);
                 intent.PutExtra("Route", step.Route.Id);
 
-                int code = step.Stop.Id << 4 | step.Route.Id;
+                int code = Util.Hash(step.Stop.Id, step.Route.Id);
 
                 PendingIntent pendingIntent = PendingIntent.GetActivity(context, code, intent, 0);
                 remoteViews.SetOnClickPendingIntent(Resource.Id.StepWidget_Button, pendingIntent);
 
                 // Update widget UI
                 remoteViews.SetTextViewText(Resource.Id.StepWidget_Name, step.Stop.Name);
+                remoteViews.SetViewVisibility(Resource.Id.StepWidget_Description, App.Config.EnableWidgetRefresh ? ViewStates.Visible : ViewStates.Gone);
 
-                Color color = Utils.GetColorForLine(context, step.Route.Line);
-                Drawable drawable = context.Resources.GetDrawable(Utils.GetResourceForLine(step.Route.Line));
-                DrawableCompat.SetTint(drawable, color);
-
-                remoteViews.SetImageViewBitmap(Resource.Id.StepWidget_Icon, drawable.ToBitmap());
+                Bitmap bitmap = Utils.GetTransportIconForLine(context, step.Route.Line, 48);
+                remoteViews.SetImageViewBitmap(Resource.Id.StepWidget_Icon, bitmap);
 
                 // Get step information
                 if (App.Config.EnableWidgetRefresh)

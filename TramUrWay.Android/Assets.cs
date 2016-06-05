@@ -58,6 +58,7 @@ namespace TramUrWay.Android
             Line line = new Line()
             {
                 Id = lineObject["Id"].Value<int>(),
+                Number = lineObject["Id"].Value<int>(),
                 Name = lineObject["Name"].Value<string>(),
                 Color = Convert.ToInt32(lineObject["Color"].Value<string>().Replace("#", ""), 16),
                 Type = (LineType)Enum.Parse(typeof(LineType), lineObject["Type"].Value<string>()),

@@ -8,6 +8,14 @@ namespace TramUrWay.Android
 {
     public abstract class BaseActivity : AppCompatActivity
     {
+        public float Density
+        {
+            get
+            {
+                return Resources.DisplayMetrics.Density;
+            }
+        }
+
         protected AppBarLayout appBarLayout;
         protected Toolbar toolbar;
         protected View toolbarShadow;

@@ -104,7 +104,7 @@ namespace TramUrWay.Android
 
         public static int GetResourceForLine(Line line)
         {
-            if (line.Id <= 5)
+            if (line.Number <= 5)
                 return Resource.Drawable.ic_tram;
             else
                 return Resource.Drawable.ic_directions_bus;
@@ -126,12 +126,15 @@ namespace TramUrWay.Android
 
         public static Bitmap GetStopIconForLine(Context context, Line line, int stopIconSize = 16)
         {
-            int hash = Hash(nameof(GetStopIconForLine), line.Id, stopIconSize);
-
+            Color color = GetColorForLine(context, line);
+            return GetStopIconForColor(context, color, stopIconSize);
+        }
+        public static Bitmap GetStopIconForColor(Context context, Color color, int stopIconSize = 16)
+        {
+            int hash = Hash(nameof(GetStopIconForColor), color.ToArgb(), stopIconSize);
             if (Cache.ContainsKey(hash))
                 return Cache[hash] as Bitmap;
 
-            Color color = GetColorForLine(context, line);
             float density = context.Resources.DisplayMetrics.Density;
 
             Paint paint = new Paint();

@@ -21,7 +21,7 @@ using Java.Lang;
 
 namespace TramUrWay.Android
 {
-    public class FavoritesFragment : TabFragment
+    public class HomeFavoritesFragment : TabFragment
     {
         public override string Title => "Favoris";
 
@@ -29,7 +29,7 @@ namespace TramUrWay.Android
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            View view = inflater.Inflate(Resource.Layout.FavoritesFragment, container, false);
+            View view = inflater.Inflate(Resource.Layout.HomeFavoritesFragment, container, false);
 
             favoriteLinesRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
             favoriteLinesRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));

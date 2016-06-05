@@ -32,6 +32,9 @@ namespace TramUrWay.Android
         public const int GlobalUpdateDelay = 60;
         public const int WidgetUpdateDelay = 60;
 
+        public const int MapStopIconSize = 10;
+        public const int MapTransportIconSize = 22;
+
         public static Config Config { get; private set; }
         public static Assets Assets { get; private set; }
         public static WebService Service { get; private set; }
@@ -58,17 +61,21 @@ namespace TramUrWay.Android
             Assets = new Assets(context);
             Service = new WebService();
 
-            // Trigger widgets update
-            if (Config.EnableWidgetRefresh)
-                WidgetUpdateService.Start(context);
-
             // Preload lines
             Lines = Assets.LoadLines();
 
 #if DEBUG
             // Enable experimental features on debug builds
             Config.ExperimentalFeatures = true;
+            Config.EnableWidgetRefresh = true;
 #endif
+
+            // Trigger widgets update
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+            StepWidget.Update(context, appWidgetManager);
+
+            if (Config.EnableWidgetRefresh)
+                WidgetUpdateService.Start(context);
         }
 
         public static Line GetLine(int id)

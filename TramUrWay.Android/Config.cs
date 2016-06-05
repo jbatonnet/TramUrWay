@@ -249,7 +249,7 @@ namespace TramUrWay.Android
                         }
                     }
 
-                    favoriteStops.CollectionChanged += (s, e) =>
+                    stepWidgets.CollectionChanged += (s, e) =>
                     {
                         List<string> widgetsData = new List<string>();
 

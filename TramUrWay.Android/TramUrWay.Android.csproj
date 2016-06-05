@@ -117,27 +117,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activities\NearbyActivity.cs" />
-    <Compile Include="Activities\Line\RouteFragment.cs" />
+    <Compile Include="Activities\Nearby\NearbyMapFragment.cs" />
+    <Compile Include="Activities\Nearby\NearbyActivity.cs" />
+    <Compile Include="Activities\Line\LineRouteFragment.cs" />
     <Compile Include="Activities\Line\LineMapFragment.cs" />
-    <Compile Include="Activities\Home\FavoritesFragment.cs" />
+    <Compile Include="Activities\Home\HomeFavoritesFragment.cs" />
     <Compile Include="Activities\AboutActivity.cs" />
     <Compile Include="Activities\BaseActivity.cs" />
     <Compile Include="Activities\NavigationActivity.cs" />
+    <Compile Include="Activities\Nearby\NearbyStopsFragment.cs" />
     <Compile Include="Activities\Routes\RouteActivity.cs" />
     <Compile Include="Activities\SplashScreenActivity.cs" />
     <Compile Include="Activities\MapFragment.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
     <Compile Include="Activities\Routes\RoutesActivity.cs" />
     <Compile Include="Activities\Widgets\StepWidgetActivity.cs" />
-    <Compile Include="Activities\Home\StopsFragment.cs" />
-    <Compile Include="Activities\Home\LinesFragment.cs" />
+    <Compile Include="Activities\Home\HomeStopsFragment.cs" />
+    <Compile Include="Activities\Home\HomeLinesFragment.cs" />
     <Compile Include="Activities\Home\HomeActivity.cs" />
     <Compile Include="Activities\StopActivity.cs" />
     <Compile Include="Activities\Line\LineActivity.cs" />
     <Compile Include="Adapters\LineFragmentsAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentStopAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentAdapter.cs" />
+    <Compile Include="Adapters\StopNameAdapter.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
@@ -262,13 +265,13 @@
     <AndroidResource Include="Resources\drawable\train.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\LinesFragment.xml" />
+    <AndroidResource Include="Resources\layout\HomeLinesFragment.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\FavoritesFragment.xml" />
+    <AndroidResource Include="Resources\layout\HomeFavoritesFragment.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\StopsFragment.xml" />
+    <AndroidResource Include="Resources\layout\HomeStopsFragment.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\menu\StopMenu.xml" />
@@ -458,6 +461,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\shadow_inv.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\NearbyMapFragment.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\NearbyStopsFragment.xml" />
   </ItemGroup>
   <Import Project="..\[Shared]\Android\Android.projitems" Label="Shared" />
   <Import Project="..\[Shared]\Utilities\Utilities.projitems" Label="Shared" />

@@ -27,7 +27,7 @@ using Object = Java.Lang.Object;
 
 namespace TramUrWay.Android
 {
-    public class RouteFragment : TabFragment
+    public class LineRouteFragment : TabFragment
     {
         public override string Title => "Vers " + route.Steps.Last().Stop.Name;
 
@@ -42,7 +42,7 @@ namespace TramUrWay.Android
         private SwipeRefreshLayout swipeRefresh;
         private RecyclerView recyclerView;
 
-        public RouteFragment(Route route, Color color)
+        public LineRouteFragment(Route route, Color color)
         {
             this.route = route;
             this.color = color;

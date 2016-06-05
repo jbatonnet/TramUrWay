@@ -173,17 +173,19 @@
                 android:id="@+id/RoutesActivity_InitialHint"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Entrez une station de départ et de destination,\n puis lancez une recherche d'itinéraires"
-                android:gravity="center_vertical|center_horizontal"
-                android:textColor="@color/primary_text_disabled_material_light" />
+                android:layout_margin="16dp"
+                android:text="Entrez une station de départ et de destination, puis lancez une recherche d'itinéraires"
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:gravity="center_vertical|center_horizontal" />
 
             <TextView
                 android:id="@+id/RoutesActivity_NoResults"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="16dp"
                 android:text="Aucun itinéraire disponible avec les critères spécifiés"
-                android:gravity="center_vertical|center_horizontal"
-                android:textColor="@color/primary_text_disabled_material_light" />
+                android:textSize="@dimen/abc_text_size_medium_material"
+                android:gravity="center_vertical|center_horizontal" />
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/RoutesActivity_SwipeRefresh"

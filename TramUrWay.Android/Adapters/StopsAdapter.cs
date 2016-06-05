@@ -20,6 +20,7 @@ namespace TramUrWay.Android
     {
         public ImageView Icon { get; }
         public TextView Name { get; }
+        public TextView Description { get; }
         public ImageView Favorite { get; }
 
         public EventHandler FavoriteClick;
@@ -28,6 +29,7 @@ namespace TramUrWay.Android
         {
             Icon = itemView.FindViewById<ImageView>(Resource.Id.StopItem_Icon);
             Name = itemView.FindViewById<TextView>(Resource.Id.StopItem_Name);
+            Description = itemView.FindViewById<TextView>(Resource.Id.StopItem_Description);
             Favorite = itemView.FindViewById<ImageView>(Resource.Id.StopItem_Favorite);
 
             Favorite.Click += (s, e) => FavoriteClick?.Invoke(s, e);
@@ -55,20 +57,34 @@ namespace TramUrWay.Android
                 UpdateFilter();
             }
         }
+        public Position? Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+                UpdateFilter();
+            }
+        }
 
         public event EventHandler<Stop> StopClick;
 
-        private Dictionary<string, Stop[]> stops;
-        private Dictionary<string, Stop[]> filteredStops;
+        private List<KeyValuePair<string, Stop[]>> stops;
+        private List<KeyValuePair<string, Stop[]>> filteredStops;
         private List<StopViewHolder> viewHolders = new List<StopViewHolder>();
         private string filter = null;
+        private Position? position;
         
         public StopsAdapter(IEnumerable<Stop> stops)
         {
             this.stops = stops.Where(s => s.Name != null)
-                              .GroupBy(s => s.Name)
-                              .OrderBy(g => g.Key)
-                              .ToDictionary(g => g.Key, g => g.ToArray());
+                              .GroupBy(s => Util.Hash(s.Name, s.Line.Id))
+                              .OrderBy(g => g.First().Name)
+                              .Select(g => new KeyValuePair<string, Stop[]>(g.First().Name, g.ToArray()))
+                              .ToList();
 
             UpdateFilter();
         }
@@ -85,8 +101,18 @@ namespace TramUrWay.Android
             StopViewHolder viewHolder = holder as StopViewHolder;
             KeyValuePair<string, Stop[]> stop = filteredStops.ElementAt(position);
 
-            viewHolder.Icon.SetImageDrawable(stop.Value.First().Line.GetIconDrawable(viewHolder.ItemView.Context));
+            viewHolder.Icon.SetImageDrawable(stop.Value[0].Line.GetIconDrawable(viewHolder.ItemView.Context));
             viewHolder.Name.Text = stop.Key;
+
+            if (this.position != null)
+            {
+                float distance = stop.Value[0].Position - this.position.Value;
+                distance = (float)Math.Ceiling(distance / 100) * 100;
+
+                viewHolder.Description.Text = distance > 1000 ? ((distance / 1000) + " km") : (distance + " m");
+            }
+            else
+                viewHolder.Description.Text = "";
 
             viewHolder.Favorite.SetImageResource(stop.Value.Any(s => s.GetIsFavorite()) ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
             viewHolder.Favorite.Visibility = StopClick != null ? ViewStates.Gone : ViewStates.Visible;
@@ -110,7 +136,6 @@ namespace TramUrWay.Android
                 view.Context.StartActivity(intent);
             }
         }
-
         private void Favorite_Click(object sender, EventArgs e)
         {
             View view = sender as View;
@@ -124,30 +149,8 @@ namespace TramUrWay.Android
             }
             else
             {
-                Stop[] stops = App.Lines.SelectMany(l => l.Stops)
-                                        .Where(s => s.Name == stop.Key)
-                                        .GroupBy(s => s.Line)
-                                        .Select(g => g.First())
-                                        .OrderBy(s => s.Line.Id)
-                                        .ToArray();
-
-                if (stops.Length == 1)
-                    stops[0].SetIsFavorite(true);
-                else
-                {
-                    string[] choices = stops.Select(s => s.Line.ToString()).ToArray();
-
-                    new global::Android.Support.V7.App.AlertDialog.Builder(view.Context)
-                        .SetTitle("Choisissez une ligne")
-                        .SetSingleChoiceItems(choices, 0, (s, a) =>
-                        {
-                            stops[a.Which].SetIsFavorite(true);
-                            (s as Dialog).Dismiss();
-
-                            NotifyDataSetChanged();
-                        })
-                        .Show();
-                }
+                foreach (Stop s in stop.Value)
+                    s.SetIsFavorite(true);
             }
 
             NotifyItemChanged(viewHolder.AdapterPosition);
@@ -172,9 +175,11 @@ namespace TramUrWay.Android
                     return value.Contains(pattern);
                 };
 
-                filteredStops = stops.Where(p => predicate(p.Key))
-                                     .ToDictionary(p => p.Key, p => p.Value);
+                filteredStops = stops.Where(p => predicate(p.Key)).ToList();
             }
+
+            if (position != null)
+                filteredStops = filteredStops.OrderBy(p => p.Value[0].Position - position.Value).ToList();
 
             NotifyDataSetChanged();
         }

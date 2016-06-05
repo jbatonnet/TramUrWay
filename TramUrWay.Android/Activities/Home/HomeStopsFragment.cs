@@ -17,28 +17,35 @@ using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
+using static Android.Support.V7.Widget.SearchView;
 using Java.Lang;
 
 namespace TramUrWay.Android
 {
-    public class LinesFragment : TabFragment
+    public class HomeStopsFragment : TabFragment
     {
-        public override string Title => "Lignes";
+        public override string Title => "Stations";
+
+        private StopsAdapter stopsAdapter;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.LinesFragment, container, false);
+            return inflater.Inflate(Resource.Layout.HomeStopsFragment, container, false);
         }
-
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
 
-            RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.LinesFragment_LineList);
+            RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.StopsFragment_StopList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(new LinesAdapter(App.Lines));
+            recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+        }
+
+        public void OnQueryTextChanged(object sender, QueryTextChangeEventArgs e)
+        {
+            stopsAdapter.Filter = e.NewText;
         }
     }
 }

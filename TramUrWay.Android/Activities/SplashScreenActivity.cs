@@ -37,19 +37,9 @@ namespace TramUrWay.Android
                 .ContinueWith(t =>
                 {
 #if DEBUG
-                    Intent intent = new Intent(this, typeof(RoutesActivity));
-
-                    /*intent.PutExtra("RouteSegments", new string[]
-                    {
-                        @"{ ""Line"": 2, ""From.Route"": 1, ""From.Stop"": 42221, ""From.Date"": ""2016-05-27T23:18:00+02:00"", ""To.Route"": 1, ""To.Stop"": 42229, ""To.Date"": ""2016-05-27T23:26:00+02:00"" }",
-                        @"{ ""Line"": 4, ""From.Route"": 1, ""From.Stop"": 41131, ""From.Date"": ""2016-05-27T23:28:00+02:00"", ""To.Route"": 1, ""To.Stop"": 41145, ""To.Date"": ""2016-05-27T23:36:04+02:00"" }",
-                        @"{ ""Line"": 1, ""From.Route"": 1, ""From.Stop"": 41145, ""From.Date"": ""2016-05-27T23:38:00+02:00"", ""To.Route"": 1, ""To.Stop"": 41155, ""To.Date"": ""2016-05-27T23:48:54+02:00"" }"
-                    });*/
-
-                    StartActivity(intent);
+                    StartActivity(typeof(HomeActivity));
 #else
-                    Intent intent = new Intent(this, typeof(HomeActivity));
-                    StartActivity(intent);
+                    StartActivity(typeof(HomeActivity));
 #endif
                 });
         }

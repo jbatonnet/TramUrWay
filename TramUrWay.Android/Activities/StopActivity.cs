@@ -190,8 +190,7 @@ namespace TramUrWay.Android
             snackbar?.Dismiss();
             snackbar = null;
 
-            Intent intent = new Intent(this, typeof(SettingsActivity));
-            StartActivity(intent);
+            StartActivity(typeof(SettingsActivity));
         }
 
         private async void Refresh()

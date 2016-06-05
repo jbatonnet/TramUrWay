@@ -58,9 +58,6 @@ namespace TramUrWay.Android
             }
         }
 
-        private const int StopIconSize = 10;
-        private const int TransportIconSize = 22;
-
         public override string Title => "Map";
 
         private Line line;
@@ -146,8 +143,8 @@ namespace TramUrWay.Android
             // Preload icons
             Task iconLoader = Task.Run(() =>
             {
-                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetStopIconForLine(Activity, line, StopIconSize));
-                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetTransportIconForLine(Activity, line, TransportIconSize));
+                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetStopIconForLine(Activity, line, App.MapStopIconSize));
+                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetTransportIconForLine(Activity, line, App.MapTransportIconSize));
             });
 
             // Add a polyline between steps

@@ -43,4 +43,15 @@
         android:background="?android:attr/selectableItemBackground"
         android:padding="12dp" />
 
+    <TextView
+        android:id="@+id/StopItem_Description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="@dimen/abc_text_size_small_material"
+        android:textColor="@android:color/tertiary_text_light"
+        android:layout_toLeftOf="@+id/StopItem_Favorite"
+        android:layout_centerVertical="true"
+        android:visibility="visible" />
+
 </RelativeLayout>

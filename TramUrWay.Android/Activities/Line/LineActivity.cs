@@ -84,7 +84,7 @@ namespace TramUrWay.Android
             fragments = new List<TabFragment>() { new LineMapFragment(line, color) };
             foreach (Route route in line.Routes)
             {
-                RouteFragment routeFragment = new RouteFragment(route, color);
+                LineRouteFragment routeFragment = new LineRouteFragment(route, color);
                 routeFragment.QueryRefresh += SwipeRefresh_Refresh;
 
                 fragments.Add(routeFragment);
@@ -178,8 +178,7 @@ namespace TramUrWay.Android
             snackbar?.Dismiss();
             snackbar = null;
 
-            Intent intent = new Intent(this, typeof(SettingsActivity));
-            StartActivity(intent);
+            StartActivity(typeof(SettingsActivity));
         }
 
         public async void Refresh()
@@ -263,7 +262,7 @@ namespace TramUrWay.Android
             foreach (TabFragment fragment in fragments)
             {
                 (fragment as LineMapFragment)?.OnRefreshing();
-                (fragment as RouteFragment)?.OnRefreshing();
+                (fragment as LineRouteFragment)?.OnRefreshing();
             }
         }
         private void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
@@ -271,7 +270,7 @@ namespace TramUrWay.Android
             foreach (TabFragment fragment in fragments)
             {
                 (fragment as LineMapFragment)?.OnRefreshed(timeSteps, transports);
-                (fragment as RouteFragment)?.OnRefreshed(timeSteps, transports);
+                (fragment as LineRouteFragment)?.OnRefreshed(timeSteps, transports);
             }
         }
     }

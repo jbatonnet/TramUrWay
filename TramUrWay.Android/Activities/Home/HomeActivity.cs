@@ -34,9 +34,9 @@ namespace TramUrWay.Android
     {
         private SearchView searchView;
 
-        private FavoritesFragment favoritesFragment = new FavoritesFragment();
-        private LinesFragment linesFragment = new LinesFragment();
-        private StopsFragment stopsFragment = new StopsFragment();
+        private HomeFavoritesFragment favoritesFragment = new HomeFavoritesFragment();
+        private HomeLinesFragment linesFragment = new HomeLinesFragment();
+        private HomeStopsFragment stopsFragment = new HomeStopsFragment();
         private ViewPager viewPager;
         private TabFragmentsAdapter fragmentsAdapter;
 
