@@ -76,6 +76,7 @@ namespace TramUrWay.Android
 
             viewHolder.StopList.SetLayoutManager(new WrapLayoutManager(viewHolder.StopList));
             viewHolder.StopList.SetAdapter(new RouteSegmentStopAdapter(segment));
+            viewHolder.StopList.NestedScrollingEnabled = false;
 
             if (!viewHolders.Contains(viewHolder))
                 viewHolders.Add(viewHolder);

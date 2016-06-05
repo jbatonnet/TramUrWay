@@ -38,13 +38,13 @@ namespace TramUrWay.Android
         private Stop from, to;
         private List<RouteSegment> routeSegments;
 
-        private SwipeRefreshLayout swipeRefresh;
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             OnCreate(savedInstanceState, Resource.Layout.RouteActivity);
+            Title = "Itinéraire";
             
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
             
@@ -125,6 +125,7 @@ namespace TramUrWay.Android
             recyclerView.SetLayoutManager(new WrapLayoutManager(recyclerView.Context));
             recyclerView.AddItemDecoration(new DividerItemDecoration(recyclerView.Context, LinearLayoutManager.Vertical, true));
             recyclerView.SetAdapter(new RouteSegmentAdapter(routeSegments.ToArray()));
+            recyclerView.NestedScrollingEnabled = false;
 
             // Setup maps fragment
             mapFragment = SupportMapFragment.NewInstance();
@@ -154,10 +155,51 @@ namespace TramUrWay.Android
         public void OnMapReady(GoogleMap map)
         {
             googleMap = map;
+            mapFragment.View.Post(OnMapLoaded);
 
-            // Set initial zoom level
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
-            googleMap.MoveCamera(cameraUpdate);
+            // Draw route segments
+            foreach (RouteSegment segment in routeSegments)
+            {
+                PolylineOptions polyline = new PolylineOptions()
+                    .InvokeWidth(7)
+                    .InvokeColor(Utils.GetColorForLine(this, segment.Line).ToArgb());
+
+                foreach (TimeStep timestep in segment.TimeSteps)
+                    foreach (TrajectoryStep trajectoryStep in timestep.Step.Trajectory)
+                        polyline = polyline.Add(new LatLng(trajectoryStep.Position.Latitude, trajectoryStep.Position.Longitude));
+
+                googleMap.AddPolyline(polyline);
+            }
+
+            // Draw segment markers
+            float density = Resources.DisplayMetrics.Density;
+            MarkerOptions marker;
+            Position position;
+
+            foreach (RouteSegment segment in routeSegments)
+            {
+                Bitmap stopIcon = Utils.GetStopIconForLine(this, segment.Line, 10);
+
+                position = segment.From.Trajectory?.First()?.Position ?? segment.From.Stop.Position;
+
+                marker = new MarkerOptions()
+                    .SetPosition(new LatLng(position.Latitude, position.Longitude))
+                    .SetIcon(BitmapDescriptorFactory.FromBitmap(stopIcon))
+                    .Anchor(0.5f, 0.5f);
+
+                googleMap.AddMarker(marker);
+
+                position = segment.To.Previous.Trajectory?.Last()?.Position ?? segment.To.Stop.Position;
+
+                marker = new MarkerOptions()
+                    .SetPosition(new LatLng(position.Latitude, position.Longitude))
+                    .SetIcon(BitmapDescriptorFactory.FromBitmap(stopIcon))
+                    .Anchor(0.5f, 0.5f);
+
+                googleMap.AddMarker(marker);
+            }
+
+
 
             // Add polylines
             /*foreach (Line line in App.Lines)
@@ -204,9 +246,8 @@ namespace TramUrWay.Android
             }*/
 
             // Show stops
-            float density = Resources.DisplayMetrics.Density;
 
-            foreach (Line line in App.Lines)
+            /*foreach (Line line in App.Lines)
                 foreach (Stop stop in line.Stops)
                 {
                     //Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
@@ -215,7 +256,19 @@ namespace TramUrWay.Android
                     
 
                     googleMap.AddMarker(new MarkerOptions().SetPosition(new LatLng(stop.Position.Latitude, stop.Position.Longitude)));
-                }
+                }*/
+        }
+        public void OnMapLoaded()
+        {
+            LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+            foreach (RouteSegment segment in routeSegments)
+            {
+                boundsBuilder.Include(new LatLng(segment.From.Stop.Position.Latitude, segment.From.Stop.Position.Longitude));
+                boundsBuilder.Include(new LatLng(segment.To.Stop.Position.Latitude, segment.To.Stop.Position.Longitude));
+            }
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngBounds(boundsBuilder.Build(), 100);
+            googleMap.MoveCamera(cameraUpdate);
         }
 
         private void SwipeRefresh_Refresh(object sender, EventArgs e)
