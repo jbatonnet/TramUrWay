@@ -36,7 +36,7 @@ namespace TramUrWay.Android
             RecyclerView linesRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
             linesRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             linesRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            linesRecyclerView.SetAdapter(linesAdapter = new LinesAdapter());
+            linesRecyclerView.SetAdapter(linesAdapter = new LinesAdapter(Enumerable.Empty<Line>()));
 
             RecyclerView stopsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
             stopsRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
@@ -60,7 +60,7 @@ namespace TramUrWay.Android
 
             if (favorites)
             {
-                linesAdapter.Lines = favoriteLines;
+                linesAdapter.Items = favoriteLines;
                 stopsAdapter.Update(favoriteStops);
             }
         }

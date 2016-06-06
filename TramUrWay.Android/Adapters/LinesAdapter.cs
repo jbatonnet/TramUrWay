@@ -3,91 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Android.App;
+
 using Android.Content;
-using Android.Database;
-using Android.Graphics.Drawables;
-using Android.OS;
-using Android.Runtime;
-using Android.Support.V7.Widget;
 using Android.Utilities;
 using Android.Views;
 using Android.Widget;
 
 namespace TramUrWay.Android
 {
-    public class LineViewHolder : RecyclerView.ViewHolder
+    public class LinesAdapter : GenericAdapter<Line>
     {
-        public ImageView Icon { get; }
-        public TextView Name { get; }
+        public LinesAdapter(IEnumerable<Line> lines) : base(lines, Resource.Layout.LineItem) { }
 
-        public LineViewHolder(View itemView) : base(itemView)
+        protected override void OnBind(View view, Line line)
         {
-            Icon = itemView.FindViewById<ImageView>(Resource.Id.LineItem_Icon);
-            Name = itemView.FindViewById<TextView>(Resource.Id.LineItem_Name);
+            ImageView iconView = view.FindViewById<ImageView>(Resource.Id.LineItem_Icon);
+            iconView.SetImageDrawable(line.GetIconDrawable(view.Context));
+
+            TextView nameView = view.FindViewById<TextView>(Resource.Id.LineItem_Name);
+            nameView.Text = line.Name;
         }
-    }
-
-    public class LinesAdapter : RecyclerView.Adapter, View.IOnClickListener
-    {
-        public override int ItemCount
+        protected override void OnClick(View view, Line line)
         {
-            get
-            {
-                return lines?.Length ?? 0;
-            }
-        }
-        public Line[] Lines
-        {
-            get
-            {
-                return lines;
-            }
-            set
-            {
-                lines = value;
-
-                // TODO: Notify array diff
-                NotifyDataSetChanged();
-            }
-        }
-
-        private Line[] lines;
-        private List<LineViewHolder> viewHolders = new List<LineViewHolder>();
-
-        public LinesAdapter()
-        {
-            lines = null;
-        }
-        public LinesAdapter(IEnumerable<Line> lines)
-        {
-            this.lines = lines.ToArray();
-        }
-
-        public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            View itemView = LayoutInflater.From(parent.Context).Inflate(Resource.Layout.LineItem, parent, false);
-            itemView.SetOnClickListener(this);
-
-            return new LineViewHolder(itemView);
-        }
-        public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            LineViewHolder viewHolder = holder as LineViewHolder;
-            Line line = lines[position];
-
-            viewHolder.Icon.SetImageDrawable(line.GetIconDrawable(viewHolder.ItemView.Context));
-            viewHolder.Name.Text = line.Name;
-
-            if (!viewHolders.Contains(viewHolder))
-                viewHolders.Add(viewHolder);
-        }
-
-        public void OnClick(View view)
-        {
-            LineViewHolder viewHolder = viewHolders.First(vh => vh.ItemView == view);
-            Line line = lines[viewHolder.AdapterPosition];
-
             Intent intent = new Intent(view.Context, typeof(LineActivity));
             intent.PutExtra("Line", line.Id);
 

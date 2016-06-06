@@ -137,10 +137,11 @@
     <Compile Include="Activities\Home\HomeActivity.cs" />
     <Compile Include="Activities\StopActivity.cs" />
     <Compile Include="Activities\Line\LineActivity.cs" />
-    <Compile Include="Adapters\LineFragmentsAdapter.cs" />
+    <Compile Include="Adapters\LinesAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentStopAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentAdapter.cs" />
     <Compile Include="Adapters\StopNameAdapter.cs" />
+    <Compile Include="Adapters\GenericStopsAdapter.cs" />
     <Compile Include="Adapters\StopsAdapter.cs" />
     <Compile Include="Adapters\RouteSegmentsAdapter.cs" />
     <Compile Include="Model\Position.cs" />
@@ -159,7 +160,6 @@
     <Compile Include="Model\Stop.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Adapters\LinesAdapter.cs" />
     <Compile Include="Adapters\TimeStepsAdapter.cs" />
     <Compile Include="Adapters\RouteAdapter.cs" />
     <Compile Include="Service\WidgetUpdateService.cs" />
