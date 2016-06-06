@@ -128,12 +128,8 @@ namespace TramUrWay.Android
             recyclerView.NestedScrollingEnabled = false;
 
             // Setup maps fragment
-            mapFragment = SupportMapFragment.NewInstance();
+            mapFragment = SupportFragmentManager.FindFragmentById(Resource.Id.RouteActivity_Map) as SupportMapFragment;
             mapFragment.GetMapAsync(this);
-
-            FragmentTransaction fragmentTransaction = SupportFragmentManager.BeginTransaction();
-            fragmentTransaction.Replace(Resource.Id.RouteActivity_Map, mapFragment);
-            fragmentTransaction.Commit();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)

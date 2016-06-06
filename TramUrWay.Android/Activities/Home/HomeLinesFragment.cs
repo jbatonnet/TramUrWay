@@ -29,14 +29,12 @@ namespace TramUrWay.Android
         {
             return inflater.Inflate(Resource.Layout.HomeLinesFragment, container, false);
         }
-
         public override void OnActivityCreated(Bundle savedInstanceState)
         {
             base.OnActivityCreated(savedInstanceState);
 
             RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.LinesFragment_LineList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-            recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(new LinesAdapter(App.Lines));
         }

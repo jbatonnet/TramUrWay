@@ -34,13 +34,31 @@ namespace TramUrWay.Android
         {
             get
             {
-                return lines.Length;
+                return lines?.Length ?? 0;
+            }
+        }
+        public Line[] Lines
+        {
+            get
+            {
+                return lines;
+            }
+            set
+            {
+                lines = value;
+
+                // TODO: Notify array diff
+                NotifyDataSetChanged();
             }
         }
 
         private Line[] lines;
         private List<LineViewHolder> viewHolders = new List<LineViewHolder>();
-        
+
+        public LinesAdapter()
+        {
+            lines = null;
+        }
         public LinesAdapter(IEnumerable<Line> lines)
         {
             this.lines = lines.ToArray();

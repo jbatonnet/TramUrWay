@@ -28,6 +28,11 @@ namespace TramUrWay.Android
 
         private StopsAdapter stopsAdapter;
 
+        public HomeStopsFragment()
+        {
+            stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops));
+        }
+
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.HomeStopsFragment, container, false);
@@ -38,9 +43,8 @@ namespace TramUrWay.Android
 
             RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.StopsFragment_StopList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
-            recyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+            recyclerView.SetAdapter(stopsAdapter);
         }
 
         public void OnQueryTextChanged(object sender, QueryTextChangeEventArgs e)

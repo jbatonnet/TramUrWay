@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Android;
 using Android.Animation;
 using Android.Content;
+using Android.Content.PM;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.App;
+using Android.Support.V4.Content;
 using Android.Utilities;
 using Android.Views;
 using Android.Views.Animations;
@@ -117,27 +120,15 @@ namespace TramUrWay.Android
             // Late load map
             if (mapFragment == null)
             {
-                mapFragment = SupportMapFragment.NewInstance();
+                mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.MapFragment_Map) as SupportMapFragment;
                 mapFragment.GetMapAsync(this);
-
-                FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-                fragmentTransaction.Replace(Resource.Id.MapFragment_Map, mapFragment);
-                fragmentTransaction.Commit();
             }
         }
-        public void OnMapReady(GoogleMap googleMap)
+        public void OnMapReady(GoogleMap map)
         {
-            this.googleMap = googleMap;
-
-            // Configure map
-            googleMap.UiSettings.MyLocationButtonEnabled = true;
-            googleMap.UiSettings.MapToolbarEnabled = true;
-
             // Register events
+            googleMap = map;
             mapFragment.View.Post(OnMapLoaded);
-            //googleMap.CameraChange += GoogleMap_CameraChange;
-            //googleMap.MarkerClick += GoogleMap_MarkerClick;
-            //googleMap.MapClick += GoogleMap_MapClick;
             googleMap.InfoWindowClick += GoogleMap_InfoWindowClick;
 
             // Preload icons

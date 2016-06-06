@@ -66,7 +66,7 @@ namespace TramUrWay.Android
 
 #if DEBUG
             // Enable experimental features on debug builds
-            Config.ExperimentalFeatures = true;
+            Config.ExperimentalFeatures = false;
             Config.EnableWidgetRefresh = true;
 #endif
 

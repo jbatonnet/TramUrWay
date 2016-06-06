@@ -37,7 +37,7 @@ namespace TramUrWay.Android
                 .ContinueWith(t =>
                 {
 #if DEBUG
-                    StartActivity(typeof(HomeActivity));
+                    StartActivity(typeof(NearbyActivity));
 #else
                     StartActivity(typeof(HomeActivity));
 #endif

@@ -18,6 +18,7 @@ using Android.Utilities;
 using Android.Views;
 using Android.Widget;
 using Java.Lang;
+using System.Threading.Tasks;
 
 namespace TramUrWay.Android
 {
@@ -25,39 +26,31 @@ namespace TramUrWay.Android
     {
         public override string Title => "Favoris";
 
-        private RecyclerView favoriteLinesRecyclerView, favoriteStopsRecyclerView;
+        private LinesAdapter linesAdapter;
+        private StopsAdapter stopsAdapter;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.HomeFavoritesFragment, container, false);
 
-            favoriteLinesRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
-            favoriteLinesRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
-            favoriteLinesRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+            RecyclerView linesRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
+            linesRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
+            linesRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+            linesRecyclerView.SetAdapter(linesAdapter = new LinesAdapter());
 
-            favoriteStopsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
-            favoriteStopsRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
-            favoriteStopsRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+            RecyclerView stopsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
+            stopsRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
+            stopsRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
+            stopsRecyclerView.SetAdapter(stopsAdapter = new StopsAdapter());
 
             return view;
         }
-        public override void OnResume()
-        {
-            base.OnResume();
-            Refresh();
-        }
         protected override void OnGotFocus()
         {
-            base.OnGotFocus();
-            Refresh();
-        }
+            Line[] favoriteLines = App.Config.FavoriteLines.ToArray();
+            Stop[] favoriteStops = App.Config.FavoriteStops.ToArray();
 
-        private new void Refresh()
-        {
-            if (View == null)
-                return;
-
-            bool favorites = App.Config.FavoriteLines.Any() || App.Config.FavoriteStops.Any();
+            bool favorites = favoriteLines.Length > 0 || favoriteStops.Length > 0;
 
             View favoritesView = View.FindViewById(Resource.Id.FavoritesFragment_Favorites);
             favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
@@ -67,8 +60,8 @@ namespace TramUrWay.Android
 
             if (favorites)
             {
-                favoriteLinesRecyclerView.SetAdapter(new LinesAdapter(App.Config.FavoriteLines));
-                favoriteStopsRecyclerView.SetAdapter(new StopsAdapter(App.Config.FavoriteStops));
+                linesAdapter.Lines = favoriteLines;
+                stopsAdapter.Update(favoriteStops);
             }
         }
     }

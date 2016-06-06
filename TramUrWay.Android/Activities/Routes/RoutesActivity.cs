@@ -95,10 +95,6 @@ namespace TramUrWay.Android
                 if (stop != null)
                     fromTextView.Text = stop.Name;
             }
-#if DEBUG
-            else
-                UpdateAutoFrom();
-#endif
 
             if (extras != null && extras.ContainsKey("To"))
             {
@@ -124,6 +120,13 @@ namespace TramUrWay.Android
 
             noResultsView = FindViewById(Resource.Id.RoutesActivity_NoResults);
             noResultsView.Visibility = ViewStates.Gone;
+        }
+        protected override void OnResume()
+        {
+            if (fromTextView.Text == "")
+                UpdateAutoFrom();
+
+            base.OnResume();
         }
         protected override void OnPause()
         {

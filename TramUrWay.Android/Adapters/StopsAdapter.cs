@@ -78,7 +78,17 @@ namespace TramUrWay.Android
         private string filter = null;
         private Position? position;
         
+        public StopsAdapter()
+        {
+            stops = new List<KeyValuePair<string, Stop[]>>();
+            UpdateFilter();
+        }
         public StopsAdapter(IEnumerable<Stop> stops)
+        {
+            Update(stops);
+        }
+
+        public void Update(IEnumerable<Stop> stops)
         {
             this.stops = stops.Where(s => s.Name != null)
                               .GroupBy(s => Util.Hash(s.Name, s.Line.Id))

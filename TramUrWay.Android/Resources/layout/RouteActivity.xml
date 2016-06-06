@@ -2,6 +2,7 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -30,148 +31,145 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <FrameLayout
+            <fragment
                 android:id="@+id/RouteActivity_Map"
+                class="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="200dp"
+                map:cameraTargetLat="43.608340"
+                map:cameraTargetLng="3.877086"
+                map:cameraZoom="12" />
 
-            <!--<android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/RouteActivity_SwipeRefresh"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">-->
+                android:layout_height="match_parent"
+                android:layout_below="@id/RouteActivity_Map">
 
-                <ScrollView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@id/RouteActivity_Map">
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/defaultFocus"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:layout_width="0px"
-                            android:layout_height="0px" />
+                        android:id="@+id/defaultFocus"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_width="0px"
+                        android:layout_height="0px" />
                         
-                        <RelativeLayout
-                            android:layout_width="match_parent"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp">
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Départ :"
+                            android:id="@+id/RouteActivity_FromLabel"
+                            android:layout_marginLeft="12dp"
+                            android:layout_marginTop="16dp"
+                            android:textSize="12sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="Départ :"
-                                android:id="@+id/RouteActivity_FromLabel"
-                                android:layout_marginLeft="12dp"
-                                android:layout_marginTop="16dp"
-                                android:textSize="12sp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:id="@+id/RouteActivity_FromIcon"
+                            android:layout_below="@+id/RouteActivity_FromLabel"
+                            android:layout_alignLeft="@+id/RouteActivity_FromLabel"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="4dp" />
 
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:id="@+id/RouteActivity_FromIcon"
-                                android:layout_below="@+id/RouteActivity_FromLabel"
-                                android:layout_alignLeft="@+id/RouteActivity_FromLabel"
-                                android:layout_marginLeft="16dp"
-                                android:layout_marginTop="4dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="Saint-Lazare"
-                                android:id="@+id/RouteActivity_FromName"
-                                android:layout_marginLeft="12dp"
-                                android:textColor="@color/foreground_material_light"
-                                android:layout_alignTop="@+id/RouteActivity_FromIcon"
-                                android:layout_toRightOf="@+id/RouteActivity_FromIcon"
-                                android:layout_alignBottom="@+id/RouteActivity_FromIcon"
-                                android:gravity="center_vertical" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="9:54"
-                                android:id="@+id/RouteActivity_FromDate"
-                                android:textColor="@color/foreground_material_light"
-                                android:layout_alignParentEnd="false"
-                                android:layout_alignParentRight="true"
-                                android:layout_marginRight="24dp"
-                                android:layout_alignTop="@+id/RouteActivity_FromName"
-                                android:layout_alignBottom="@+id/RouteActivity_FromName"
-                                android:gravity="center_vertical" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="Destination :"
-                                android:id="@+id/RouteActivity_ToLabel"
-                                android:layout_alignLeft="@+id/RouteActivity_FromLabel"
-                                android:layout_marginTop="8dp"
-                                android:layout_below="@+id/RouteActivity_FromIcon"
-                                android:textSize="12sp" />
-
-                            <ImageView
-                                android:id="@+id/RouteActivity_ToIcon"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_below="@+id/RouteActivity_ToLabel"
-                                android:layout_alignLeft="@+id/RouteActivity_FromIcon"
-                                android:layout_marginTop="4dp" />
-
-                            <TextView
-                                android:id="@+id/RouteActivity_ToName"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="Odysseum"
-                                android:textColor="@color/foreground_material_light"
-                                android:layout_marginLeft="12dp"
-                                android:layout_alignTop="@+id/RouteActivity_ToIcon"
-                                android:layout_alignBottom="@+id/RouteActivity_ToIcon"
-                                android:layout_toRightOf="@+id/RouteActivity_ToIcon"
-                                android:gravity="center_vertical" />
-
-                            <TextView
-                                android:id="@+id/RouteActivity_ToDate"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="10:38"
-                                android:textColor="@color/foreground_material_light"
-                                android:layout_alignTop="@+id/RouteActivity_ToName"
-                                android:layout_alignParentEnd="false"
-                                android:layout_alignRight="@+id/RouteActivity_FromDate"
-                                android:layout_alignBottom="@+id/RouteActivity_ToName"
-                                android:gravity="center_vertical" />
-
-                        </RelativeLayout>
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/RouteActivity_SegmentsList"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:overScrollMode="never" />
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Saint-Lazare"
+                            android:id="@+id/RouteActivity_FromName"
+                            android:layout_marginLeft="12dp"
+                            android:textColor="@color/foreground_material_light"
+                            android:layout_alignTop="@+id/RouteActivity_FromIcon"
+                            android:layout_toRightOf="@+id/RouteActivity_FromIcon"
+                            android:layout_alignBottom="@+id/RouteActivity_FromIcon"
+                            android:gravity="center_vertical" />
 
-                    </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="9:54"
+                            android:id="@+id/RouteActivity_FromDate"
+                            android:textColor="@color/foreground_material_light"
+                            android:layout_alignParentEnd="false"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="24dp"
+                            android:layout_alignTop="@+id/RouteActivity_FromName"
+                            android:layout_alignBottom="@+id/RouteActivity_FromName"
+                            android:gravity="center_vertical" />
 
-                </ScrollView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Destination :"
+                            android:id="@+id/RouteActivity_ToLabel"
+                            android:layout_alignLeft="@+id/RouteActivity_FromLabel"
+                            android:layout_marginTop="8dp"
+                            android:layout_below="@+id/RouteActivity_FromIcon"
+                            android:textSize="12sp" />
+
+                        <ImageView
+                            android:id="@+id/RouteActivity_ToIcon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_below="@+id/RouteActivity_ToLabel"
+                            android:layout_alignLeft="@+id/RouteActivity_FromIcon"
+                            android:layout_marginTop="4dp" />
+
+                        <TextView
+                            android:id="@+id/RouteActivity_ToName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Odysseum"
+                            android:textColor="@color/foreground_material_light"
+                            android:layout_marginLeft="12dp"
+                            android:layout_alignTop="@+id/RouteActivity_ToIcon"
+                            android:layout_alignBottom="@+id/RouteActivity_ToIcon"
+                            android:layout_toRightOf="@+id/RouteActivity_ToIcon"
+                            android:gravity="center_vertical" />
+
+                        <TextView
+                            android:id="@+id/RouteActivity_ToDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="10:38"
+                            android:textColor="@color/foreground_material_light"
+                            android:layout_alignTop="@+id/RouteActivity_ToName"
+                            android:layout_alignParentEnd="false"
+                            android:layout_alignRight="@+id/RouteActivity_FromDate"
+                            android:layout_alignBottom="@+id/RouteActivity_ToName"
+                            android:gravity="center_vertical" />
+
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/RouteActivity_SegmentsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never" />
+
+                </LinearLayout>
+
+            </ScrollView>
             
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:background="@drawable/shadow_inv"
-                    android:layout_alignBottom="@id/RouteActivity_Map" />
-
-            <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/shadow_inv"
+                android:layout_alignBottom="@id/RouteActivity_Map" />
 
             <View
                 android:id="@+id/shadow"

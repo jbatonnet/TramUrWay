@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+
 using Android;
-using Android.Animation;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.Locations;
 using Android.OS;
-using Android.Support.V4.App;
+using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Utilities;
 using Android.Views;
-using Android.Views.Animations;
+
 using Activity = Android.App.Activity;
 
 namespace TramUrWay.Android
 {
-    public class NearbyMapFragment : TabFragment, IOnMapReadyCallback, GoogleMap.IOnMapLoadedCallback
+    public class NearbyMapFragment : TabFragment, IOnMapReadyCallback
     {
         public override string Title => "Carte";
 
@@ -30,15 +28,17 @@ namespace TramUrWay.Android
         private const float MyLocationZoom = 14.5f;
         private const float MarkerZoom = 15.5f;
 
+        private View view;
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
+        private Snackbar snackbar;
 
         private Dictionary<string, Marker> multiStopGrayMarkers = new Dictionary<string, Marker>();
         private Dictionary<Stop, Marker> multiStopDetailMarkers = new Dictionary<Stop, Marker>();
         private Dictionary<Stop, Marker> singleStopMarkers = new Dictionary<Stop, Marker>();
-        private Dictionary<string, Stop> markerStops = new Dictionary<string, Stop>();
 
         private Dictionary<string, Stop[]> stops;
+        private Dictionary<string, Stop> markerStops = new Dictionary<string, Stop>();
 
         public NearbyMapFragment()
         {
@@ -51,7 +51,8 @@ namespace TramUrWay.Android
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.NearbyMapFragment, container, false);
+            view = inflater.Inflate(Resource.Layout.NearbyMapFragment, container, false);
+            return view;
         }
         protected override void OnGotFocus()
         {
@@ -60,72 +61,82 @@ namespace TramUrWay.Android
             // Late load map
             if (mapFragment == null)
             {
-                mapFragment = SupportMapFragment.NewInstance();
+                mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.NearbyMapFragment_Map) as SupportMapFragment;
                 mapFragment.GetMapAsync(this);
-
-                FragmentTransaction fragmentTransaction = FragmentManager.BeginTransaction();
-                fragmentTransaction.Replace(Resource.Id.NearbyMapFragment_Map, mapFragment);
-                fragmentTransaction.Commit();
             }
         }
-
-        public void OnMapReady(GoogleMap map)
+        public async void OnMapReady(GoogleMap map)
         {
-            mapFragment.View.Post(OnMapLoaded);
-
+            // Register events
             googleMap = map;
             googleMap.CameraChange += GoogleMap_CameraChange;
             googleMap.MyLocationButtonClick += GoogleMap_MyLocationButtonClick;
             googleMap.MarkerClick += GoogleMap_MarkerClick;
             googleMap.InfoWindowClick += GoogleMap_InfoWindowClick;
 
+            // Enable my location if user has granted location permission
             if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
                 googleMap.MyLocationEnabled = true;
 
-            Bitmap multiStopIcon = Utils.GetStopIconForColor(Activity, Color.Gray, App.MapStopIconSize);
-            BitmapDescriptor multiStopIconDescriptor = BitmapDescriptorFactory.FromBitmap(multiStopIcon);
-
-            // Create multistop markers
-            foreach (var pair in stops.Where(p => p.Value.Length > 1))
+            await Task.Run(() =>
             {
-                MarkerOptions markerOptions = CreateStopMarker(multiStopIconDescriptor, pair.Value);
-                multiStopGrayMarkers.Add(pair.Key, googleMap.AddMarker(markerOptions));
+                Dictionary<string, MarkerOptions> multiStopGrayMarkerOptions = new Dictionary<string, MarkerOptions>();
+                Dictionary<Stop, MarkerOptions> multiStopDetailMarkerOptions = new Dictionary<Stop, MarkerOptions>();
+                Dictionary<Stop, MarkerOptions> singleStopMarkerOptions = new Dictionary<Stop, MarkerOptions>();
 
-                foreach (Stop stop in pair.Value)
+                Bitmap multiStopIcon = Utils.GetStopIconForColor(Activity, Color.Gray, App.MapStopIconSize);
+                BitmapDescriptor multiStopIconDescriptor = BitmapDescriptorFactory.FromBitmap(multiStopIcon);
+
+                // Create multistop markers
+                foreach (var pair in stops.Where(p => p.Value.Length > 1))
                 {
+                    MarkerOptions markerOptions = CreateStopMarker(multiStopIconDescriptor, pair.Value);
+                    multiStopGrayMarkerOptions.Add(pair.Key, markerOptions);
+
+                    foreach (Stop stop in pair.Value)
+                    {
+                        Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, App.MapStopIconSize);
+                        BitmapDescriptor stopIconDescriptor = BitmapDescriptorFactory.FromBitmap(stopIcon);
+
+                        markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(false);
+                        multiStopDetailMarkerOptions.Add(stop, markerOptions);
+                    }
+                }
+
+                // Create single stop markers
+                foreach (var pair in stops.Where(p => p.Value.Length == 1))
+                {
+                    Stop stop = pair.Value[0];
+
                     Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, App.MapStopIconSize);
                     BitmapDescriptor stopIconDescriptor = BitmapDescriptorFactory.FromBitmap(stopIcon);
 
-                    markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(false);
-                    Marker marker = googleMap.AddMarker(markerOptions);
-
-                    multiStopDetailMarkers.Add(stop, marker);
-                    markerStops.Add(marker.Id, stop);
+                    MarkerOptions markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(stop.Line.Type == LineType.Tram);
+                    singleStopMarkerOptions.Add(stop, markerOptions);
                 }
-            }
 
-            // Create single stop markers
-            foreach (var pair in stops.Where(p => p.Value.Length == 1))
-            {
-                Stop stop = pair.Value[0];
+                // Add all markers to the map
+                Activity.RunOnUiThread(() =>
+                {
+                    foreach (var pair in multiStopGrayMarkerOptions)
+                        multiStopGrayMarkers.Add(pair.Key, googleMap.AddMarker(pair.Value));
 
-                Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, App.MapStopIconSize);
-                BitmapDescriptor stopIconDescriptor = BitmapDescriptorFactory.FromBitmap(stopIcon);
+                    foreach (var pair in multiStopDetailMarkerOptions)
+                    {
+                        Marker marker = googleMap.AddMarker(pair.Value);
+                        multiStopDetailMarkers.Add(pair.Key, marker);
+                        markerStops.Add(marker.Id, pair.Key);
+                    }
 
-                MarkerOptions markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(stop.Line.Type == LineType.Tram);
-                Marker marker = googleMap.AddMarker(markerOptions);
-
-                singleStopMarkers.Add(stop, marker);
-                markerStops.Add(marker.Id, stop);
-            }
+                    foreach (var pair in singleStopMarkerOptions)
+                    {
+                        Marker marker = googleMap.AddMarker(pair.Value);
+                        singleStopMarkers.Add(pair.Key, marker);
+                        markerStops.Add(marker.Id, pair.Key);
+                    }
+                });
+            });
         }
-        public void OnMapLoaded()
-        {
-            // Set initial zoom level
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(43.608340, 3.877086), 12);
-            googleMap.MoveCamera(cameraUpdate);
-        }
-
         private MarkerOptions CreateStopMarker(BitmapDescriptor bitmapDescriptor, params Stop[] stops)
         {
             Stop stop = stops[0];
@@ -154,8 +165,18 @@ namespace TramUrWay.Android
         }
         private void GoogleMap_MyLocationButtonClick(object sender, GoogleMap.MyLocationButtonClickEventArgs e)
         {
+            snackbar?.Dismiss();
+
             float zoom = googleMap.CameraPosition.Zoom;
             Location location = googleMap.MyLocation;
+
+            if (location == null)
+            {
+                snackbar = Snackbar.Make(view, "Données GPS non disponibles", Snackbar.LengthIndefinite);
+                snackbar.Show();
+
+                return;
+            }
 
             CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(location.Latitude, location.Longitude), Math.Max(zoom, MyLocationZoom));
             googleMap.AnimateCamera(cameraUpdate);
