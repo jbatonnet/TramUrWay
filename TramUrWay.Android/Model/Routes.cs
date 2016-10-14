@@ -162,9 +162,13 @@ namespace TramUrWay.Android
                     // Skip reusage of same line
                     if (lastLink != null && lastLink.Line != link.Line && route.Any(l => l.Line == link.Line))
                         continue;
-
+                    
                     // Avoid leaving the line we search
                     if (lastLink != null && lastLink.Line != link.Line && lastLink.Line == to.Line)
+                        continue;
+
+                    // Skip reusage of same stop
+                    if (route.Any(l => l.Line == link.Line && l.To.Stop.Name == linkTo))
                         continue;
 
                     float linkWeight = weight + link.Weight;

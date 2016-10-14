@@ -24,8 +24,6 @@ namespace TramUrWay.Android
 
         public override void OnReceive(Context context, Intent intent)
         {
-            App.Initialize(context);
-
             if (intent.Action == Intent.ActionScreenOn)
                 WidgetUpdateService.Start(context);
             else if (intent.Action == Intent.ActionScreenOff)

@@ -41,7 +41,7 @@ namespace TramUrWay.Android
 
             // Setup an alarm
             AlarmManager alarmManager = GetSystemService(AlarmService) as AlarmManager;
-            alarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime(), App.WidgetUpdateDelay * 1000, pendingIntent);
+            alarmManager.SetInexactRepeating(AlarmType.ElapsedRealtime, SystemClock.ElapsedRealtime(), TramUrWayApplication.WidgetUpdateDelay * 1000, pendingIntent);
         }
         public override void OnDestroy()
         {

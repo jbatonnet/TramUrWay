@@ -14,12 +14,12 @@ namespace TramUrWay.Dumper
         // http://www.tam-voyages.com/horaires_ligne/index.asp?rub_code=6&actionButton=SearchByLineNumberHiddenField&lign_id=
 
         private const string baseAddress = "http://www.tam-voyages.com/horaires_ligne/index.asp?rub_code=6";
-        private const string outputDirectory = @"..\..\..\Data\Hiver 2015";
+        private const string outputDirectory = @"..\..\..\Data\Hiver 2016";
 
-        private const string weekDate = "03/05/2016";
-        private const string fridayDate = "06/05/2016";
-        private const string saturdayDate = "07/05/2016";
-        private const string sundayDate = "08/05/2016";
+        private const string weekDate = "18/10/2016";
+        private const string fridayDate = "21/10/2016";
+        private const string saturdayDate = "22/10/2016";
+        private const string sundayDate = "23/10/2016";
 
         private static Regex blockRegex = new Regex(@"headers=""commune""([^<]|<[^\/]|<\/[^t]|<\/t[^r])+", RegexOptions.Compiled);
         private static Regex idRegex = new Regex(@"id=""arret([0-9]+)"" class=""arret""", RegexOptions.Compiled);
@@ -27,6 +27,12 @@ namespace TramUrWay.Dumper
         private static Regex timeRegex = new Regex(@"s=""arret[^""]+"">([^<]+)<", RegexOptions.Compiled);
 
         public static void Main(string[] args)
+        {
+            DumpData();
+            PatchData();
+        }
+
+        private static void DumpData()
         {
             WebClient webClient = new WebClient();
             webClient.Encoding = Encoding.UTF8;
@@ -253,7 +259,12 @@ namespace TramUrWay.Dumper
                         content = webClient.DownloadString(url);
 
                         if (content.Contains("pas d'horaire"))
+                        {
+                            if (addIndex)
+                                break;
+
                             addIndex = false;
+                        }
                         else
                             break;
                     }
@@ -305,6 +316,29 @@ namespace TramUrWay.Dumper
                 using (StreamWriter output = new StreamWriter(outputFile, false, Encoding.UTF8))
                     foreach (string line in lines.Distinct())
                         output.WriteLine(line);
+            }
+        }
+        private static void PatchData()
+        {
+            // Demux line 3 routes
+            foreach (string variation in new[] { "lun-jeu", "ven", "sam", "dim" })
+            {
+                string inputXFile = Path.Combine(outputDirectory, @"L3\L3.XXX." + variation + ".csv");
+                string inputYFile = Path.Combine(outputDirectory, @"L3\L3.XXX." + variation + ".csv");
+
+                string routeFile = Path.Combine(outputDirectory, @"L3\L3.R{0}." + variation + ".csv");
+
+                string[] linesX = File.ReadAllLines(inputXFile, Encoding.UTF8);
+                string[][] valuesX = linesX.Select(l => l.Split(';')).ToArray();
+
+                File.WriteAllLines(string.Format(routeFile, "0"), valuesX.Select(l => l.Take(4).Concat(l.Skip(6)).Join(";")), Encoding.UTF8);
+                File.WriteAllLines(string.Format(routeFile, "1"), valuesX.Select(l => l.Skip(4).Join(";")), Encoding.UTF8);
+
+                string[] linesY = File.ReadAllLines(inputXFile, Encoding.UTF8);
+                string[][] valuesY = linesY.Select(l => l.Split(';')).ToArray();
+
+                File.WriteAllLines(string.Format(routeFile, "2"), valuesY.Select(l => l.Take(4).Concat(l.Skip(6)).Join(";")), Encoding.UTF8);
+                File.WriteAllLines(string.Format(routeFile, "3"), valuesY.Select(l => l.Skip(4).Join(";")), Encoding.UTF8);
             }
         }
     }

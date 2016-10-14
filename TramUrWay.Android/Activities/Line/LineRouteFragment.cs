@@ -29,7 +29,7 @@ namespace TramUrWay.Android
 {
     public class LineRouteFragment : TabFragment
     {
-        public override string Title => "Vers " + route.Steps.Last().Stop.Name;
+        public override string Title => route.Name ?? "Vers " + route.Steps.Last().Stop.Name;
 
         public event EventHandler QueryRefresh;
 

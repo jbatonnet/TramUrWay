@@ -19,6 +19,7 @@ using Android.Views;
 using Android.Widget;
 using static Android.Support.V7.Widget.SearchView;
 using Java.Lang;
+using System.Threading.Tasks;
 
 namespace TramUrWay.Android
 {
@@ -26,12 +27,8 @@ namespace TramUrWay.Android
     {
         public override string Title => "Stations";
 
-        private StopsAdapter stopsAdapter;
-
-        public HomeStopsFragment()
-        {
-            stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops));
-        }
+        private StopsAdapter stopsAdapter = new StopsAdapter();
+        private bool loaded = false;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -45,6 +42,24 @@ namespace TramUrWay.Android
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
             recyclerView.SetAdapter(stopsAdapter);
+        }
+        protected override async void OnGotFocus()
+        {
+            if (loaded)
+                return;
+
+            loaded = true;
+
+            await Task.Run(() =>
+            {
+                foreach (Line line in TramUrWayApplication.Lines)
+                    line.Loaded.WaitOne();
+
+                Activity.RunOnUiThread(() =>
+                {
+                    stopsAdapter.Update(TramUrWayApplication.Lines.SelectMany(l => l.Stops));
+                });
+            });
         }
 
         public void OnQueryTextChanged(object sender, QueryTextChangeEventArgs e)

@@ -77,7 +77,7 @@ namespace TramUrWay.Android
                 return useLongStyle ? "Plus d'une heure" : "> 1 heure";
             else
             {
-                if (App.Config.EnableTamBug && now.Day != timeStep.Date.Day)
+                if (TramUrWayApplication.Config.EnableTamBug && now.Day != timeStep.Date.Day)
                     return $"24 h {minutes} min";
                 else
                     return $"{minutes} min";

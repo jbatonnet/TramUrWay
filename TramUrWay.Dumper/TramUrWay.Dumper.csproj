@@ -7,8 +7,8 @@
     <ProjectGuid>{F0BB2A45-FA8E-4B22-8B5F-03709E27449B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TramUrWay.Test</RootNamespace>
-    <AssemblyName>TramUrWay.Test</AssemblyName>
+    <RootNamespace>TramUrWay.Dumper</RootNamespace>
+    <AssemblyName>TramUrWay.Dumper</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

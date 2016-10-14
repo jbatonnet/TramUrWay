@@ -27,13 +27,12 @@ namespace TramUrWay.Baker
         public static void Main(string[] args)
         {
             // Load data
-            Lines = BakerV2.Bake();
+            Lines = BakerV1.Bake();
 
             // Dump everything
-            //DumpData();
-
+            DumpData();
             
-            TestSearch();
+            //TestSearch();
         }
 
         private static void DumpData()
@@ -51,7 +50,8 @@ namespace TramUrWay.Baker
                     ["Type"] = line.Type.ToString(),
                     ["Image"] = line.Image == null ? null : Convert.ToBase64String(line.Image),
                     ["Stops"] = lineStopsObject = new JArray(),
-                    ["Routes"] = lineRoutesObject = new JArray()
+                    ["Routes"] = lineRoutesObject = new JArray(),
+                    ["Metadata"] = new JObject(line.Metadata.Select(m => new JProperty(m.Key, m.Value)))
                 };
 
                 foreach (Stop stop in line.Stops)
@@ -74,6 +74,7 @@ namespace TramUrWay.Baker
                     JObject routeObject = new JObject
                     {
                         ["Id"] = route.Id,
+                        ["Name"] = route.Name,
                         ["Steps"] = routeStepsObject,
                         ["TimeTable"] = route.TimeTable == null ? null : routeTimeTableObject,
                     };

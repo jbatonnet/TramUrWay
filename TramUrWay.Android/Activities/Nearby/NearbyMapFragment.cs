@@ -42,7 +42,7 @@ namespace TramUrWay.Android
 
         public NearbyMapFragment()
         {
-            stops = App.Lines.SelectMany(l => l.Stops)
+            stops = TramUrWayApplication.Lines.SelectMany(l => l.Stops)
                  .GroupBy(s => Util.Hash(s.Name, s.Line.Id))
                  .Select(g => g.First())
                  .GroupBy(s => s.Name)
@@ -84,7 +84,7 @@ namespace TramUrWay.Android
                 Dictionary<Stop, MarkerOptions> multiStopDetailMarkerOptions = new Dictionary<Stop, MarkerOptions>();
                 Dictionary<Stop, MarkerOptions> singleStopMarkerOptions = new Dictionary<Stop, MarkerOptions>();
 
-                Bitmap multiStopIcon = Utils.GetStopIconForColor(Activity, Color.Gray, App.MapStopIconSize);
+                Bitmap multiStopIcon = Utils.GetStopIconForColor(Activity, Color.Gray, TramUrWayApplication.MapStopIconSize);
                 BitmapDescriptor multiStopIconDescriptor = BitmapDescriptorFactory.FromBitmap(multiStopIcon);
 
                 // Create multistop markers
@@ -95,7 +95,7 @@ namespace TramUrWay.Android
 
                     foreach (Stop stop in pair.Value)
                     {
-                        Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, App.MapStopIconSize);
+                        Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, TramUrWayApplication.MapStopIconSize);
                         BitmapDescriptor stopIconDescriptor = BitmapDescriptorFactory.FromBitmap(stopIcon);
 
                         markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(false);
@@ -108,7 +108,7 @@ namespace TramUrWay.Android
                 {
                     Stop stop = pair.Value[0];
 
-                    Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, App.MapStopIconSize);
+                    Bitmap stopIcon = Utils.GetStopIconForLine(Activity, stop.Line, TramUrWayApplication.MapStopIconSize);
                     BitmapDescriptor stopIconDescriptor = BitmapDescriptorFactory.FromBitmap(stopIcon);
 
                     MarkerOptions markerOptions = CreateStopMarker(stopIconDescriptor, stop).Visible(stop.Line.Type == LineType.Tram);

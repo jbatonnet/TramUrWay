@@ -20,7 +20,7 @@ namespace TramUrWay.Baker
 {
     internal class BakerV1
     {
-        private const string inputDirectory = @"..\..\..\Data\Hiver 2015";
+        private const string inputDirectory = @"..\..\..\Data\Été 2016";
 
         public static Line[] Lines { get; private set; }
         public static Dictionary<int, string> StepNames { get; } = new Dictionary<int, string>();
@@ -39,7 +39,6 @@ namespace TramUrWay.Baker
             LoadDurations();
             LoadTrajectories();
             LoadSpeedCurves();
-
 
             // Temp
             /*DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
@@ -61,6 +60,9 @@ namespace TramUrWay.Baker
         {
             List<Line> lines = new List<Line>();
 
+            SQLiteConnection sqliteConnection = new SQLiteConnection("Data Source=" + inputDirectory + @"\..\referential_android.sqlite");
+            sqliteConnection.Open();
+
             string content = File.ReadAllText(Path.Combine(inputDirectory, "getAll.json"));
             JObject data = JsonConvert.DeserializeObject(content) as JObject;
             JArray linesData = data["lines"] as JArray;
@@ -72,7 +74,7 @@ namespace TramUrWay.Baker
                 string lineName = (lineType == LineType.Tram ? "Tramway" : "Bus") + " ligne " + lineId;
                 string lineColor = lineData["color"].Value<string>();
 
-                Line line = new Line() { Id = lineId, Name = lineName, Color = Convert.ToInt32(lineColor, 16), Type = lineType };
+                Line line = new Line() { Id = lineId, Number = lineId, Name = lineName, Color = Convert.ToInt32(lineColor, 16), Type = lineType };
                 List<Stop> lineStops = new List<Stop>();
                 List<Route> lineRoutes = new List<Route>();
 
@@ -98,9 +100,17 @@ namespace TramUrWay.Baker
                 }
                 line.Stops = lineStops.ToArray();
 
+                // Add some temp metadata
+                using (DbCommand command = sqliteConnection.CreateCommand("SELECT * FROM LINE WHERE tam_id = " + line.Id))
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                        line.Metadata["Urban"] = (bool)reader["urban"];
+                }
+
                 // For now, skip lines 18 and > 19
                 if (line.Id == 18 || line.Id > 19)
-                    continue;
+                continue;
 
                 Route currentRoute = null;
                 List<Step> routeSteps = new List<Step>();
@@ -155,6 +165,8 @@ namespace TramUrWay.Baker
 
                 foreach (Route route in lineRoutes)
                 {
+                    route.Name = "Vers " + route.Steps.Last().Stop.Name;
+
                     for (int i = 0; i < route.Steps.Length; i++)
                     {
                         route.Steps[i].Previous = i > 0 ? route.Steps[i - 1] : null;
@@ -363,6 +375,63 @@ namespace TramUrWay.Baker
             Lines.First(l => l.Number == 13).Name = "La navette";
             Lines.First(l => l.Number == 15).Name = "La ronde";
 
+            // New line 4 stops
+            {
+                Line line = Lines.First(l => l.Number == 4);
+
+                // Build new stops
+                Stop saintGuilhemA = new Stop() { Id = 44104, Line = line, Name = "Saint-Guilhem - Courreau", Position = new Position(43.608202f, 3.873421f) };
+                Stop saintGuilhemB = new Stop() { Id = 44204, Line = line, Name = "Saint-Guilhem - Courreau", Position = new Position(43.608202f, 3.873421f) };
+                Stop peyrouA = new Stop() { Id = 44103, Line = line, Name = "Peyrou - Arc de Triomphe", Position = new Position(43.611504f, 3.872289f) };
+                Stop peyrouB = new Stop() { Id = 44203, Line = line, Name = "Peyrou - Arc de Triomphe", Position = new Position(43.611504f, 3.872289f) };
+                Stop garciaLorcaA = new Stop() { Id = 44106, Line = line, Name = "Garcia Lorca", Position = new Position(43.59097872f, 3.89081396f) };
+                Stop garciaLorcaB = new Stop() { Id = 44205, Line = line, Name = "Garcia Lorca", Position = new Position(43.59097872f, 3.89081396f) };
+
+                // Swap routes
+                Route route0 = line.Routes[1], // 4a
+                      route1 = line.Routes[0]; // 4b
+                line.Routes[0] = route0;
+                line.Routes[1] = route1;
+                route0.Id = 0;
+                route1.Id = 1;
+
+                // Roll some stops
+                route0.Steps = route0.Steps.Skip(9).Concat(route0.Steps.Take(9)).ToArray();
+                route1.Steps = route1.Steps.Skip(7).Concat(route1.Steps.Take(7)).ToArray();
+
+                // Replace Saint-Denis with new steps
+                line.Stops = line.Stops.Concat(saintGuilhemA, peyrouA, saintGuilhemB, peyrouB, garciaLorcaA, garciaLorcaB).ToArray();
+                route0.Steps = route0.Steps.Take(7).Concat(new Step() { Stop = saintGuilhemA }, new Step() { Stop = peyrouA }).Concat(route0.Steps.Skip(8)).ToArray();
+                route1.Steps = route1.Steps.Take(10).Concat(new Step() { Stop = peyrouB }, new Step() { Stop = saintGuilhemB }).Concat(route1.Steps.Skip(11)).ToArray();
+
+                // Loop routes with Garcia Lorca clones
+                route0.Steps = route0.Steps.Concat(new Step() { Stop = garciaLorcaA }).ToArray();
+                route1.Steps = route1.Steps.Concat(new Step() { Stop = garciaLorcaB }).ToArray();
+
+                // Patch Albert 1er
+                route0.Steps[9].Stop.Name = route1.Steps[9].Stop.Name = "Albert 1er - Cathédrale";
+                route0.Steps[9].Stop.Position = route1.Steps[9].Stop.Position = new Position(43.614713f, 3.873682f);
+                route0.Steps[9].Stop.Id = 44102;
+                route1.Steps[9].Stop.Id = 44202;
+
+                // Patch Garcia Lorca
+                route0.Steps[0].Stop.Id = 44105;
+                route1.Steps[0].Stop.Id = 44201;
+
+                // Rebuild routes
+                foreach (Route route in line.Routes)
+                    for (int i = 0; i < route.Steps.Length; i++)
+                    {
+                        route.Steps[i].Direction = "vers " + route.Steps.Last().Stop.Name;
+                        route.Steps[i].Previous = i == 0 ? null : route.Steps[i - 1];
+                        route.Steps[i].Next = i == route.Steps.Length - 1 ? null : route.Steps[i + 1];
+                    }
+            }
+
+            // Line 4 routes are named 4a and 4b
+            Lines.First(l => l.Number == 4).Routes.First().Name = "4a";
+            Lines.First(l => l.Number == 4).Routes.Last().Name = "4b";
+
             // TaM data fixes
             {
                 // Last stop of line 1 is Odysseum
@@ -395,7 +464,7 @@ namespace TramUrWay.Baker
         // Helpers
         private static TimeSpan?[,] LoadTimeTable(Route route, Stream stream)
         {
-            Step[] partialSteps;
+            List<Step> partialSteps = new List<Step>();
             List<TimeSpan?[]> partialTimes = new List<TimeSpan?[]>();
 
             // Read raw data
@@ -407,9 +476,16 @@ namespace TramUrWay.Baker
 
                 string[] headerParts = header.Split(';');
 
-                partialSteps = headerParts.Select(p => route.Steps.FirstOrDefault(s => Likes(s.Stop.Name, p))).ToArray();
+                List<Step> availableSteps = route.Steps.ToList();
+                foreach (string headerPart in headerParts)
+                {
+                    Step matchingStep = availableSteps.FirstOrDefault(s => Likes(s.Stop.Name, headerPart));
 
-                TimeSpan[] lastTimes = new TimeSpan[partialSteps.Length];
+                    availableSteps.Remove(matchingStep);
+                    partialSteps.Add(matchingStep);
+                }
+
+                TimeSpan[] lastTimes = new TimeSpan[partialSteps.Count];
                 while (true)
                 {
                     string data = reader.ReadLine();
@@ -417,9 +493,9 @@ namespace TramUrWay.Baker
                         break;
 
                     string[] dataParts = data.Split(';');
-                    TimeSpan?[] times = new TimeSpan?[partialSteps.Length];
+                    TimeSpan?[] times = new TimeSpan?[partialSteps.Count];
 
-                    for (int i = 0; i < partialSteps.Length; i++)
+                    for (int i = 0; i < partialSteps.Count; i++)
                     {
                         TimeSpan time;
                         if (TimeSpan.TryParse(dataParts[i], out time))

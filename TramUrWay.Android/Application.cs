@@ -25,57 +25,58 @@ using LogPriority = Android.Util.LogPriority;
 
 namespace TramUrWay.Android
 {
-    public static class App
+    [Application]
+    public class TramUrWayApplication : BaseApplication
     {
-        public const string Name = "TramUrWay";
+        public override string Name => "TramUrWay";
 
         public const int GlobalUpdateDelay = 60;
         public const int WidgetUpdateDelay = 60;
+        public const int MinimumServiceDelay = 30;
 
         public const int MapStopIconSize = 10;
         public const int MapTransportIconSize = 22;
 
         public static Config Config { get; private set; }
-        public static Assets Assets { get; private set; }
+        public new static Assets Assets { get; private set; }
         public static WebService Service { get; private set; }
 
-        public static Line[] Lines { get; private set; }
-
-        private static bool initialized = false;
-        public static void Initialize(Context context)
+        public static Line[] Lines
         {
-            if (initialized) return;
-            initialized = true;
+            get
+            {
+                if (lines == null)
+                    lines = Assets.PreloadLines();
 
-            // Initialize logging
-#if DEBUG
-            Log.TraceStream = new LogcatWriter(App.Name, LogPriority.Verbose);
-            Log.DebugStream = new LogcatWriter(App.Name, LogPriority.Debug);
-#endif
-            Log.InfoStream = new LogcatWriter(App.Name, LogPriority.Info);
-            Log.WarningStream = new LogcatWriter(App.Name, LogPriority.Warn);
-            Log.ErrorStream = new LogcatWriter(App.Name, LogPriority.Error);
+                return lines;
+            }
+        }
 
+        private static Line[] lines;
+
+        public TramUrWayApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer) { }
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            
             // Load data
-            Config = new Config(context);
-            Assets = new Assets(context);
+            Config = new Config(this);
+            Assets = new Assets(this);
             Service = new WebService();
-
-            // Preload lines
-            Lines = Assets.LoadLines();
 
 #if DEBUG
             // Enable experimental features on debug builds
-            Config.ExperimentalFeatures = false;
+            Config.ExperimentalFeatures = true;
             Config.EnableWidgetRefresh = true;
 #endif
 
             // Trigger widgets update
-            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-            StepWidget.Update(context, appWidgetManager);
+            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);
+            StepWidget.Update(this, appWidgetManager);
 
             if (Config.EnableWidgetRefresh)
-                WidgetUpdateService.Start(context);
+                WidgetUpdateService.Start(this);
         }
 
         public static Line GetLine(int id)

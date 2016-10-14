@@ -61,7 +61,7 @@ namespace TramUrWay.Android
 
             OnPostCreate();
 
-            Stop[] stops = App.Lines.SelectMany(l => l.Stops).ToArray();
+            Stop[] stops = TramUrWayApplication.Lines.SelectMany(l => l.Stops).ToArray();
             string[] stopNames = stops.Select(s => s.Name).Distinct().ToArray();
 
             // Initialize UI
@@ -91,7 +91,7 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("From"))
             {
                 int stopId = extras.GetInt("From");
-                Stop stop = App.GetStop(stopId);
+                Stop stop = TramUrWayApplication.GetStop(stopId);
                 if (stop != null)
                     fromTextView.Text = stop.Name;
             }
@@ -99,7 +99,7 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("To"))
             {
                 int stopId = extras.GetInt("To");
-                Stop stop = App.GetStop(stopId);
+                Stop stop = TramUrWayApplication.GetStop(stopId);
                 if (stop != null)
                     toTextView.Text = stop.Name;
             }
@@ -181,7 +181,7 @@ namespace TramUrWay.Android
                 }
                 else
                 {
-                    Stop stop = App.GetStop(a.Item.ItemId);
+                    Stop stop = TramUrWayApplication.GetStop(a.Item.ItemId);
                     fromTextView.Text = stop.Name;
                 }
             };
@@ -191,7 +191,7 @@ namespace TramUrWay.Android
                 menu.Menu.Add(1, 0, 1, "Automatique").SetIcon(Resource.Drawable.ic_place);
 
             // Favorite stops
-            foreach (Stop stop in App.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
+            foreach (Stop stop in TramUrWayApplication.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -217,13 +217,13 @@ namespace TramUrWay.Android
                 }
                 else
                 {
-                    Stop stop = App.GetStop(a.Item.ItemId);
+                    Stop stop = TramUrWayApplication.GetStop(a.Item.ItemId);
                     toTextView.Text = stop.Name;
                 }
             };
 
             // Favorite stops
-            foreach (Stop stop in App.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
+            foreach (Stop stop in TramUrWayApplication.Config.FavoriteStops.GroupBy(s => s.Name).Select(g => g.First()))
                 menu.Menu.Add(1, stop.Id, 2, stop.Name);
 
             // Other: focus the search box and trigger autocomplete
@@ -258,7 +258,7 @@ namespace TramUrWay.Android
                 return;
             }
 
-            Stop from = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == fromTextView.Text);
+            Stop from = TramUrWayApplication.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == fromTextView.Text);
             if (from == null)
             {
                 fromLayout.Error = "La station spécifiée n'existe pas";
@@ -273,7 +273,7 @@ namespace TramUrWay.Android
                 return;
             }
 
-            Stop to = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == toTextView.Text);
+            Stop to = TramUrWayApplication.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == toTextView.Text);
             if (to == null)
             {
                 toLayout.Error = "La station spécifiée n'existe pas";
@@ -319,7 +319,7 @@ namespace TramUrWay.Android
                 // Build a new route searcher
                 RouteSearch routeSearch = new RouteSearch();
                 routeSearch.Settings.AllowWalkLinks = false;
-                routeSearch.Prepare(App.Lines);
+                routeSearch.Prepare(TramUrWayApplication.Lines);
 
                 // Start enumeration
                 DateTime end = DateTime.Now + TimeSpan.FromSeconds(5);
@@ -390,25 +390,36 @@ namespace TramUrWay.Android
                 criteria.CostAllowed = false;
                 criteria.PowerRequirement = Power.Low;
 
+                Stop stop = null;
+                bool locationEnabled = false;
+
                 string provider = locationManager.GetBestProvider(criteria, true);
-                Location location = locationManager.GetLastKnownLocation(provider);
-                Position position = new Position((float)location.Latitude, (float)location.Longitude);
+                if (provider != null)
+                {
+                    Location location = locationManager.GetLastKnownLocation(provider);
+                    if (location != null)
+                    {
+                        Position position = new Position((float)location.Latitude, (float)location.Longitude);
 
-                Stop[] nearbyStops = App.Lines.SelectMany(l => l.Stops)
-                                              .Select(s => new { Stop = s, Distance = s.Position - position })
-                                              .Where(s => s.Distance < 1000)
-                                              .OrderBy(s => s.Distance)
-                                              .Select(s => s.Stop)
-                                              .ToArray();
+                        Stop[] nearbyStops = TramUrWayApplication.Lines.SelectMany(l => l.Stops)
+                                                      .Select(s => new { Stop = s, Distance = s.Position - position })
+                                                      .Where(s => s.Distance < 1000)
+                                                      .OrderBy(s => s.Distance)
+                                                      .Select(s => s.Stop)
+                                                      .ToArray();
 
-                // Select first favorite, or first tram, else first one
-                Stop stop = nearbyStops.FirstOrDefault(s => s.GetIsFavorite()) ?? nearbyStops.FirstOrDefault(s => s.Line.Type == LineType.Tram) ?? nearbyStops.FirstOrDefault();
+                        locationEnabled = true;
 
-                if (stop == null)
+                        // Select first favorite, or first tram, else first one
+                        stop = nearbyStops.FirstOrDefault(s => s.GetIsFavorite()) ?? nearbyStops.FirstOrDefault(s => s.Line.Type == LineType.Tram) ?? nearbyStops.FirstOrDefault();
+                    }
+                }
+
+                if (!locationEnabled || stop == null)
                 {
                     snackbar?.Dismiss();
 
-                    snackbar = Snackbar.Make(recyclerView, "Aucune station à proximité", Snackbar.LengthIndefinite);
+                    snackbar = Snackbar.Make(recyclerView, locationEnabled ? "Aucune station à proximité" : "Impossible de déterminer la position actuelle", Snackbar.LengthIndefinite);
                     snackbar.Show();
                 }
                 else

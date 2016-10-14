@@ -56,7 +56,7 @@ namespace TramUrWay.Android
             TabLayout tabLayout = FindViewById<TabLayout>(Resource.Id.MainActivity_Tabs);
             tabLayout.SetupWithViewPager(viewPager);
 
-            if (App.Config.ShowFavorites && App.Config.FavoriteStops.Any())
+            if (TramUrWayApplication.Config.ShowFavorites && TramUrWayApplication.Config.FavoriteStops.Any())
                 viewPager.SetCurrentItem(0, true);
             else
                 viewPager.SetCurrentItem(1, true);

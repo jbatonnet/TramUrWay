@@ -56,11 +56,11 @@ namespace TramUrWay.Android
                 }
 
                 // Try to find device
-                line = App.GetLine(lineId);
+                line = TramUrWayApplication.GetLine(lineId);
             }
 #if DEBUG
             else
-                line = App.GetLine(2);
+                line = TramUrWayApplication.GetLine(2);
 #endif
             if (line == null)
                 throw new Exception("Could not find any line matching the specified id");
@@ -130,7 +130,7 @@ namespace TramUrWay.Android
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     Refresh();
-                    await Task.Delay(App.GlobalUpdateDelay * 1000);
+                    await Task.Delay(TramUrWayApplication.GlobalUpdateDelay * 1000);
                 }
             });
         }
@@ -193,7 +193,7 @@ namespace TramUrWay.Android
                 // Online time steps
                 try
                 {
-                    if (App.Config.OfflineMode)
+                    if (TramUrWayApplication.Config.OfflineMode)
                         throw new Exception();
 
                     /*timeSteps = App.Service.GetLiveTimeSteps()
@@ -201,7 +201,7 @@ namespace TramUrWay.Android
                         .OrderBy(t => t.Date)
                         .ToArray();*/
 
-                    timeSteps = App.Service.GetLiveTimeSteps(line)
+                    timeSteps = TramUrWayApplication.Service.GetLiveTimeSteps(line)
                         .OrderBy(t => t.Date)
                         .ToArray();
 
@@ -221,10 +221,10 @@ namespace TramUrWay.Android
                             if (snackbar == null)
                             {
                                 snackbar = Snackbar.Make(viewPager, "Données hors-ligne", Snackbar.LengthIndefinite);
-                                if (App.Config.OfflineMode)
-                                    snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
+                                if (TramUrWayApplication.Config.OfflineMode)
+                                    snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
                                 else
-                                    snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+                                    snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
 
                                 snackbar.Show();
                             }
@@ -238,10 +238,10 @@ namespace TramUrWay.Android
                             if (snackbar == null)
                             {
                                 snackbar = Snackbar.Make(viewPager, "Aucune donnée disponible", Snackbar.LengthIndefinite);
-                                if (App.Config.OfflineMode)
-                                    snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
+                                if (TramUrWayApplication.Config.OfflineMode)
+                                    snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
                                 else
-                                    snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+                                    snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
 
                                 snackbar.Show();
                             }

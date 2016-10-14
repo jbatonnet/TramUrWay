@@ -28,59 +28,6 @@ namespace TramUrWay.Android
     [Activity(Theme = "@style/AppTheme.NoActionBar")]
     public class SettingsActivity : BaseActivity
     {
-        public class SettingsFragment : PreferenceFragment
-        {
-            public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-            {
-                PreferenceScreen = PreferenceManager.CreatePreferenceScreen(inflater.Context);
-
-                foreach (PropertyInfo property in typeof(Config).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-                {
-                    Preference preference = null;
-
-                    if (property.PropertyType == typeof(bool))
-                    {
-                        preference = new CheckBoxPreference(PreferenceScreen.Context)
-                        {
-                            Checked = (bool)property.GetValue(App.Config),
-                        };
-                    }
-                    else
-                        continue;
-
-                    preference.Key = property.Name;
-                    preference.Title = property.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName;
-                    preference.Summary = property.GetCustomAttribute<DescriptionAttribute>()?.Description;
-
-                    PreferenceScreen.AddPreference(preference);
-                }
-
-                return base.OnCreateView(inflater, container, savedInstanceState);
-            }
-            public override void OnResume()
-            {
-                base.OnResume();
-
-                for (int i = 0; i < PreferenceScreen.PreferenceCount; i++)
-                {
-                    Preference preference = PreferenceScreen.GetPreference(i);
-                    PropertyInfo property = typeof(Config).GetProperty(preference.Key);
-
-                    if (preference is CheckBoxPreference)
-                        (preference as CheckBoxPreference).Checked = (bool)property.GetValue(App.Config);
-                }
-            }
-            public override bool OnPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference)
-            {
-                PropertyInfo property = typeof(Config).GetProperty(preference.Key);
-
-                if (preference is CheckBoxPreference)
-                    property.SetValue(App.Config, (preference as CheckBoxPreference).Checked);
-
-                return base.OnPreferenceTreeClick(preferenceScreen, preference);
-            }
-        }
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             OnCreate(savedInstanceState, Resource.Layout.SettingsActivity);
@@ -88,7 +35,7 @@ namespace TramUrWay.Android
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
 
             FragmentManager.BeginTransaction()
-                           .Replace(Resource.Id.SettingsActivity_Fragment, new SettingsFragment())
+                           .Replace(Resource.Id.SettingsActivity_Fragment, new SettingsFragment(TramUrWayApplication.Config))
                            .Commit();
         }
 

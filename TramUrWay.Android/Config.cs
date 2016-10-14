@@ -28,23 +28,19 @@ using Newtonsoft.Json.Linq;
 
 namespace TramUrWay.Android
 {
-    public class Config
+    public class Config : BaseConfig
     {
-        internal ISharedPreferences Preferences { get; }
-
         [DisplayName("Mode hors-ligne")]
         [Description("Force l'utilisation des données hors-ligne dans l'application")]
         public bool OfflineMode
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(OfflineMode), false);
+                return GetValue(false);
             }
             set
             {
-                ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(OfflineMode), value);
-                editor.Apply();
+                SetValue(value);
             }
         }
 
@@ -54,13 +50,11 @@ namespace TramUrWay.Android
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(EnableTamBug), false);
+                return GetValue(false);
             }
             set
             {
-                ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(EnableTamBug), value);
-                editor.Apply();
+                SetValue(value);
             }
         }
 
@@ -70,13 +64,11 @@ namespace TramUrWay.Android
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(EnableWidgetRefresh), false);
+                return GetValue(false);
             }
             set
             {
-                ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(EnableWidgetRefresh), value);
-                editor.Apply();
+                SetValue(value);
             }
         }
 
@@ -86,13 +78,11 @@ namespace TramUrWay.Android
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(ShowFavorites), true);
+                return GetValue(true);
             }
             set
             {
-                ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(ShowFavorites), value);
-                editor.Apply();
+                SetValue(value);
             }
         }
 
@@ -102,13 +92,11 @@ namespace TramUrWay.Android
         {
             get
             {
-                return Preferences.GetBoolean("Config." + nameof(ExperimentalFeatures), false);
+                return GetValue(false);
             }
             set
             {
-                ISharedPreferencesEditor editor = Preferences.Edit();
-                editor.PutBoolean("Config." + nameof(ExperimentalFeatures), value);
-                editor.Apply();
+                SetValue(value);
             }
         }
 
@@ -129,7 +117,7 @@ namespace TramUrWay.Android
                             try
                             {
                                 int lineId = lineObject["LineId"].Value<int>();
-                                favoriteLines.Add(App.GetLine(lineId));
+                                favoriteLines.Add(TramUrWayApplication.GetLine(lineId));
                             }
                             catch
                             {
@@ -180,7 +168,7 @@ namespace TramUrWay.Android
                             try
                             {
                                 int stopId = stopObject["StopId"].Value<int>();
-                                favoriteStops.Add(App.GetStop(stopId));
+                                favoriteStops.Add(TramUrWayApplication.GetStop(stopId));
                             }
                             catch
                             {
@@ -235,7 +223,7 @@ namespace TramUrWay.Android
                                 int routeId = widgetObject["RouteId"].Value<int>();
                                 int stopId = widgetObject["StopId"].Value<int>();
 
-                                Line line = App.GetLine(lineId);
+                                Line line = TramUrWayApplication.GetLine(lineId);
                                 Route route = line.Routes.FirstOrDefault(r => r.Id == routeId);
                                 Step step = route.Steps.FirstOrDefault(s => s.Stop.Id == stopId);
 
@@ -277,36 +265,33 @@ namespace TramUrWay.Android
         }
         private ObservableDictionary<int, Step> stepWidgets;
 
-        public Config(Context context)
-        {
-            Preferences = context.GetSharedPreferences(App.Name + ".conf", FileCreationMode.Private);
-        }
+        public Config(Context context) : base(context) { }
     }
 
     public static class ConfigExtensions
     {
         public static bool GetIsFavorite(this Line me)
         {
-            return App.Config.FavoriteLines.Contains(me);
+            return TramUrWayApplication.Config.FavoriteLines.Contains(me);
         }
         public static void SetIsFavorite(this Line me, bool value)
         {
             if (GetIsFavorite(me) && !value)
-                App.Config.FavoriteLines.Remove(me);
+                TramUrWayApplication.Config.FavoriteLines.Remove(me);
             else if (value)
-                App.Config.FavoriteLines.Add(me);
+                TramUrWayApplication.Config.FavoriteLines.Add(me);
         }
 
         public static bool GetIsFavorite(this Stop me)
         {
-            return App.Config.FavoriteStops.Contains(me);
+            return TramUrWayApplication.Config.FavoriteStops.Any(s => s.Id == me.Id);
         }
         public static void SetIsFavorite(this Stop me, bool value)
         {
             if (GetIsFavorite(me) && !value)
-                App.Config.FavoriteStops.Remove(me);
+                TramUrWayApplication.Config.FavoriteStops.Remove(me);
             else if (value)
-                App.Config.FavoriteStops.Add(me);
+                TramUrWayApplication.Config.FavoriteStops.Add(me);
         }
     }
 }

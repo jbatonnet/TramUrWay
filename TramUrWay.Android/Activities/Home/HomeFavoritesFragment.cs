@@ -45,24 +45,33 @@ namespace TramUrWay.Android
 
             return view;
         }
-        protected override void OnGotFocus()
+        protected override async void OnGotFocus()
         {
-            Line[] favoriteLines = App.Config.FavoriteLines.ToArray();
-            Stop[] favoriteStops = App.Config.FavoriteStops.ToArray();
-
-            bool favorites = favoriteLines.Length > 0 || favoriteStops.Length > 0;
-
             View favoritesView = View.FindViewById(Resource.Id.FavoritesFragment_Favorites);
-            favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
-
             View noFavoritesView = View.FindViewById(Resource.Id.FavoritesFragment_NoFavorites);
-            noFavoritesView.Visibility = favorites ? ViewStates.Gone : ViewStates.Visible;
 
-            if (favorites)
+            await Task.Run(() =>
             {
-                linesAdapter.Items = favoriteLines;
-                stopsAdapter.Update(favoriteStops);
-            }
+                foreach (Line line in TramUrWayApplication.Lines)
+                    line.Loaded.WaitOne();
+
+                Line[] favoriteLines = TramUrWayApplication.Config.FavoriteLines.ToArray();
+                Stop[] favoriteStops = TramUrWayApplication.Config.FavoriteStops.ToArray();
+
+                bool favorites = favoriteLines.Length > 0 || favoriteStops.Length > 0;
+
+                Activity.RunOnUiThread(() =>
+                {
+                    favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
+                    noFavoritesView.Visibility = favorites ? ViewStates.Gone : ViewStates.Visible;
+
+                    if (favorites)
+                    {
+                        linesAdapter.Items = favoriteLines;
+                        stopsAdapter.Update(favoriteStops);
+                    }
+                });
+            });
         }
     }
 }

@@ -112,7 +112,7 @@ namespace TramUrWay.Android
             googleMap.MoveCamera(cameraUpdate);
 
             // Add polylines
-            foreach (Line line in App.Lines)
+            foreach (Line line in TramUrWayApplication.Lines)
             {
                 foreach (Route route in line.Routes)
                 {
@@ -139,7 +139,7 @@ namespace TramUrWay.Android
             Drawable drawable = Resources.GetDrawable(Resource.Drawable.train);
             Drawable drawableOutline = Resources.GetDrawable(Resource.Drawable.train_glow);
 
-            foreach (Line line in App.Lines)
+            foreach (Line line in TramUrWayApplication.Lines)
             {
                 Bitmap bitmap = Bitmap.CreateBitmap((int)(IconSize * density), (int)(IconSize * density), Bitmap.Config.Argb8888);
                 Canvas canvas = new Canvas(bitmap);
@@ -164,7 +164,7 @@ namespace TramUrWay.Android
 
             // Update lines visibility
             bool showBuses = e.Position.Zoom >= BusZoomLimit;
-            foreach (Line line in App.Lines)
+            foreach (Line line in TramUrWayApplication.Lines)
                 foreach (Route route in line.Routes)
                 {
                     Polyline polyline;
@@ -214,7 +214,7 @@ namespace TramUrWay.Android
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     UpdateTimeSteps();
-                    Thread.Sleep(App.GlobalUpdateDelay / 2 * 1000);
+                    Thread.Sleep(TramUrWayApplication.GlobalUpdateDelay / 2 * 1000);
                 }
             });
             Task.Run(() =>
@@ -237,7 +237,7 @@ namespace TramUrWay.Android
             // Online time steps
             try
             {
-                if (App.Config.OfflineMode)
+                if (TramUrWayApplication.Config.OfflineMode)
                     throw new Exception();
 
                 newTimeSteps = new TimeStep[0];// App.Service.GetLiveTimeSteps().Where(t => t.Step.Route.Line.Id < 6).OrderBy(t => t.Date).ToArray();
@@ -248,7 +248,7 @@ namespace TramUrWay.Android
             {
                 DateTime now = DateTime.Now;
 
-                newTimeSteps = App.Lines.Where(l => l.Id < 6)
+                newTimeSteps = TramUrWayApplication.Lines.Where(l => l.Id < 6)
                                         .SelectMany(l => l.Routes)
                                         .SelectMany(r => r.Steps)
                                         .Select(s => s.Route.TimeTable?.GetStepsFromStep(s, now, false)?.Take(3))
@@ -279,7 +279,7 @@ namespace TramUrWay.Android
             // For each route, find transport positions
             List<Transport> transports = new List<Transport>();
 
-            foreach (Line line in App.Lines)
+            foreach (Line line in TramUrWayApplication.Lines)
                 foreach (Route route in line.Routes)
                 {
                     for (int i = 0; i < route.Steps.Length - 1; i++)

@@ -83,7 +83,7 @@ namespace TramUrWay.Android
 
         public StopNameAdapter(Activity activity)
         {
-            stopNames = App.Lines.SelectMany(l => l.Stops).Select(s => s.Name).Distinct().ToArray();
+            stopNames = TramUrWayApplication.Lines.SelectMany(l => l.Stops).Select(s => s.Name).Distinct().ToArray();
             this.activity = activity;
 
             Filter = new StopNameFilter(this, stopNames);

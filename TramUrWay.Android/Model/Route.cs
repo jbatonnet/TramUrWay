@@ -8,6 +8,7 @@ namespace TramUrWay.Android
     public class Route
     {
         public int Id { get; set; }
+        public string Name { get; set; }
 
         public Line Line { get; set; }
         public Step[] Steps { get; set; }
@@ -16,7 +17,10 @@ namespace TramUrWay.Android
 
         public override string ToString()
         {
-            return "Line " + Line.Number + " from " + Steps.First().Stop.Name + " to " + Steps.Last().Stop.Name;
+            if (Name == null)
+                return "Line " + Line.Number + " from " + Steps.First().Stop.Name + " to " + Steps.Last().Stop.Name;
+            else
+                return "Line " + Line.Number + " - " + Name;
         }
     }
 }

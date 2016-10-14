@@ -44,7 +44,7 @@ namespace TramUrWay.Android
             RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.NearbyStopsFragment_StopList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+            recyclerView.SetAdapter(stopsAdapter = new StopsAdapter(TramUrWayApplication.Lines.SelectMany(l => l.Stops)));
         }
 
         public override void OnResume()

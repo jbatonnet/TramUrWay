@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Content.Res;
@@ -17,10 +18,12 @@ namespace TramUrWay.Android
 {
     public class Assets
     {
-
         private static Regex lineFileRegex = new Regex("^L([0-9]+).json$", RegexOptions.Compiled);
 
+        public ManualResetEvent LineLoaded { get; } = new ManualResetEvent(false);
+
         private Context context;
+        private Dictionary<Line, JObject> lineData = new Dictionary<Line, JObject>();
         private Dictionary<Route, TimeTable> timeTables = new Dictionary<Route, TimeTable>();
 
         public Assets(Context context)
@@ -28,12 +31,12 @@ namespace TramUrWay.Android
             this.context = context;
         }
 
-        public Line[] LoadLines()
+        public Line[] PreloadLines()
         {
             string[] files = context.Assets.List("");
             ConcurrentBag<Line> lines = new ConcurrentBag<Line>();
 
-            // Load lines
+            // Preload lines
             Parallel.ForEach(files, file =>
             {
                 Match lineFileMatch = lineFileRegex.Match(file);
@@ -42,12 +45,22 @@ namespace TramUrWay.Android
 
                 int lineId = int.Parse(lineFileMatch.Groups[1].Value);
                 using (Stream stream = context.Assets.Open(file))
-                    lines.Add(LoadLine(lineId, stream));
+                    lines.Add(PreloadLine(lineId, stream));
             });
+
+            // Trigger full loading
+            foreach (Line line in lines)
+            {
+                Task.Run(() =>
+                {
+                    LoadLine(line);
+                    line.Loaded.Set();
+                });
+            }
 
             return lines.OrderBy(l => l.Id).ToArray();
         }
-        private Line LoadLine(int id, Stream stream)
+        private Line PreloadLine(int id, Stream stream)
         {
             string content;
             using (StreamReader streamReader = new StreamReader(stream))
@@ -64,6 +77,16 @@ namespace TramUrWay.Android
                 Type = (LineType)Enum.Parse(typeof(LineType), lineObject["Type"].Value<string>()),
                 Image = Convert.FromBase64String(lineObject["Image"].Value<string>())
             };
+
+            foreach (var metadata in lineObject["Metadata"] as JObject)
+                line.Metadata[metadata.Key] = metadata.Value?.Value<JValue>()?.Value;
+
+            lineData.Add(line, lineObject);
+            return line;
+        }
+        private void LoadLine(Line line)
+        {
+            JObject lineObject = lineData[line];
 
             List<Stop> lineStops = new List<Stop>();
 
@@ -89,6 +112,7 @@ namespace TramUrWay.Android
                 Route route = new Route()
                 {
                     Id = routeObject["Id"].Value<int>(),
+                    Name = routeObject["Name"].Value<string>(),
                     Line = line
                 };
 
@@ -164,13 +188,11 @@ namespace TramUrWay.Android
                     route.Steps[i].Previous = i > 0 ? route.Steps[i - 1] : null;
                     route.Steps[i].Next = i < route.Steps.Length - 1 ? route.Steps[i + 1] : null;
                 }
-                
+
                 lineRoutes.Add(route);
             }
-            
-            line.Routes = lineRoutes.ToArray();
 
-            return line;
+            line.Routes = lineRoutes.ToArray();
         }
 
         private TimeSpan? ParseTimeSpan(string value)

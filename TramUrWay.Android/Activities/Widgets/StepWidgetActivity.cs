@@ -34,7 +34,6 @@ namespace TramUrWay.Android
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            App.Initialize(this);
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.StepWidgetActivity);
@@ -60,7 +59,7 @@ namespace TramUrWay.Android
             RecyclerView recyclerView = FindViewById<RecyclerView>(Resource.Id.StepWidgetActivity_StopList);
             recyclerView.SetLayoutManager(new WrapLayoutManager(this));
             recyclerView.AddItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(adapter = new StopsAdapter(App.Lines.SelectMany(l => l.Stops)));
+            recyclerView.SetAdapter(adapter = new StopsAdapter(TramUrWayApplication.Lines.SelectMany(l => l.Stops)));
 
             // Register UI events
             adapter.StopClick += Adapter_StopClick;
@@ -131,7 +130,7 @@ namespace TramUrWay.Android
         private void RegisterWidget(Step step)
         {
             // Register the widget
-            App.Config.StepWidgets.Add(appWidgetId, step);
+            TramUrWayApplication.Config.StepWidgets.Add(appWidgetId, step);
 
             // Update the widget
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(this);

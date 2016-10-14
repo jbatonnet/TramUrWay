@@ -61,7 +61,7 @@ namespace TramUrWay.Android
                     if (routeSegmentObject == null)
                         throw new Exception("Unable to decode specified route information");
 
-                    Line line = App.GetLine(routeSegmentObject["Line"].Value<int>());
+                    Line line = TramUrWayApplication.GetLine(routeSegmentObject["Line"].Value<int>());
 
                     int fromRouteId = routeSegmentObject["From.Route"].Value<int>();
                     int fromStopId = routeSegmentObject["From.Stop"].Value<int>();
@@ -168,7 +168,7 @@ namespace TramUrWay.Android
 
             foreach (RouteSegment segment in routeSegments)
             {
-                Bitmap stopIcon = Utils.GetStopIconForLine(this, segment.Line, App.MapStopIconSize);
+                Bitmap stopIcon = Utils.GetStopIconForLine(this, segment.Line, TramUrWayApplication.MapStopIconSize);
 
                 position = segment.From.Trajectory?.First()?.Position ?? segment.From.Stop.Position;
 

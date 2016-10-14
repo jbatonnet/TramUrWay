@@ -18,134 +18,64 @@ namespace TramUrWay.Android
 {
     public class WebService
     {
-        // http://www.tam-direct.com (Down)
-        // http://e-tam.fr (Down)
-        // http://tam.mobitrans.fr
-        // http://37.59.49.161
-
-        private const string webServiceOldUrl = "http://tam.mobitrans.fr/webservice";
-        private const string webServiceNewUrl = "https://apimobile.tam-voyages.com";
-
-        public IEnumerable<TimeStep> GetLiveTimeSteps()
+        private class CacheEntry
         {
-            //string content;
-            //using (StreamReader reader = new StreamReader(context.Assets.Open("getDetails.json")))
-            //    content = reader.ReadToEnd();
-
-            const string url = webServiceOldUrl + "/data.php?pattern=getDetails";
-            string content = new WebClient().DownloadString(url);
-
-            DateTime now = DateTime.Now;
-            DayOfWeek referenceDay = now.DayOfWeek;
-            DateTime referenceDate = now.DayOfWeek == referenceDay ? now.Date : now.Date.AddDays(-1);
-
-            JObject data = JsonConvert.DeserializeObject(content) as JObject;
-            TimeSpan lastTime = TimeSpan.Zero;
-
-            JArray allersData = data["aller"] as JArray;
-            foreach (JToken allerData in allersData)
-            {
-                int diff = allerData[5].Value<int>();
-                if (diff <= 0)
-                    continue;
-
-                int lineId = allerData[0].Value<int>();
-                bool theorical = allerData[2].Value<int>() != 0;
-                TimeSpan time = TimeSpan.Parse(allerData[3].Value<string>());
-                int stopId = allerData[4].Value<int>();
-                string end = allerData[6].Value<string>();
-
-                Line line = App.GetLine(lineId);
-                if (line == null)
-                    continue;
-
-                Step step = line.Routes.SelectMany(r => r.Steps).FirstOrDefault(s => s.Stop.Id == stopId);
-                if (step == null)
-                {
-                    Log.Warning("Could not find any stop with id {0} on line {1}", stopId, lineId);
-                    continue;
-                }
-
-                Step destination = step.Route.Steps.FirstOrDefault(s => Utils.Likes(s.Stop.Name, end));
-                if (destination == null)
-                {
-                    Log.Debug("Could not find any stop with name \"{0}\" on line {1}, building a fake one", end, lineId);
-                    destination = new Step() { Stop = new Stop() { Name = end }, Direction = step.Direction, Route = step.Route };
-                }
-
-                if (time < lastTime)
-                    time = time.Add(TimeSpan.FromDays(1));
-                else
-                    lastTime = time;
-
-                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online, Destination = destination };
-            }
-
-            lastTime = TimeSpan.Zero;
-
-            JArray retoursData = data["retour"] as JArray;
-            foreach (JToken retourData in retoursData)
-            {
-                int diff = retourData[5].Value<int>();
-                if (diff <= 0)
-                    continue;
-
-                int lineId = retourData[0].Value<int>();
-                bool theorical = retourData[2].Value<int>() != 0;
-                TimeSpan time = TimeSpan.Parse(retourData[3].Value<string>());
-                int stopId = retourData[4].Value<int>();
-                string end = retourData[6].Value<string>();
-
-                Line line = App.GetLine(lineId);
-                if (line == null)
-                    continue;
-
-                Step step = line.Routes.SelectMany(r => r.Steps).FirstOrDefault(s => s.Stop.Id == stopId);
-                if (step == null)
-                {
-                    Log.Warning("Could not find any stop with id {0} on line {1}", stopId, lineId);
-                    continue;
-                }
-
-                Step destination = step.Route.Steps.FirstOrDefault(s => Utils.Likes(s.Stop.Name, end));
-                if (destination == null)
-                {
-                    Log.Debug("Could not find any stop with name \"{0}\" on line {1}, building a fake one", end, lineId);
-                    destination = new Step() { Stop = new Stop() { Name = end }, Direction = step.Direction, Route = step.Route };
-                }
-
-                if (time < lastTime)
-                    time = time.Add(TimeSpan.FromDays(1));
-                else
-                    lastTime = time;
-
-                yield return new TimeStep() { Step = step, Date = referenceDate.Add(time), Source = theorical ? TimeStepSource.Theorical : TimeStepSource.Online, Destination = destination };
-            }
+            public DateTime Date { get; set; }
+            public TimeStep[] Steps { get; set; }
         }
+        
+        private const string webServiceUrl = "https://apimobile.tam-voyages.com";
+
+        private Dictionary<Line, CacheEntry> cache = new Dictionary<Line, CacheEntry>();
 
         public IEnumerable<TimeStep> GetLiveTimeSteps(Line line)
         {
-            return GetLiveTimeSteps().Where(s => s.Step.Route.Line == line);
-            /*
-            string url = webServiceNewUrl + "/api/v1/hours/next/line";
+            CacheEntry cacheEntry;
 
-            // Build request
-            JObject query = new JObject()
+            if (!cache.TryGetValue(line, out cacheEntry) || (DateTime.Now - cacheEntry.Date).TotalSeconds > TramUrWayApplication.MinimumServiceDelay)
             {
-                ["directions"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
-                ["citywayLineId"] = line.Id,
-                ["lineNumber"] = line.Number,
-                ["stops"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
-                ["urbanLine"] = 1
-            };
+                string url = webServiceUrl + "/api/v1/hours/next/line";
 
-            // Send the query
-            string data = new WebClient().UploadString(url, query.ToString());
+                // Build request
+                JObject query = new JObject()
+                {
+                    ["directions"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
+                    ["citywayLineId"] = line.Id,
+                    ["lineNumber"] = line.Number,
+                    ["stops"] = new JArray(line.Routes.SelectMany(r => r.Steps).Select(s => s.Stop.Id).ToArray()),
+                    ["urbanLine"] = line.Metadata?["Urban"] as bool? ?? false ? 1 : 0
+                };
 
-            // Parse results
-            JObject result = JsonConvert.DeserializeObject(data) as JObject;
+                // Send the query
+                Log.Info("Downloading live timesteps from service for line {0}", line.Id);
+                string data = new WebClient().UploadString(url, query.ToString());
 
-            yield break;*/
+                // Parse results
+                JArray results = JsonConvert.DeserializeObject(data) as JArray;
+                List<TimeStep> timeSteps = new List<TimeStep>();
+
+                foreach (JObject resultData in results)
+                {
+                    int stopId = resultData["cityway_stop_id"].Value<int>();
+                    int directionId = resultData["line_direction"].Value<int>();
+                    Step step = line.Routes.SelectMany(r => r.Steps).FirstOrDefault(s => s.Stop.Id == stopId);
+
+                    JArray timeStepsData = resultData["stop_next_time"].Value<JArray>();
+                    foreach (JObject timeStepData in timeStepsData)
+                    {
+                        int hour = timeStepData["passing_hour"].Value<int>();
+                        int minute = timeStepData["passing_minute"].Value<int>();
+
+                        DateTime date = DateTime.Now.Date.AddHours(hour).AddMinutes(minute);
+
+                        timeSteps.Add(new TimeStep() { Step = step, Date = date, Source = TimeStepSource.Online });
+                    }
+                }
+
+                cache[line] = cacheEntry = new CacheEntry() { Date = DateTime.Now, Steps = timeSteps.ToArray() };
+            }
+
+            return cacheEntry.Steps;
         }
     }
 }

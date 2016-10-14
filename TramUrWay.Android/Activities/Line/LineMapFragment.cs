@@ -42,7 +42,7 @@ namespace TramUrWay.Android
 
             public void OnAnimationUpdate(ValueAnimator animation)
             {
-                if (!App.Config.ExperimentalFeatures)
+                if (!TramUrWayApplication.Config.ExperimentalFeatures)
                     return;
                 if (cancellationTokenSource.IsCancellationRequested)
                     return;
@@ -134,8 +134,8 @@ namespace TramUrWay.Android
             // Preload icons
             Task iconLoader = Task.Run(() =>
             {
-                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetStopIconForLine(Activity, line, App.MapStopIconSize));
-                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetTransportIconForLine(Activity, line, App.MapTransportIconSize));
+                stopBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetStopIconForLine(Activity, line, TramUrWayApplication.MapStopIconSize));
+                transportBitmapDescriptor = BitmapDescriptorFactory.FromBitmap(Utils.GetTransportIconForLine(Activity, line, TramUrWayApplication.MapTransportIconSize));
             });
 
             // Add a polyline between steps
@@ -211,9 +211,9 @@ namespace TramUrWay.Android
             timeStepsCache = timeSteps.ToArray();
             transportsCache = transports.ToArray();
 
-            if (!App.Config.ExperimentalFeatures)
+            if (!TramUrWayApplication.Config.ExperimentalFeatures)
                 return;
-            if (googleMap == null)
+            if (googleMap == null || Activity == null)
                 return;
 
             List<Transport> unusedTransports = transportMarkers.Keys.ToList();
@@ -259,17 +259,17 @@ namespace TramUrWay.Android
 
         private void RefreshTimes()
         {
-            if (!App.Config.ExperimentalFeatures)
+            if (!TramUrWayApplication.Config.ExperimentalFeatures)
                 return;
 
             DateTime now = DateTime.Now;
             transportMarkers.Keys.UpdateProgress(now);
 
-            RefreshMarkers();
+            //RefreshMarkers();
         }
         private void RefreshMarkers()
         {
-            if (!App.Config.ExperimentalFeatures)
+            if (!TramUrWayApplication.Config.ExperimentalFeatures)
                 return;
 
             // Update each marker position
@@ -295,7 +295,7 @@ namespace TramUrWay.Android
 
         private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
         {
-            if (!App.Config.ExperimentalFeatures)
+            if (!TramUrWayApplication.Config.ExperimentalFeatures)
                 return;
 
             Activity.RunOnUiThread(() =>

@@ -30,7 +30,7 @@ namespace TramUrWay.Android
 
         public override void OnEnabled(Context context)
         {
-            if (App.Config.EnableWidgetRefresh)
+            if (TramUrWayApplication.Config.EnableWidgetRefresh)
                 WidgetUpdateService.Start(context, true);
         }
         public override void OnDisabled(Context context)
@@ -40,7 +40,7 @@ namespace TramUrWay.Android
             AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
             int[] appWidgetIds = appWidgetManager.GetAppWidgetIds(widgetComponent);
 
-            if (appWidgetIds.Length == 0 && App.Config.EnableWidgetRefresh)
+            if (appWidgetIds.Length == 0 && TramUrWayApplication.Config.EnableWidgetRefresh)
                 WidgetUpdateService.Stop(context);
         }
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -49,8 +49,6 @@ namespace TramUrWay.Android
         }
         public override void OnReceive(Context context, Intent intent)
         {
-            App.Initialize(context);
-
             if (intent.Action == AppWidgetManager.ActionAppwidgetUpdate)
             {
                 AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
@@ -83,7 +81,7 @@ namespace TramUrWay.Android
             foreach (int appWidgetId in appWidgetIds)
             {
                 Step step;
-                if (!App.Config.StepWidgets.TryGetValue(appWidgetId, out step))
+                if (!TramUrWayApplication.Config.StepWidgets.TryGetValue(appWidgetId, out step))
                     return;
 
                 RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.StepWidget);
@@ -99,24 +97,24 @@ namespace TramUrWay.Android
 
                 // Update widget UI
                 remoteViews.SetTextViewText(Resource.Id.StepWidget_Name, step.Stop.Name);
-                remoteViews.SetViewVisibility(Resource.Id.StepWidget_Description, App.Config.EnableWidgetRefresh ? ViewStates.Visible : ViewStates.Gone);
+                remoteViews.SetViewVisibility(Resource.Id.StepWidget_Description, TramUrWayApplication.Config.EnableWidgetRefresh ? ViewStates.Visible : ViewStates.Gone);
 
                 Bitmap bitmap = Utils.GetTransportIconForLine(context, step.Route.Line, 48);
                 remoteViews.SetImageViewBitmap(Resource.Id.StepWidget_Icon, bitmap);
 
                 // Get step information
-                if (App.Config.EnableWidgetRefresh)
+                if (TramUrWayApplication.Config.EnableWidgetRefresh)
                 {
                     DateTime now = DateTime.Now;
                     TimeStep[] timeSteps = null;
 
                     try
                     {
-                        timeSteps = App.Service.GetLiveTimeSteps(step.Route.Line).Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
+                        timeSteps = TramUrWayApplication.Service.GetLiveTimeSteps(step.Route.Line).Where(t => t.Step.Stop == step.Stop).OrderBy(t => t.Date).Take(2).ToArray();
                     }
                     catch (Exception e)
                     {
-                        timeSteps = App.Lines.SelectMany(l => l.Routes)
+                        timeSteps = TramUrWayApplication.Lines.SelectMany(l => l.Routes)
                                              .SelectMany(r => r.Steps.Where(s => s.Stop.Name == step.Stop.Name))
                                              .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
                                              .Take(2)

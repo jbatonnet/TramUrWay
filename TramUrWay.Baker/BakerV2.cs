@@ -24,13 +24,13 @@ namespace TramUrWay.Baker
 
         public static Line[] Lines { get; private set; }
 
-        private static Dictionary<Line, int> lineIds = new Dictionary<Line, int>();
-        private static Dictionary<Line, int> lineTamIds = new Dictionary<Line, int>();
-        private static Dictionary<Line, int> lineCitywayIds = new Dictionary<Line, int>();
+        private static Association<Line, int> lineIds = new Association<Line, int>();
+        private static Association<Line, int> lineTamIds = new Association<Line, int>();
+        private static Association<Line, int> lineCitywayIds = new Association<Line, int>();
 
-        private static Dictionary<Stop, int> stopIds = new Dictionary<Stop, int>();
-        private static Dictionary<Stop, int> stopTamIds = new Dictionary<Stop, int>();
-        private static Dictionary<Stop, int> stopCitywayIds = new Dictionary<Stop, int>();
+        private static Association<Stop, int> stopIds = new Association<Stop, int>();
+        private static Association<Stop, int> stopTamIds = new Association<Stop, int>();
+        private static Association<Stop, int> stopCitywayIds = new Association<Stop, int>();
 
         public static Line[] Bake()
         {
@@ -44,7 +44,7 @@ namespace TramUrWay.Baker
         {
             Line line;
 
-            if (lineCitywayIds.TryGetKey(citywayId, out line))
+            if (lineCitywayIds.TryGetLeft(citywayId, out line))
                 return line;
             else
                 return null;
@@ -53,7 +53,7 @@ namespace TramUrWay.Baker
         {
             Stop stop;
 
-            if (stopIds.TryGetKey(id, out stop))
+            if (stopIds.TryGetLeft(id, out stop))
                 return stop;
             else
                 return null;
@@ -62,7 +62,7 @@ namespace TramUrWay.Baker
         {
             Stop stop;
 
-            if (stopTamIds.TryGetKey(tamId, out stop))
+            if (stopTamIds.TryGetLeft(tamId, out stop))
                 return stop;
             else
                 return null;
@@ -71,7 +71,7 @@ namespace TramUrWay.Baker
         {
             Stop stop;
 
-            if (stopCitywayIds.TryGetKey(citywayId, out stop))
+            if (stopCitywayIds.TryGetLeft(citywayId, out stop))
                 return stop;
             else
                 return null;
@@ -106,6 +106,8 @@ namespace TramUrWay.Baker
 
                     string lineColor = (string)reader["color"];
                     line.Color = Convert.ToInt32(lineColor.TrimStart('#'), 16);
+
+                    line.Metadata["urban"] = (bool)reader["urban"];
 
                     lines.Add(line);
                 }
@@ -191,7 +193,7 @@ namespace TramUrWay.Baker
                 line.Routes = lineRoutes.ToArray();
             }
 
-            Lines = lines.ToArray();
+            Lines = lines.Where(l => l.Id < 6).ToArray();
         }
 
         // Helpers

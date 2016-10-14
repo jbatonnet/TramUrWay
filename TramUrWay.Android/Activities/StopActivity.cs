@@ -51,11 +51,11 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("Stop"))
             {
                 int stopId = extras.GetInt("Stop");
-                stop = App.GetStop(stopId);
+                stop = TramUrWayApplication.GetStop(stopId);
             }
 #if DEBUG
             else
-                stop = App.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == "Saint-Lazare");
+                stop = TramUrWayApplication.Lines.SelectMany(l => l.Stops).FirstOrDefault(s => s.Name == "Saint-Lazare");
 #endif
             if (stop == null)
                 throw new Exception("Could not find any stop matching the specified id");
@@ -63,7 +63,7 @@ namespace TramUrWay.Android
             if (extras != null && extras.ContainsKey("Line"))
             {
                 int lineId = extras.GetInt("Line");
-                line = App.GetLine(lineId);
+                line = TramUrWayApplication.GetLine(lineId);
             }
             else
                 line = stop.Line;
@@ -127,7 +127,7 @@ namespace TramUrWay.Android
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     Refresh();
-                    await Task.Delay(App.GlobalUpdateDelay * 1000);
+                    await Task.Delay(TramUrWayApplication.GlobalUpdateDelay * 1000);
                 }
             });
 
@@ -200,18 +200,18 @@ namespace TramUrWay.Android
                 // Online time steps
                 try
                 {
-                    if (App.Config.OfflineMode)
+                    if (TramUrWayApplication.Config.OfflineMode)
                         throw new Exception();
 
                     swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-                    timeSteps = App.Service.GetLiveTimeSteps(line).Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
+                    timeSteps = TramUrWayApplication.Service.GetLiveTimeSteps(line).Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
                     snackbar?.Dismiss();
                 }
                 catch (Exception e)
                 {
                     DateTime now = DateTime.Now;
-                    timeSteps = App.Lines.SelectMany(l => l.Routes)
+                    timeSteps = TramUrWayApplication.Lines.SelectMany(l => l.Routes)
                                          .SelectMany(r => r.Steps.Where(s => s.Stop.Name == stop.Name))
                                          .SelectMany(s => s.Route.TimeTable?.GetStepsFromStep(s, now)?.Take(3) ?? Enumerable.Empty<TimeStep>())
                                          .ToArray();
@@ -221,10 +221,10 @@ namespace TramUrWay.Android
                         if (snackbar == null)
                         {
                             snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite);
-                            if (App.Config.OfflineMode)
-                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
+                            if (TramUrWayApplication.Config.OfflineMode)
+                                snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
                             else
-                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+                                snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
 
 
                             snackbar.Show();
@@ -237,10 +237,10 @@ namespace TramUrWay.Android
                         if (snackbar == null)
                         {
                             snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite);
-                            if (App.Config.OfflineMode)
-                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
+                            if (TramUrWayApplication.Config.OfflineMode)
+                                snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
                             else
-                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
+                                snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
 
 
                             snackbar.Show();
