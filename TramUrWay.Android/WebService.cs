@@ -59,6 +59,7 @@ namespace TramUrWay.Android
                     int stopId = resultData["cityway_stop_id"].Value<int>();
                     int directionId = resultData["line_direction"].Value<int>();
                     Step step = line.Routes.SelectMany(r => r.Steps).FirstOrDefault(s => s.Stop.Id == stopId);
+                    Step direction = step.Route.Steps.FirstOrDefault(s => s.Stop.Id == directionId);
 
                     JArray timeStepsData = resultData["stop_next_time"].Value<JArray>();
                     foreach (JObject timeStepData in timeStepsData)
@@ -68,7 +69,7 @@ namespace TramUrWay.Android
 
                         DateTime date = DateTime.Now.Date.AddHours(hour).AddMinutes(minute);
 
-                        timeSteps.Add(new TimeStep() { Step = step, Date = date, Source = TimeStepSource.Online });
+                        timeSteps.Add(new TimeStep() { Step = step, Date = date, Source = TimeStepSource.Online, Destination = direction });
                     }
                 }
 

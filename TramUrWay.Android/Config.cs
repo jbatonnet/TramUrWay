@@ -168,7 +168,12 @@ namespace TramUrWay.Android
                             try
                             {
                                 int stopId = stopObject["StopId"].Value<int>();
-                                favoriteStops.Add(TramUrWayApplication.GetStop(stopId));
+                                int? lineId = stopObject.Property("LineId") == null ? null : stopObject["LineId"].Value<int>() as int?;
+
+                                Line[] lines = TramUrWayApplication.Lines.Where(l => lineId.HasValue ? (l.Id == lineId) : true).ToArray();
+                                Stop stop = lines.SelectMany(l => l.Stops).First(s => s.Id == stopId);
+
+                                favoriteStops.Add(stop);
                             }
                             catch
                             {
@@ -185,7 +190,8 @@ namespace TramUrWay.Android
                         {
                             JObject stopObject = new JObject()
                             {
-                                ["StopId"] = stop.Id
+                                ["StopId"] = stop.Id,
+                                ["LineId"] = stop.Line.Id
                             };
 
                             stopsData.Add(stopObject.ToString());
@@ -284,7 +290,7 @@ namespace TramUrWay.Android
 
         public static bool GetIsFavorite(this Stop me)
         {
-            return TramUrWayApplication.Config.FavoriteStops.Any(s => s.Id == me.Id);
+            return TramUrWayApplication.Config.FavoriteStops.Any(s => s.Id == me.Id && s.Line.Id == me.Line.Id);
         }
         public static void SetIsFavorite(this Stop me, bool value)
         {

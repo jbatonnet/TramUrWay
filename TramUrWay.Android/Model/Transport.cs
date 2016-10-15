@@ -20,7 +20,15 @@ namespace TramUrWay.Android
         public static void Update(this List<Transport> me, IEnumerable<TimeStep> steps, DateTime dateTime)
         {
             // Keep only the first steps for each stop
-            steps = steps.GroupBy(s => s.Step).Select(g => g.OrderBy(s => s.Date).First()).ToArray();
+            steps = steps.GroupBy(s => s.Step)
+                         .Select(g =>
+                         {
+                             TimeStep[] timeSteps = g.OrderBy(s => s.Date).ToArray();
+
+                             TimeStep result = timeSteps.Where(ts => ts.Date > dateTime).FirstOrDefault();
+                             return result ?? timeSteps.FirstOrDefault();
+                         })
+                         .ToArray();
 
             // Sort by lines
             Dictionary<Line, List<Transport>> lineTransports = me.GroupBy(t => t.Route.Line).ToDictionary(g => g.Key, g => g.ToList());

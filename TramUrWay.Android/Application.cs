@@ -66,9 +66,20 @@ namespace TramUrWay.Android
             Service = new WebService();
 
 #if DEBUG
+            // Force load lines
+            Lines.First(l => l.Number == 1).Loaded.WaitOne();
+            Lines.First(l => l.Number == 2).Loaded.WaitOne();
+
             // Enable experimental features on debug builds
             Config.ExperimentalFeatures = true;
             Config.EnableWidgetRefresh = true;
+            Config.OfflineMode = true;
+
+            // Setup some favorites
+            Config.FavoriteStops.Clear();
+            Config.FavoriteStops.Add(Lines.First(l => l.Number == 1).Stops.First(s => s.Name == "Odysseum"));
+            Config.FavoriteStops.Add(Lines.First(l => l.Number == 2).Stops.First(s => s.Name == "Saint-Lazare"));
+            Config.FavoriteStops.Add(Lines.First(l => l.Number == 2).Stops.First(s => s.Name == "Gare Saint-Roch"));
 #endif
 
             // Trigger widgets update
