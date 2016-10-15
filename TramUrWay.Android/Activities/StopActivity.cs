@@ -163,7 +163,7 @@ namespace TramUrWay.Android
 
                 case Resource.Id.StopMenu_Route:
                     Intent intent = new Intent(this, typeof(RoutesActivity));
-                    intent.PutExtra("From", stop.Id);
+                    intent.PutExtra("To", stop.Id);
                     StartActivity(intent);
                     break;
             }
@@ -205,7 +205,12 @@ namespace TramUrWay.Android
 
                     swipeRefresh.Post(() => swipeRefresh.Refreshing = true);
 
-                    timeSteps = TramUrWayApplication.Service.GetLiveTimeSteps(line).Where(t => t.Step.Stop.Name == stop.Name).OrderBy(t => t.Date).ToArray();
+                    timeSteps = TramUrWayApplication.Lines.Where(l => l.Stops.Any(s => s.Name == stop.Name))
+                                                          .SelectMany(l => TramUrWayApplication.Service.GetLiveTimeSteps(l))
+                                                          .Where(t => t.Step.Stop.Name == stop.Name)
+                                                          .OrderBy(t => t.Date)
+                                                          .ToArray();
+
                     snackbar?.Dismiss();
                 }
                 catch (Exception e)
@@ -222,9 +227,9 @@ namespace TramUrWay.Android
                         {
                             snackbar = Snackbar.Make(swipeRefresh, "Données hors-ligne", Snackbar.LengthIndefinite);
                             if (TramUrWayApplication.Config.OfflineMode)
-                                snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
+                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
                             else
-                                snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
 
 
                             snackbar.Show();
@@ -238,9 +243,9 @@ namespace TramUrWay.Android
                         {
                             snackbar = Snackbar.Make(swipeRefresh, "Aucune donnée disponible", Snackbar.LengthIndefinite);
                             if (TramUrWayApplication.Config.OfflineMode)
-                                snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
+                                snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
                             else
-                                snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
+                                snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
 
 
                             snackbar.Show();

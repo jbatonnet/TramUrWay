@@ -27,11 +27,15 @@ namespace TramUrWay.Android
         public override string Title => "Favoris";
 
         private LinesAdapter linesAdapter;
-        private StopsAdapter stopsAdapter;
+        private GenericStopsAdapter stopsAdapter;
+        private View favoritesView, noFavoritesView;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.HomeFavoritesFragment, container, false);
+
+            favoritesView = view.FindViewById(Resource.Id.FavoritesFragment_Favorites);
+            noFavoritesView = view.FindViewById(Resource.Id.FavoritesFragment_NoFavorites);
 
             RecyclerView linesRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteLineList);
             linesRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
@@ -41,36 +45,53 @@ namespace TramUrWay.Android
             RecyclerView stopsRecyclerView = view.FindViewById<RecyclerView>(Resource.Id.FavoritesFragment_FavoriteStopList);
             stopsRecyclerView.SetLayoutManager(new WrapLayoutManager(Activity));
             stopsRecyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            stopsRecyclerView.SetAdapter(stopsAdapter = new StopsAdapter());
+            stopsRecyclerView.SetAdapter(stopsAdapter = new GenericStopsAdapter());
+
+            stopsAdapter.Click += StopsAdapter_Click;
+
+            RefreshFavorites();
 
             return view;
         }
         protected override async void OnGotFocus()
         {
-            View favoritesView = View.FindViewById(Resource.Id.FavoritesFragment_Favorites);
-            View noFavoritesView = View.FindViewById(Resource.Id.FavoritesFragment_NoFavorites);
+            await Task.Run(new Action(RefreshFavorites));
+        }
 
-            await Task.Run(() =>
+        private void StopsAdapter_Click(GenericAdapter<Stop> adapter, View view, Stop item)
+        {
+            Intent intent = new Intent(view.Context, typeof(StopActivity));
+            intent.PutExtra("Stop", item.Id);
+            intent.PutExtra("Line", item.Line.Id);
+
+            view.Context.StartActivity(intent);
+        }
+
+        private void RefreshFavorites()
+        {
+            foreach (Line line in TramUrWayApplication.Lines)
+                line.Loaded.WaitOne();
+
+            Line[] favoriteLines = TramUrWayApplication.Config.FavoriteLines.ToArray();
+            Stop[] favoriteStops = TramUrWayApplication.Config.FavoriteStops.GroupBy(s => Utils.Hash(s.Line.Id, s.Name))
+                                                                            .Select(g => g.First())
+                                                                            .ToArray();
+
+            Log.Info("{0} favorite lines", favoriteLines.Length);
+            Log.Info("{0} favorite stops", favoriteStops.Length);
+
+            bool favorites = favoriteLines.Length > 0 || favoriteStops.Length > 0;
+
+            Activity.RunOnUiThread(() =>
             {
-                foreach (Line line in TramUrWayApplication.Lines)
-                    line.Loaded.WaitOne();
+                favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
+                noFavoritesView.Visibility = favorites ? ViewStates.Gone : ViewStates.Visible;
 
-                Line[] favoriteLines = TramUrWayApplication.Config.FavoriteLines.ToArray();
-                Stop[] favoriteStops = TramUrWayApplication.Config.FavoriteStops.ToArray();
-
-                bool favorites = favoriteLines.Length > 0 || favoriteStops.Length > 0;
-
-                Activity.RunOnUiThread(() =>
+                if (favorites)
                 {
-                    favoritesView.Visibility = favorites ? ViewStates.Visible : ViewStates.Gone;
-                    noFavoritesView.Visibility = favorites ? ViewStates.Gone : ViewStates.Visible;
-
-                    if (favorites)
-                    {
-                        linesAdapter.Items = favoriteLines;
-                        stopsAdapter.Update(favoriteStops);
-                    }
-                });
+                    linesAdapter.Items = favoriteLines;
+                    stopsAdapter.Items = favoriteStops.GroupBy(s => Utils.Hash(s.Line.Id, s.Name)).Select(g => g.First());
+                }
             });
         }
     }

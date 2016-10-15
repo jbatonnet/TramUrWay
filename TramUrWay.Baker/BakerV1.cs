@@ -20,7 +20,7 @@ namespace TramUrWay.Baker
 {
     internal class BakerV1
     {
-        private const string inputDirectory = @"..\..\..\Data\Été 2016";
+        private const string inputDirectory = @"..\..\..\Data\Hiver 2016";
 
         public static Line[] Lines { get; private set; }
         public static Dictionary<int, string> StepNames { get; } = new Dictionary<int, string>();
@@ -39,19 +39,6 @@ namespace TramUrWay.Baker
             LoadDurations();
             LoadTrajectories();
             LoadSpeedCurves();
-
-            // Temp
-            /*DateTime firstDate = new DateTime(2016, 5, 6, 15, 30, 0);
-            DateTime secondDate = firstDate.AddSeconds(30);
-
-            TimeStep[] firstTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, firstDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
-            TimeStep[] secondTimeSteps = Lines.Where(l => l.Id < 6).SelectMany(l => l.Routes.SelectMany(r => r.Steps.SelectMany(s => r.TimeTable?.GetStepsFromStep(s, secondDate)?.Take(3) ?? Enumerable.Empty<TimeStep>()))).ToArray();
-
-            List<Transport> transports = new List<Transport>();
-            transports.Update(firstTimeSteps, firstDate);
-            transports.Update(secondTimeSteps, secondDate);*/
-
-            //TestSearch();
 
             return Lines;
         }
@@ -358,7 +345,8 @@ namespace TramUrWay.Baker
         }
         private static void LoadSpeedCurves()
         {
-            Curve defaultCurve = new Curve(x => Math.Pow(0.5 - Math.Sin(Math.PI / 2 + x * Math.PI) / 2, 1.2));
+            Curve defaultCurve = new Curve(x => x);
+            //Curve defaultCurve = new Curve(x => Math.Pow(0.5 - Math.Sin(Math.PI / 2 + x * Math.PI) / 2, 1.2));
 
             foreach (Line line in Lines)
                 foreach (Route route in line.Routes)
@@ -436,6 +424,7 @@ namespace TramUrWay.Baker
             {
                 // Last stop of line 1 is Odysseum
                 Lines.First(l => l.Number == 1).Routes.Last().Steps.Last().Stop.Name = "Odysseum";
+                Lines.First(l => l.Number == 1).Routes.Last().Name = "Vers Odysseum";
 
                 // First stop of lines 8 and 12 is Gare Saint-Roch (Pont de Sète)
                 Lines.First(l => l.Number == 8).Routes.First().Steps.First().Stop.Name = "Gare Saint-Roch (Pont de Sète)";

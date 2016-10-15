@@ -222,9 +222,9 @@ namespace TramUrWay.Android
                             {
                                 snackbar = Snackbar.Make(viewPager, "Données hors-ligne", Snackbar.LengthIndefinite);
                                 if (TramUrWayApplication.Config.OfflineMode)
-                                    snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
+                                    snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
                                 else
-                                    snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
+                                    snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
 
                                 snackbar.Show();
                             }
@@ -239,9 +239,9 @@ namespace TramUrWay.Android
                             {
                                 snackbar = Snackbar.Make(viewPager, "Aucune donnée disponible", Snackbar.LengthIndefinite);
                                 if (TramUrWayApplication.Config.OfflineMode)
-                                    snackbar = snackbar.SetAction((string)"Activer", (Action<View>)this.Snackbar_Activate);
+                                    snackbar = snackbar.SetAction("Activer", Snackbar_Activate);
                                 else
-                                    snackbar = snackbar.SetAction((string)"Réessayer", (Action<View>)this.Snackbar_Retry);
+                                    snackbar = snackbar.SetAction("Réessayer", Snackbar_Retry);
 
                                 snackbar.Show();
                             }

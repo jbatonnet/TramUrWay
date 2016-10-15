@@ -368,9 +368,9 @@ namespace TramUrWay.Android
                 {
                     noResultsView.Visibility = routeSegments.Count == 0 ? ViewStates.Visible : ViewStates.Gone;
                     recyclerView.Visibility = routeSegments.Count > 0 ? ViewStates.Visible : ViewStates.Gone;
-                });
 
-                swipeRefresh?.Post(() => swipeRefresh.Refreshing = false);
+                    swipeRefresh?.PostDelayed(() => swipeRefresh.Refreshing = false, 200);
+                });
             });
         }
 

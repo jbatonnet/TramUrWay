@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,14 @@ namespace TramUrWay.Android
 
         private Position? position;
 
-        public GenericStopsAdapter(IEnumerable<Stop> stops) : base(stops, Resource.Layout.StopItem) { }
+        public GenericStopsAdapter() : base(Resource.Layout.StopItem)
+        {
+            Sort = Comparer<Stop>.Create((a, b) => string.Compare(a.Name, b.Name));
+        }
+        public GenericStopsAdapter(IEnumerable<Stop> stops) : base(stops, Resource.Layout.StopItem)
+        {
+            Sort = Comparer<Stop>.Create((a, b) => string.Compare(a.Name, b.Name));
+        }
 
         protected override void OnBind(View view, Stop stop)
         {
@@ -59,22 +67,21 @@ namespace TramUrWay.Android
             favoriteView.SetImageResource(stop.GetIsFavorite() ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
             //favoriteView.Visibility = StopClick != null ? ViewStates.Gone : ViewStates.Visible;
         }
-        protected override void OnClick(View view, Stop stop)
+        protected override void OnUnbind(View view, Stop item)
         {
-            /*if (StopClick != null)
-                StopClick.Invoke(this, stop.Value.First());
-            else
-            {
-                Intent intent = new Intent(view.Context, typeof(StopActivity));
-                intent.PutExtra("Stop", stop.Value.First().Id);
-
-                view.Context.StartActivity(intent);
-            }*/
+            ImageView favoriteView = view.FindViewById<ImageView>(Resource.Id.StopItem_Favorite);
+            favoriteView.Click -= FavoriteView_Click;
         }
 
         private void FavoriteView_Click(object sender, EventArgs e)
         {
-            
+            ImageView favoriteView = sender as ImageView;
+            Stop stop = GetItemFromView(favoriteView.Parent as View);
+
+            bool favorite = !stop.GetIsFavorite();
+            stop.SetIsFavorite(favorite);
+
+            favoriteView.SetImageResource(favorite ? Resource.Drawable.ic_star : Resource.Drawable.ic_star_border);
         }
     }
 }

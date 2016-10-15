@@ -20,6 +20,7 @@ using Android.Widget;
 using static Android.Support.V7.Widget.SearchView;
 using Java.Lang;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace TramUrWay.Android
 {
@@ -27,44 +28,61 @@ namespace TramUrWay.Android
     {
         public override string Title => "Stations";
 
-        private StopsAdapter stopsAdapter = new StopsAdapter();
-        private bool loaded = false;
+        private GenericStopsAdapter stopsAdapter;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            return inflater.Inflate(Resource.Layout.HomeStopsFragment, container, false);
-        }
-        public override void OnActivityCreated(Bundle savedInstanceState)
-        {
-            base.OnActivityCreated(savedInstanceState);
+            View view = inflater.Inflate(Resource.Layout.HomeStopsFragment, container, false);
 
-            RecyclerView recyclerView = View.FindViewById<RecyclerView>(Resource.Id.StopsFragment_StopList);
+            // Load view
+            RecyclerView recyclerView = view.FindViewById<RecyclerView>(Resource.Id.StopsFragment_StopList);
             recyclerView.SetLayoutManager(new LinearLayoutManager(Activity));
             recyclerView.AddItemDecoration(new DividerItemDecoration(Activity, LinearLayoutManager.Vertical));
-            recyclerView.SetAdapter(stopsAdapter);
-        }
-        protected override async void OnGotFocus()
-        {
-            if (loaded)
-                return;
+            recyclerView.SetAdapter(stopsAdapter = new GenericStopsAdapter());
 
-            loaded = true;
+            // Setup adapter
+            stopsAdapter.Click += StopsAdapter_Click;
+            stopsAdapter.Filter = (stop, search) =>
+            {
+                // ASCII normalize strings
+                string value = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(stop.Name.ToLowerInvariant()));
+                string pattern = Encoding.ASCII.GetString(Encoding.ASCII.GetBytes(search.ToLowerInvariant()));
 
-            await Task.Run(() =>
+                // Remove non character strings
+                value = new string(value.Select(c => char.IsLetter(c) ? c : ' ').ToArray());
+                pattern = new string(pattern.Select(c => char.IsLetter(c) ? c : ' ').ToArray());
+
+                return value.Contains(pattern);
+            };
+
+            // Trigger async loading
+            Task.Run(() =>
             {
                 foreach (Line line in TramUrWayApplication.Lines)
                     line.Loaded.WaitOne();
 
                 Activity.RunOnUiThread(() =>
                 {
-                    stopsAdapter.Update(TramUrWayApplication.Lines.SelectMany(l => l.Stops));
+                    stopsAdapter.Items = TramUrWayApplication.Lines.SelectMany(l => l.Stops)
+                                                                   .GroupBy(s => Utils.Hash(s.Line.Id, s.Name))
+                                                                   .Select(g => g.First());
                 });
             });
-        }
 
+            return view;
+        }
         public void OnQueryTextChanged(object sender, QueryTextChangeEventArgs e)
         {
-            stopsAdapter.Filter = e.NewText;
+            stopsAdapter.FilterText = e.NewText;
+        }
+
+        private void StopsAdapter_Click(GenericAdapter<Stop> adapter, View view, Stop item)
+        {
+            Intent intent = new Intent(view.Context, typeof(StopActivity));
+            intent.PutExtra("Stop", item.Id);
+            intent.PutExtra("Line", item.Line.Id);
+
+            view.Context.StartActivity(intent);
         }
     }
 }

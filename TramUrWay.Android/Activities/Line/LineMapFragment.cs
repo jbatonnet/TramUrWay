@@ -69,6 +69,7 @@ namespace TramUrWay.Android
         private SupportMapFragment mapFragment;
         private GoogleMap googleMap;
         private Dictionary<Transport, Marker> transportMarkers = new Dictionary<Transport, Marker>();
+        private Dictionary<Marker, ValueAnimator> markerAnimators = new Dictionary<Marker, ValueAnimator>();
         private Dictionary<string, Step> markerSteps = new Dictionary<string, Step>();
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
 
@@ -77,6 +78,7 @@ namespace TramUrWay.Android
 
         private TimeStep[] timeStepsCache;
         private Transport[] transportsCache;
+        private bool hasFocus = false;
 
         public LineMapFragment(Line line, Color color)
         {
@@ -87,6 +89,29 @@ namespace TramUrWay.Android
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             return inflater.Inflate(Resource.Layout.LineMapFragment, container, false);
+        }
+        public override void OnDestroyView()
+        {
+            base.OnDestroyView();
+
+            // Clean markers
+            foreach (Marker marker in transportMarkers.Values)
+                Activity.RunOnUiThread(marker.Remove);
+
+            transportMarkers.Clear();
+            markerSteps.Clear();
+
+            // Stop and clean animators
+            foreach (ValueAnimator valueAnimator in markerAnimators.Values)
+                Activity.RunOnUiThread(valueAnimator.Pause);
+
+            markerAnimators.Clear();
+
+            // Dispose map
+            googleMap.Clear();
+            googleMap.Dispose();
+            mapFragment.Dispose();
+            mapFragment = null;
         }
         public override void OnPause()
         {
@@ -117,12 +142,20 @@ namespace TramUrWay.Android
         {
             base.OnGotFocus();
 
+            hasFocus = true;
+
             // Late load map
             if (mapFragment == null)
             {
                 mapFragment = ChildFragmentManager.FindFragmentById(Resource.Id.MapFragment_Map) as SupportMapFragment;
                 mapFragment.GetMapAsync(this);
             }
+        }
+        protected override void OnLostFocus()
+        {
+            base.OnLostFocus();
+
+            hasFocus = false;
         }
         public void OnMapReady(GoogleMap map)
         {
@@ -252,6 +285,13 @@ namespace TramUrWay.Android
                 transportMarkers.Remove(transport);
 
                 Activity.RunOnUiThread(marker.Remove);
+
+                ValueAnimator valueAnimator;
+                if (markerAnimators.TryGetValue(marker, out valueAnimator))
+                {
+                    Activity.RunOnUiThread(valueAnimator.Cancel);
+                    markerAnimators.Remove(marker);
+                }
             }
 
             RefreshMarkers();
@@ -265,7 +305,8 @@ namespace TramUrWay.Android
             DateTime now = DateTime.Now;
             transportMarkers.Keys.UpdateProgress(now);
 
-            //RefreshMarkers();
+            if (hasFocus)
+                RefreshMarkers();
         }
         private void RefreshMarkers()
         {
@@ -284,11 +325,21 @@ namespace TramUrWay.Android
                 LatLng quickPosition = new LatLng(quickFrom.Latitude + (quickTo.Latitude - quickFrom.Latitude) * transport.Progress, quickFrom.Longitude + (quickTo.Longitude - quickFrom.Longitude) * transport.Progress);
 
                 // Update marker
-                ValueAnimator valueAnimator = new ValueAnimator();
-                valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p), refreshCancellationTokenSource));
-                valueAnimator.SetFloatValues(0, 1);
-                valueAnimator.SetInterpolator(new LinearInterpolator());
-                valueAnimator.SetDuration(1000);
+                ValueAnimator valueAnimator;
+                if (!markerAnimators.TryGetValue(marker, out valueAnimator))
+                {
+                    valueAnimator = new ValueAnimator();
+
+                    valueAnimator.AddUpdateListener(new MarkerAnimator(Activity, marker, transport, p => SetMarkerPosition(transport, marker, p), refreshCancellationTokenSource));
+                    valueAnimator.SetInterpolator(new LinearInterpolator());
+                    valueAnimator.SetFloatValues(0, 1);
+                    valueAnimator.SetDuration(1000);
+
+                    markerAnimators.Add(marker, valueAnimator);
+                }
+                else
+                    Activity.RunOnUiThread(valueAnimator.Cancel);
+
                 Activity.RunOnUiThread(valueAnimator.Start);
             }
         }
@@ -296,6 +347,8 @@ namespace TramUrWay.Android
         private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
         {
             if (!TramUrWayApplication.Config.ExperimentalFeatures)
+                return;
+            if (!hasFocus)
                 return;
 
             Activity.RunOnUiThread(() =>
