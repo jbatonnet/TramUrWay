@@ -25,7 +25,6 @@ namespace TramUrWay.Android
         public override string Title => "Carte";
 
         private const float DetailsThreshold = 13.5f;
-        private const float MyLocationZoom = 14.5f;
         private const float MarkerZoom = 15.5f;
 
         private View view;
@@ -178,7 +177,7 @@ namespace TramUrWay.Android
                 return;
             }
 
-            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(location.Latitude, location.Longitude), Math.Max(zoom, MyLocationZoom));
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(location.Latitude, location.Longitude), Math.Max(zoom, TramUrWayApplication.MyLocationZoom));
             googleMap.AnimateCamera(cameraUpdate);
         }
         private void GoogleMap_MarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)

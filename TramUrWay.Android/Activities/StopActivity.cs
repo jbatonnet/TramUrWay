@@ -265,7 +265,8 @@ namespace TramUrWay.Android
             if (stop != null && timeSteps != null)
             {
                 TimeStep[] lineSteps = timeSteps.Where(s => s.Step.Stop.Line == line)
-                                                .OrderBy(s => s.Date)
+                                                .OrderBy(s => s.Step.Route.Id)
+                                                .ThenBy(s => s.Date)
                                                 .ToArray();
                 listStopList.SetAdapter(new TimeStepsAdapter(lineSteps));
 

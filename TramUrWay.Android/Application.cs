@@ -37,6 +37,8 @@ namespace TramUrWay.Android
         public const int MapStopIconSize = 10;
         public const int MapTransportIconSize = 22;
 
+        public const float MyLocationZoom = 14.5f;
+
         public static Config Config { get; private set; }
         public new static Assets Assets { get; private set; }
         public static WebService Service { get; private set; }
@@ -76,10 +78,10 @@ namespace TramUrWay.Android
             Config.OfflineMode = true;
 
             // Setup some favorites
-            Config.FavoriteStops.Clear();
+            /*Config.FavoriteStops.Clear();
             Config.FavoriteStops.Add(Lines.First(l => l.Number == 1).Stops.First(s => s.Name == "Odysseum"));
             Config.FavoriteStops.Add(Lines.First(l => l.Number == 2).Stops.First(s => s.Name == "Saint-Lazare"));
-            Config.FavoriteStops.Add(Lines.First(l => l.Number == 2).Stops.First(s => s.Name == "Gare Saint-Roch"));
+            Config.FavoriteStops.Add(Lines.First(l => l.Number == 2).Stops.First(s => s.Name == "Gare Saint-Roch"));*/
 #endif
 
             // Trigger widgets update

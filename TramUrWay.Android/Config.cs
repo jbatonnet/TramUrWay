@@ -290,7 +290,7 @@ namespace TramUrWay.Android
 
         public static bool GetIsFavorite(this Stop me)
         {
-            return TramUrWayApplication.Config.FavoriteStops.Any(s => s.Id == me.Id && s.Line.Id == me.Line.Id);
+            return TramUrWayApplication.Config.FavoriteStops.Any(s => s.Name == me.Name && s.Line.Id == me.Line.Id);
         }
         public static void SetIsFavorite(this Stop me, bool value)
         {

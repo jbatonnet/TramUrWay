@@ -172,6 +172,7 @@ namespace TramUrWay.Android
                 {
                     fromTextView.RequestFocus();
                     fromTextView.ShowDropDown();
+                    fromTextView.SelectAll();
 
                     fromTextView.PostDelayed(() =>
                     {
@@ -208,6 +209,7 @@ namespace TramUrWay.Android
                 {
                     toTextView.RequestFocus();
                     toTextView.ShowDropDown();
+                    toTextView.SelectAll();
 
                     toTextView.PostDelayed(() =>
                     {

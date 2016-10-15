@@ -11,7 +11,9 @@ using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Locations;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using Android.Utilities;
@@ -42,8 +44,6 @@ namespace TramUrWay.Android
 
             public void OnAnimationUpdate(ValueAnimator animation)
             {
-                if (!TramUrWayApplication.Config.ExperimentalFeatures)
-                    return;
                 if (cancellationTokenSource.IsCancellationRequested)
                     return;
 
@@ -72,6 +72,7 @@ namespace TramUrWay.Android
         private Dictionary<Marker, ValueAnimator> markerAnimators = new Dictionary<Marker, ValueAnimator>();
         private Dictionary<string, Step> markerSteps = new Dictionary<string, Step>();
         private CancellationTokenSource refreshCancellationTokenSource = new CancellationTokenSource();
+        private Snackbar snackbar;
 
         private BitmapDescriptor stopBitmapDescriptor;
         private BitmapDescriptor transportBitmapDescriptor;
@@ -162,7 +163,12 @@ namespace TramUrWay.Android
             // Register events
             googleMap = map;
             mapFragment.View.Post(OnMapLoaded);
+            googleMap.MyLocationButtonClick += GoogleMap_MyLocationButtonClick;
             googleMap.InfoWindowClick += GoogleMap_InfoWindowClick;
+
+            // Enable my location if user has granted location permission
+            if (ContextCompat.CheckSelfPermission(Activity, Manifest.Permission.AccessFineLocation) == Permission.Granted)
+                googleMap.MyLocationEnabled = true;
 
             // Preload icons
             Task iconLoader = Task.Run(() =>
@@ -214,6 +220,24 @@ namespace TramUrWay.Android
                 OnRefreshed(timeStepsCache, transportsCache);
         }
 
+        private void GoogleMap_MyLocationButtonClick(object sender, GoogleMap.MyLocationButtonClickEventArgs e)
+        {
+            snackbar?.Dismiss();
+
+            float zoom = googleMap.CameraPosition.Zoom;
+            Location location = googleMap.MyLocation;
+
+            if (location == null)
+            {
+                snackbar = Snackbar.Make(View, "Données GPS non disponibles", Snackbar.LengthIndefinite);
+                snackbar.Show();
+
+                return;
+            }
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.NewLatLngZoom(new LatLng(location.Latitude, location.Longitude), Math.Max(zoom, TramUrWayApplication.MyLocationZoom));
+            googleMap.AnimateCamera(cameraUpdate);
+        }
         private void GoogleMap_InfoWindowClick(object sender, GoogleMap.InfoWindowClickEventArgs e)
         {
             Step step = markerSteps[e.Marker.Id];
@@ -244,8 +268,6 @@ namespace TramUrWay.Android
             timeStepsCache = timeSteps.ToArray();
             transportsCache = transports.ToArray();
 
-            if (!TramUrWayApplication.Config.ExperimentalFeatures)
-                return;
             if (googleMap == null || Activity == null)
                 return;
 
@@ -299,9 +321,6 @@ namespace TramUrWay.Android
 
         private void RefreshTimes()
         {
-            if (!TramUrWayApplication.Config.ExperimentalFeatures)
-                return;
-
             DateTime now = DateTime.Now;
             transportMarkers.Keys.UpdateProgress(now);
 
@@ -310,9 +329,6 @@ namespace TramUrWay.Android
         }
         private void RefreshMarkers()
         {
-            if (!TramUrWayApplication.Config.ExperimentalFeatures)
-                return;
-
             // Update each marker position
             foreach (var pair in transportMarkers)
             {
@@ -346,8 +362,6 @@ namespace TramUrWay.Android
 
         private void SetMarkerPosition(Transport transport, Marker marker, LatLng position)
         {
-            if (!TramUrWayApplication.Config.ExperimentalFeatures)
-                return;
             if (!hasFocus)
                 return;
 
