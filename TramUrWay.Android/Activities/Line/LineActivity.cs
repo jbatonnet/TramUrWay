@@ -115,9 +115,9 @@ namespace TramUrWay.Android
 
             base.OnPause();
         }
-        protected override void OnResume()
+        protected override void OnResumeFragments()
         {
-            base.OnResume();
+            base.OnResumeFragments();
 
             // Cancel refresh tasks
             refreshCancellationTokenSource?.Cancel();
@@ -257,9 +257,13 @@ namespace TramUrWay.Android
                 RunOnUiThread(() => OnRefreshed(timeSteps, transports));
             });
         }
+
         private void OnRefreshing()
         {
-            foreach (TabFragment fragment in fragments)
+            if (SupportFragmentManager?.Fragments == null)
+                return;
+
+            foreach (TabFragment fragment in SupportFragmentManager.Fragments)
             {
                 (fragment as LineMapFragment)?.OnRefreshing();
                 (fragment as LineRouteFragment)?.OnRefreshing();
@@ -267,7 +271,10 @@ namespace TramUrWay.Android
         }
         private void OnRefreshed(IEnumerable<TimeStep> timeSteps, IEnumerable<Transport> transports)
         {
-            foreach (TabFragment fragment in fragments)
+            if (SupportFragmentManager?.Fragments == null)
+                return;
+
+            foreach (TabFragment fragment in SupportFragmentManager.Fragments)
             {
                 (fragment as LineMapFragment)?.OnRefreshed(timeSteps, transports);
                 (fragment as LineRouteFragment)?.OnRefreshed(timeSteps, transports);

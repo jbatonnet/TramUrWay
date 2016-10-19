@@ -61,7 +61,7 @@ namespace TramUrWay.Android
             TimeStep timeStep = timeSteps[position];
 
             viewHolder.Icon.SetImageDrawable(timeStep.Step.Route.Line.GetIconDrawable(viewHolder.ItemView.Context));
-            viewHolder.Name.Text = timeStep.Destination.Stop.Name;
+            viewHolder.Name.Text = timeStep.Destination?.Stop?.Name ?? "";
             viewHolder.Description.Text = Utils.GetReadableTime(timeStep, DateTime.Now);
 
             if (!viewHolders.Contains(viewHolder))

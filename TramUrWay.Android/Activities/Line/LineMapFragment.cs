@@ -81,6 +81,7 @@ namespace TramUrWay.Android
         private Transport[] transportsCache;
         private bool hasFocus = false;
 
+        public LineMapFragment() { }
         public LineMapFragment(Line line, Color color)
         {
             this.line = line;
@@ -89,6 +90,17 @@ namespace TramUrWay.Android
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            if (savedInstanceState?.ContainsKey("Line") == true)
+            {
+                int lineId = savedInstanceState.GetInt("Line");
+                line = TramUrWayApplication.GetLine(lineId);
+            }
+            if (savedInstanceState?.ContainsKey("Color") == true)
+            { 
+                int argb = savedInstanceState.GetInt("Color");
+                color = new Color(argb);
+            }
+
             return inflater.Inflate(Resource.Layout.LineMapFragment, container, false);
         }
         public override void OnDestroyView()
@@ -113,6 +125,13 @@ namespace TramUrWay.Android
             googleMap.Dispose();
             mapFragment.Dispose();
             mapFragment = null;
+        }
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+
+            outState.PutInt("Line", line.Id);
+            outState.PutInt("Color", color.ToArgb());
         }
         public override void OnPause()
         {

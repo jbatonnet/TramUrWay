@@ -42,6 +42,7 @@ namespace TramUrWay.Android
         private SwipeRefreshLayout swipeRefresh;
         private RecyclerView recyclerView;
 
+        public LineRouteFragment() { }
         public LineRouteFragment(Route route, Color color)
         {
             this.route = route;
@@ -50,6 +51,20 @@ namespace TramUrWay.Android
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            if (savedInstanceState?.ContainsKey("Line") == true && savedInstanceState?.ContainsKey("Route") == true)
+            {
+                int lineId = savedInstanceState.GetInt("Line");
+                Line line = TramUrWayApplication.GetLine(lineId);
+
+                int routeId = savedInstanceState.GetInt("Route");
+                route = line.Routes.FirstOrDefault(r => r.Id == routeId);
+            }
+            if (savedInstanceState?.ContainsKey("Color") == true)
+            {
+                int argb = savedInstanceState.GetInt("Color");
+                color = new Color(argb);
+            }
+
             View view = inflater.Inflate(Resource.Layout.RouteFragment, container, false);
 
             // Refresh widget
@@ -69,6 +84,14 @@ namespace TramUrWay.Android
                 routeAdapter.Update(lastTimeSteps, lastTransports);
 
             return view;
+        }
+        public override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+
+            outState.PutInt("Line", route.Line.Id);
+            outState.PutInt("Route", route.Id);
+            outState.PutInt("Color", color.ToArgb());
         }
 
         public void OnRefreshing()
